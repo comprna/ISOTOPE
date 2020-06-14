@@ -1,5 +1,5 @@
 # ISOTOPE
-ISOform-guided prediction of epiTOPEs In Cancer
+ISOform-guided prediction of epiTOPEs in cancer
 
 The pipeline is divided in 4 parts, depending the event type the user wants to obtain:
 
