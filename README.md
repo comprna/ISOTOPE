@@ -1,6 +1,8 @@
 # ISOTOPE
 ISOform-guided prediction of epiTOPEs in cancer
 
+The following pipeline have been developed for the identification of cancer-specific splicing-derived epitopes from RNA-seq. The first input of this method are the read counts mapped to all posible junctions in the genome. This file is created through Junckey (https://github.com/comprna/Junckey#1-format-star-output).
+
 The pipeline is divided in 4 parts, depending the event type the user wants to obtain:
 
    * Pseudoexons (Exonizations)
