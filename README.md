@@ -11,6 +11,7 @@ The pipeline is divided in 4 parts, depending the event type the user wants to o
    * Intron retention (**IR**)
    
 For the obtention of exonizations, neoskipping and A5_A3 events, the first input are the read counts mapped to all posible junctions in the genome. This file (readCounts.tab) is created through Junckey (https://github.com/comprna/Junckey#1-format-star-output). From these junctions, ISOTOPE will obtain all splicing events expressed significantly.
+
 For the identification of IR events, a normalized expression like TPMs for all possible intronic regionic is needed. To this end, we first created a transcriptome with all possible intronic regions using kma (https://github.com/pachterlab/kma). By using a pseudoalligner like Salmon (https://combine-lab.github.io/salmon/) or Kallisto (https://pachterlab.github.io/kallisto/about) the quantification to these regions could be applied.
    
 The workflow is quite similar between all event types, but there are some specificities important to take into account 
