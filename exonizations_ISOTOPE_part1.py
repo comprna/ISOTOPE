@@ -15,6 +15,8 @@ from lib.Exonization.generate_random_intronic_positions import *
 from lib.Exonization.get_coverageBed import *
 from lib.Exonization.check_mutations_nearby import *
 
+from argparse import ArgumentParser, RawTextHelpFormatter
+
 # create logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,26 +34,40 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
+# description = \
+# "Description: Get exonization events\n\n"
+#
+# parser = ArgumentParser(description=description, formatter_class=RawTextHelpFormatter,
+#                         add_help=True)
+# parser.add_argument("-r", "--reads", required=True, help = "reads mapped to junctions")
+# parser.add_argument("-b", "--bam", required=True, help = "path to STAR output")
+# parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
+# parser.add_argument("-o", "--output", required=True, help = "Output path")
+# parser.add_argument("-m", "--max", required=False,  type=int, default=500)
+# parser.add_argument("-t", "--thres", required=False,  type=int, default=5, help="Minimum number of reads mapping the event")
+# parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
+# parser.add_argument("-rep", "--repeats", required=False, help = "Regions of the genome with repeats from maskerDB",default=None)
 
-def main():
+
+def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, max_length, threshold, n_randomizations):
     try:
 
         logger.info("Starting execution")
 
-        readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
-        bam_path = "/projects_rg/SCLC_cohorts/Smart/STAR"
-        gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        max_length = 500
-        threshold = 5
-        n_randomizations = 100
-        repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/exonizations"
+        # readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
+        # bam_path = "/projects_rg/SCLC_cohorts/Smart/STAR"
+        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
+        # max_length = 500
+        # threshold = 5
+        # n_randomizations = 100
+        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
+        # output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/exonizations"
 
         # 1. Identify the junctions that could generate an exonization
         logger.info("Part1...")
         dir_path = os.path.dirname(os.path.realpath(__file__))
         output_path_aux = output_path+"/new_exonized_junctions.tab"
-        extract_exonized_junctions(readcounts_path, gtf_path, max_length, output_path_aux)
+        extract_exonized_junctions(readcounts_path, gtf_path, genome_path, max_length, output_path_aux, mosea_path)
 
         # 2. Given the list with the possible exonizations, get the reads associate to each of them
         logger.info("Part2...")
@@ -122,4 +138,21 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # args = parser.parse_args()
+    # main(args.reads,args.bam,args.gtf,args.output,
+    #     args.max,args.thres,args.rand,args.repeats)
+
+    readcounts_path = "/home/shinoda/Desktop/ISOTOPE_TEST//data/readCounts_TEST.tab"
+    bam_path = "/home/shinoda/Desktop/ISOTOPE_TEST//data/STAR"
+    gtf_path =  "/home/shinoda/Desktop/ISOTOPE_TEST/annotation/Homo_sapiens.GRCh37.75.TEST.gtf"
+    genome_path =  "/home/shinoda/Software/MoSEA-master/test_files/genome/hg19.fa"
+    mosea_path =  "/home/shinoda/Software/MoSEA"
+    #mosea_path =  "/home/shinoda/Software/MoSEA-py3"
+    max_length = 500
+    threshold = 5
+    n_randomizations = 100
+    repeats_path = "/home/shinoda/Desktop/ISOTOPE_TEST/annotation/hg19_repeats_TEST.bed"
+    output_path = "/home/shinoda/Desktop/ISOTOPE_TEST/exonizations"
+    
+    main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, 500, 5, 100)
+

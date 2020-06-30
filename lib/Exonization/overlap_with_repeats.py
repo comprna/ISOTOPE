@@ -59,7 +59,8 @@ def overlap_with_repeats(input_path, repeats_path, output_path):
         # Save this variables as bed file
         path1 = "/".join(input_path.split("/")[:-1])
         bed = [("chr", chr), ("start", start), ("end", end), ("id", junction_reads['New_exon']),("strand", strand)]
-        bed_file = pd.DataFrame.from_items(bed)
+        # bed_file = pd.DataFrame.from_items(bed)
+        bed_file = pd.DataFrame.from_dict(dict(bed))
         bed_file['score'] = 0
         #Put columns in order
         cols = bed_file.columns.tolist()
@@ -69,8 +70,8 @@ def overlap_with_repeats(input_path, repeats_path, output_path):
 
         # Run interesectBed for obtaining the exons that overlapps with repeat regions
         logger.info("Running intersectBed...")
-        command2 = "module load BEDTools; intersectBed -wao -a " + path1 + "/aux.bed -b " + repeats_path + \
-                   " -s > " + path1 + "/aux2.bed; module unload BEDTools; "
+        command2 = "intersectBed -wao -a " + path1 + "/aux.bed -b " + repeats_path + \
+                   " -s > " + path1 + "/aux2.bed;"
         os.system(command2)
 
         #Load the new created file. Get all the repeatitions associated to the exons

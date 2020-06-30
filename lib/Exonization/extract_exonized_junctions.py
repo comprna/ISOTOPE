@@ -41,7 +41,7 @@ logger.addHandler(ch)
 # parser.add_argument("-o", "--output", required=True,
 #                     help="Output file")
 
-def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
+def extract_exonized_junctions(input_path, gtf_path, genome_path, max_length, output_path, mosea_path):
 
     try:
         logger.info("Starting execution")
@@ -259,7 +259,8 @@ def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
         path1 = "/".join(output_path.split("/")[:-1])
         bed = [("chr", chr), ("start", start), ("end", end), ("id", exonizations['New_exon']),
                ("strand", strand)]
-        bed_file = pd.DataFrame.from_items(bed)
+        #bed_file = pd.DataFrame.from_items(bed)
+        bed_file = pd.DataFrame.from_dict(dict(bed))
         bed_file['score'] = 0
         bed_file.to_csv(path1 + "/exonizations.bed", sep="\t", index=False, header=False)
 
@@ -284,16 +285,17 @@ def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
 
         # Run interesectBed for obtaining the new exons that are not in coding regions
         logger.info("Running intersectBed...")
-        command = "module load BEDTools; intersectBed -v -a " + path1 + "/exonizations.bed -b " + path1 + "/gtf.bed > " + \
-                  path1 + "/intersection.bed; module unload module load BEDTools"
+        command = "bedtools intersect -v -a " + path1 + "/exonizations.bed -b " + path1 + "/gtf.bed > " + \
+                  path1 + "/intersection.bed;"
         os.system(command)
 
         # Take from the output file the exons obtained with intersectBed
         logger.info("Filtering exons from final file...")
         intersection = pd.read_table(path1 + "/intersection.bed", delimiter="\t", header=None)
         intersection.columns = ['chr', 'start', 'end', 'exon_id','strand', 'score']
-        pos = exonizations["New_exon"].isin(intersection["exon_id"]).as_matrix()
-        exonizations_filtered = exonizations.iloc[pos]  # .tolist()
+        # pos = exonizations["New_exon"].isin(intersection["exon_id"]).as_matrix()
+        pos = exonizations["New_exon"].isin(intersection["exon_id"])
+        exonizations_filtered = exonizations.iloc[pos.tolist()]
         exonizations_filtered.to_csv(output_path, sep="\t", index=False, header=True)
 
         # Get the motifs of the splice sites
@@ -306,7 +308,8 @@ def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
         strand = exonizations_filtered["New_exon"].apply(lambda x: x.split(";")[3])
 
         bed5 = [("chr", chr), ("start", start2), ("end", start), ("strand", strand)]
-        bed5_file = pd.DataFrame.from_items(bed5)
+        # bed5_file = pd.DataFrame.from_items(bed5)
+        bed5_file = pd.DataFrame.from_dict(dict(bed5))
         bed5_file['id'] = exonizations_filtered["New_exon"]
         bed5_file['score'] = 0
         #Resort the columns
@@ -315,7 +318,8 @@ def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
         bed5_file = bed5_file[cols]
 
         bed3 = [("chr", chr), ("start", end), ("end", end2), ("strand", strand)]
-        bed3_file = pd.DataFrame.from_items(bed3)
+        # bed3_file = pd.DataFrame.from_items(bed3)
+        bed3_file = pd.DataFrame.from_dict(dict(bed3))
         bed3_file['id'] = exonizations_filtered["New_exon"]
         bed3_file['score'] = 0
         #Resort the columns
@@ -330,13 +334,17 @@ def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
         bed3_file.to_csv(path1 + "/bed3.bed", sep="\t", index=False, header=False)
 
         # Run getFasta from MoSEA (it needs python2 and BEDTools)
-        command1 = "module load Python/2.7.11; module load BEDTools; python2 /genomics/users/juanluis/Software/MoSEA-master/mosea.py getfasta --bedfile " + \
-                   path1 + "/bed5.bed --genome /genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa " \
-                           "--output " + path1 + "/bed5.fasta"
+        # command1 = "conda init bash; conda activate python2.7; python " + mosea_path + "/mosea.py getfasta --bedfile " + \
+        #            path1 + "/bed5.bed --genome " + mosea_path + "/test_files/genome/hg19.fa " \
+        #                    "--output " + path1 + "/bed5.fasta; conda deactivate;"
+        command1 = "python " + mosea_path + "/mosea.py getfasta --bedfile " + \
+                   path1 + "/bed5.bed --genome " + genome_path + " " \
+                           "--output " + path1 + "/bed5.fasta;"
         os.system(command1)
-        command2 = "module load Python/2.7.11; module load BEDTools; python2 /genomics/users/juanluis/Software/MoSEA-master/mosea.py getfasta --bedfile " + \
-                   path1 + "/bed3.bed --genome /genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa " \
-                           "--output " + path1 + "/bed3.fasta"
+
+        command2 = "python " + mosea_path + "/mosea.py getfasta --bedfile " + \
+                   path1 + "/bed3.bed --genome " + genome_path + " " \
+                           "--output " + path1 + "/bed3.fasta;"
         os.system(command2)
 
         logger.info("Obtaining the splice sites...")
