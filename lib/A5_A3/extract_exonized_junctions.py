@@ -2,7 +2,7 @@
 @authors: Juan L. Trincado
 @email: juanluis.trincado@upf.edu
 
-extract_exonized_junctions: identify the junctions that could generate an exonization
+extract_exonized_junctions: identify the junctions that could generate an alt splice site
 
 """
 
@@ -103,7 +103,7 @@ def get_info_splice_sites(line):
     return info, strand, start, end
 
 
-def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
+def extract_exonized_junctions(input_path, gtf_path, genome_path, max_length, output_path, mosea_path):
 
     try:
         logger.info("Starting execution")
@@ -380,7 +380,8 @@ def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
 
         logger.info("creating bed...")
         bed = [("chr", chr), ("start", start), ("end", end), ("strand", strand)]
-        bed_file = pd.DataFrame.from_items(bed)
+        #bed_file = pd.DataFrame.from_items(bed)
+        bed_file = pd.DataFrame.from_dict(dict(bed))
         # bed_file['id'] = id
         bed_file['score'] = 0
         # Save this variables as bed file
@@ -389,9 +390,9 @@ def extract_exonized_junctions(input_path, gtf_path, max_length, output_path):
         bed_file.to_csv(path1 + "/aux_bed.bed", sep="\t", index=False, header=False)
         # Run getFasta from MoSEA (it needs python2 and BEDTools)
         logger.info("Running Mosea...")
-        command1 = "module load Python/2.7.11; module load BEDTools; python2 /genomics/users/juanluis/Software/MoSEA-master/mosea.py getfasta --bedfile " + \
-                   path1 + "/aux_bed.bed --genome /genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa " \
-                           "--output " + path1 + "/aux_bed.fasta"
+        command1 = "python " + mosea_path + "/mosea.py getfasta --bedfile " + \
+                   path1 + "/aux_bed.bed --genome " + genome_path + " " \
+                           "--output " + path1 + "/aux_bed.fasta;"
         os.system(command1)
 
         # Load the motifs and associate it to the exons. Make it a table

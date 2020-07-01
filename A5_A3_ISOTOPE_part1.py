@@ -79,88 +79,85 @@ def main():
         output_path = "/users/genomics/juanluis/SCLC_cohorts/SCLC/epydoor/A5_A3"
         name_user = "juanluis"
 
-        # # 1. Identify the junctions that could generate an alternative splice site
-        # logger.info("Part1...")
-        # dir_path = os.path.dirname(os.path.realpath(__file__))
-        # output_path_aux = output_path+"/new_A5_A3_junctions.tab"
-        # extract_exonized_junctions(readcounts_path, gtf_path, max_length, output_path_aux)
-        #
-        # # 2. Given the list with the possible A5_A3, get the reads associate to each of them
-        # logger.info("Part2...")
-        # output_path_aux2 = output_path+"/new_A5_A3_junctions_reads.tab"
-        # get_reads_exonizations(output_path_aux, readcounts_path, output_path_aux2)
-        #
-        # # 3. find the overlap between the nex A5_A3 and repeatitions (RepeatMasker)
-        # logger.info("Part3...")
-        # output_path_aux3 = output_path + "/new_A5_A3_junctions_reads_repeatitions.tab"
-        # overlap_with_repeats(output_path_aux2, repeats_path, output_path_aux3)
-        #
-        # # 4. given the table of the A5_A3 with the reads counts,get those that are over a threshold
-        # logger.info("Part4...")
-        # get_significant_exonizations(output_path_aux3, threshold, output_path + "/A5_A3_by_sample.tab")
-        #
-        # # 5. for applying some filtering on the list of A5_A3 junctions, we are gonna compare the readcounts for each
-        # # junction against other new junctions associated to the same gene
-        # logger.info("Part5...")
-        # compare_reads_random_junctions(output_path + "/A5_A3_by_sample.tab", readcounts_path, gtf_path, output_path + "/A5_A3_by_sample_coverage.tab")
-        #
-        # # 6. Check if in the A5_A3 there are mutations nearby
-        # logger.info("Part6...")
-        # check_mutations_nearby(output_path + "/A5_A3_by_sample_coverage.tab", mutations_path, 200, output_path + "/A5_A3_by_sample_coverage_mut.tab")
-        #
-        # # 7. Separate the mutated from the non-mutated cases
-        # logger.info("Part7...")
-        # command1="module load R; Rscript "+dir_path+"/lib/A5_A3/separate_mutated_cases.R "+ output_path + "/A5_A3_by_sample_coverage_mut.tab " \
-        #          + output_path + "/A5_A3_mutated.tab " + output_path + "/A5_A3_non_mutated.tab "
-        # os.system(command1)
-        #
-        # # 8. Get the tumor specific events
-        # if(tumor_specific):
-        #
-        #     # Get also the significant A5_A3 from Rudin and Intropolis
-        #     logger.info("Part8.1...")
-        #     output_Rudin_path_aux2 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads.tab"
-        #     readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
-        #     get_reads_exonizations(output_path+"/new_A5_A3_junctions.tab", readCounts_Rudin_path, output_Rudin_path_aux2)
-        #     output_Rudin_path_aux3 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads_repeatitions.tab"
-        #     overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
-        #     output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
-        #     get_significant_exonizations(output_Rudin_path_aux3, threshold2, output_Rudin_path_aux4)
-        #
-        #     logger.info("Part8.2...")
-        #     output_Intropolis_path_aux2 = output_path + "/new_A5_A3_junctions_Intropolis_reads.tab"
-        #     get_reads_exonizations(output_path+"/new_A5_A3_junctions.tab", readcounts_path, output_Intropolis_path_aux2)
-        #     output_Intropolis_path_aux3 = output_path + "/new_A5_A3_junctions_Intropolis_reads_repeatitions.tab"
-        #     overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
-        #     output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
-        #     get_significant_exonizations(output_Intropolis_path_aux3, threshold2, output_Intropolis_path_aux4)
-        #
-        #     logger.info("Part8.3...")
-        #     output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
-        #     output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
-        #     output_path_aux11 = output_path + "/A5_A3_non_mutated_filtered.tab"
-        #     filter_exonizations(output_path + "/A5_A3_non_mutated.tab", output_Rudin_path_aux4, output_Intropolis_path_aux4, output_path_aux11, flag_Rudin)
-        #     output_path_aux12 = output_path + "/A5_A3_non_mutated_filtered2.tab"
-        #     filter_exonizations_CHESS(output_path_aux11, CHESS_A5_path, CHESS_A3_path, output_path_aux12)
-        #
-        #     # 9. Join the mutated and non_mutated cases
-        #     logger.info("Part8.4...")
-        #     output_path_aux13 = output_path + "/all_A5_A3.tab"
-        #     command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path_aux12 + " >> " + output_path_aux13
-        #     os.system(command3)
-        #
-        # else:
-        #
-        #     # 9. Join the mutated and non_mutated cases
-        #     logger.info("Part8...")
-        #     output_path_aux13 = output_path + "/all_A5_A3.tab"
-        #     command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/A5_A3_non_mutated.tab" + " >> " + output_path_aux13
-        #     os.system(command3)
+        # 1. Identify the junctions that could generate an alternative splice site
+        logger.info("Part1...")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        output_path_aux = output_path+"/new_A5_A3_junctions.tab"
+        extract_exonized_junctions(readcounts_path, gtf_path, fasta_genome, max_length, output_path_aux, mosea)
+
+        # 2. Given the list with the possible A5_A3, get the reads associate to each of them
+        logger.info("Part2...")
+        output_path_aux2 = output_path+"/new_A5_A3_junctions_reads.tab"
+        get_reads_exonizations(output_path_aux, readcounts_path, output_path_aux2)
+
+        # 3. find the overlap between the nex A5_A3 and repeatitions (RepeatMasker)
+        logger.info("Part3...")
+        output_path_aux3 = output_path + "/new_A5_A3_junctions_reads_repeatitions.tab"
+        overlap_with_repeats(output_path_aux2, repeats_path, output_path_aux3)
+
+        # 4. given the table of the A5_A3 with the reads counts,get those that are over a threshold
+        logger.info("Part4...")
+        get_significant_exonizations(output_path_aux3, threshold, output_path + "/A5_A3_by_sample.tab")
+
+        # 5. for applying some filtering on the list of A5_A3 junctions, we are gonna compare the readcounts for each
+        # junction against other new junctions associated to the same gene
+        logger.info("Part5...")
+        compare_reads_random_junctions(output_path + "/A5_A3_by_sample.tab", readcounts_path, gtf_path, output_path + "/A5_A3_by_sample_coverage.tab")
+
+        # 6. Check if in the A5_A3 there are mutations nearby
+        logger.info("Part6...")
+        check_mutations_nearby(output_path + "/A5_A3_by_sample_coverage.tab", mutations_path, 200, output_path + "/A5_A3_by_sample_coverage_mut.tab")
+
+        # 7. Separate the mutated from the non-mutated cases
+        logger.info("Part7...")
+        command1="module load R; Rscript "+dir_path+"/lib/A5_A3/separate_mutated_cases.R "+ output_path + "/A5_A3_by_sample_coverage_mut.tab " \
+                 + output_path + "/A5_A3_mutated.tab " + output_path + "/A5_A3_non_mutated.tab "
+        os.system(command1)
+
+        # 8. Get the tumor specific events
+        if(tumor_specific):
+
+            # Get also the significant A5_A3 from Rudin and Intropolis
+            logger.info("Part8.1...")
+            output_Rudin_path_aux2 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads.tab"
+            readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
+            get_reads_exonizations(output_path+"/new_A5_A3_junctions.tab", readCounts_Rudin_path, output_Rudin_path_aux2)
+            output_Rudin_path_aux3 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads_repeatitions.tab"
+            overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
+            output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
+            get_significant_exonizations(output_Rudin_path_aux3, threshold2, output_Rudin_path_aux4)
+
+            logger.info("Part8.2...")
+            output_Intropolis_path_aux2 = output_path + "/new_A5_A3_junctions_Intropolis_reads.tab"
+            get_reads_exonizations(output_path+"/new_A5_A3_junctions.tab", readcounts_path, output_Intropolis_path_aux2)
+            output_Intropolis_path_aux3 = output_path + "/new_A5_A3_junctions_Intropolis_reads_repeatitions.tab"
+            overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
+            output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
+            get_significant_exonizations(output_Intropolis_path_aux3, threshold2, output_Intropolis_path_aux4)
+
+            logger.info("Part8.3...")
+            output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
+            output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
+            output_path_aux11 = output_path + "/A5_A3_non_mutated_filtered.tab"
+            filter_exonizations(output_path + "/A5_A3_non_mutated.tab", output_Rudin_path_aux4, output_Intropolis_path_aux4, output_path_aux11, flag_Rudin)
+            output_path_aux12 = output_path + "/A5_A3_non_mutated_filtered2.tab"
+            filter_exonizations_CHESS(output_path_aux11, CHESS_A5_path, CHESS_A3_path, output_path_aux12)
+
+            # 9. Join the mutated and non_mutated cases
+            logger.info("Part8.4...")
+            output_path_aux13 = output_path + "/all_A5_A3.tab"
+            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path_aux12 + " >> " + output_path_aux13
+            os.system(command3)
+
+        else:
+
+            # 9. Join the mutated and non_mutated cases
+            logger.info("Part8...")
+            output_path_aux13 = output_path + "/all_A5_A3.tab"
+            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/A5_A3_non_mutated.tab" + " >> " + output_path_aux13
+            os.system(command3)
 
         # 10. Get the peptide sequence associated
-
-        #BORRAR DESPUES!!!
-        output_path_aux13 = output_path + "/all_A5_A3.tab"
 
         # 10.1. Split the input file into n pieces. Run a job per piece. When all jobs have finished, we will assemble all the pieces
         logger.info("get_peptide_sequence: Split the file into pieces and run get_peptide_sequence by chunk")
