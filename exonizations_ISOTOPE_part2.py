@@ -74,7 +74,7 @@ parser.add_argument("-m", "--max", required=False,  type=int, default=500)
 parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
-parser.add_argument("--remove_temp_files", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
+parser.add_argument("--remove_temp_files", type=str2bool, nargs='?',const=True, default=True,help="Remove temp files")
 parser.add_argument("--mutations", required=False, help = "Mutations path")
 parser.add_argument("--CHESS", required=False, help = "CHESS SE path")
 
