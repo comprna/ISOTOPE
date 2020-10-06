@@ -141,7 +141,7 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.reads,args.bam,args.gtf,args.genome,args.mosea,args.output,args.max,args.thres,args.rand,args.repeats)
+    main(args.reads,args.bam,args.gtf,args.genome,args.mosea,args.output,args.repeats,args.max,args.thres,args.rand)
 
     # readcounts_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/readCounts_TEST.tab"
     # bam_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/STAR"
