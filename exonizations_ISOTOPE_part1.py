@@ -48,13 +48,13 @@ parser.add_argument("-o", "--output", required=True, help = "Output path")
 parser.add_argument("-m", "--max", required=False,  type=int, default=500)
 parser.add_argument("-t", "--thres", required=False,  type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
-parser.add_argument("-rep", "--repeats", required=False, help = "Regions of the genome with repeats from maskerDB",default=None)
+parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
 
 
 def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, max_length, threshold, n_randomizations):
     try:
 
-        logger.info("Starting execution")
+        logger.info("Starting execution exonizations_ISOTOPE_part1")
 
         # readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
         # bam_path = "/projects_rg/SCLC_cohorts/Smart/STAR"

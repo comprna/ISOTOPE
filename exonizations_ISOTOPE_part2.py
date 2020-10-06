@@ -21,6 +21,8 @@ from lib.Exonization.get_peptide_sequence import *
 from lib.Exonization.run_netMHC_classI_slurm_part1 import *
 from lib.Exonization.run_netMHCpan_classI_slurm_part1 import *
 
+from argparse import ArgumentParser, RawTextHelpFormatter
+import argparse
 # create logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -38,35 +40,74 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
+description = \
+"Description: Get exonization events\n\n"
 
-def main():
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+parser = ArgumentParser(description=description, formatter_class=RawTextHelpFormatter,
+                        add_help=True)
+parser.add_argument("-r", "--reads", required=True, help = "reads mapped to junctions")
+parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
+parser.add_argument("-genome", "--genome", required=True, help = "Genome annotation")
+parser.add_argument("-trans", "--transcript", required=True, help = "transcript expression file")
+parser.add_argument("-HLAclass", "--HLAclass", required=True, help = "HLA genotype of the samples")
+parser.add_argument("-HLAtypes", "--HLAtypes", required=True, help = "HLA alelles recognized by NetMHC")
+parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help = "HLA alelles recognized by NetMHCpan")
+parser.add_argument("-netMHC", "--netMHC", required=True, help = "netMHC path")
+parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpan path")
+parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
+parser.add_argument("-orfs", "--orfs", required=True, help = "MxFinder path")
+parser.add_argument("-o", "--output", required=True, help = "Output path")
+parser.add_argument("--username", required=True, help = "Cluster user name")
+parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
+parser.add_argument("-t", "--thres", required=False,  type=int, default=5, help="Minimum number of reads mapping the event")
+parser.add_argument("-m", "--max", required=False,  type=int, default=500)
+parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
+parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
+parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
+parser.add_argument("--remove_temp_files", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
+parser.add_argument("--mutations", required=False, help = "Mutations path")
+parser.add_argument("--CHESS", required=False, help = "CHESS SE path")
+
+def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path,
+         mosea_path, orfs_scripts, output_path, repeats_path, threshold, tumor_specific, mutations_path, CHESS_SE_path, flag_Rudin, remove_temp_files, name_user):
     try:
 
         logger.info("Starting execution exonizations_ISOTOPE_part2")
 
-        tumor_specific = True
-        readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
-        transcript_expression_path = "/projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt"
-        gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
-        mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
-        repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        CHESS_SE_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_SE_strict.ioe"
-        mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
-        fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
-        orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
-        interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
-        IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
-        HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
-        HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
-        HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
-        netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
-        netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
-        remove_temp_files = True
-        flag_Rudin = False
-        threshold2 = 10
-        name_user = "juanluis"
-        output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/exonizations"
+        # tumor_specific = True
+        # readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
+        # transcript_expression_path = "/projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt"
+        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
+        # codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
+        # mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
+        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
+        # CHESS_SE_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_SE_strict.ioe"
+        # mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
+        # genome_path = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
+        # orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
+        interpro = None
+        IUPred = None
+        # HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
+        # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
+        # HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
+        # netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
+        # netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
+        # remove_temp_files = True
+        # flag_Rudin = False
+        # threshold = 10
+        # name_user = "juanluis"
+        # output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/exonizations"
+
         # ONLY FOR MARVIN
         #python2 = "Python/2.7.14-foss-2017b"
         # ONLY FOR HYDRA
@@ -96,7 +137,7 @@ def main():
 
         # 9. Separate between mutated and non-mutated cases
         logger.info("Part9...")
-        command2="module load R; Rscript "+dir_path+"/lib/Exonization/separate_mutated_cases.R "+output_path + \
+        command2="Rscript "+dir_path+"/lib/Exonization/separate_mutated_cases.R "+output_path + \
                  "/exonizations_by_sample_coverage_mut.tab"+" "+output_path + "/mutated_exonizations.tab"+" "+output_path + "/non_mutated_exonizations.tab"
         # print(command2)
         os.system(command2)
@@ -111,14 +152,14 @@ def main():
             output_Rudin_path_aux3 = output_path + "/new_exonized_junctions_Rudin_normal_reads_repeatitions.tab"
             overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
             output_Rudin_path_aux4 = output_path + "/exonizations_by_sample_Rudin_normal.tab"
-            get_significant_exonizations(output_Rudin_path_aux3, threshold2, output_Rudin_path_aux4)
+            get_significant_exonizations(output_Rudin_path_aux3, threshold, output_Rudin_path_aux4)
 
             output_Intropolis_path_aux2 = output_path + "/new_exonized_junctions_Intropolis_reads.tab"
             get_reads_exonizations(output_path+"/new_exonized_junctions.tab", readcounts_path, output_Intropolis_path_aux2)
             output_Intropolis_path_aux3 = output_path + "/new_exonized_junctions_Intropolis_reads_repeatitions.tab"
             overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
             output_Intropolis_path_aux4 = output_path + "/exonizations_by_sample_Intropolis.tab"
-            get_significant_exonizations(output_Intropolis_path_aux3, threshold2, output_Intropolis_path_aux4)
+            get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
 
             output_Rudin_path_aux4 = output_path + "/exonizations_by_sample_Rudin_normal.tab"
             output_Intropolis_path_aux4 = output_path + "/exonizations_by_sample_Intropolis.tab"
@@ -150,9 +191,9 @@ def main():
         output_path_aux15 = output_path + "/all_exonizations_ORF_sequences.tab"
         output_path_aux16 = output_path + "/all_exonizations_Interpro.tab"
         output_path_aux17 = output_path + "/all_exonizations_IUPred.tab"
-        get_peptide_sequence(output_path_aux13, transcript_expression_path, gtf_path, codons_gtf_path,
+        get_peptide_sequence(output_path_aux13, transcript_expression_path, gtf_path,
                              output_path_peptide, output_path_dna, output_path_aux14,
-                             output_path_aux15, output_path_aux16, output_path_aux17, mosea, fasta_genome, orfs_scripts,
+                             output_path_aux15, output_path_aux16, output_path_aux17, mosea_path, genome_path, orfs_scripts,
                              interpro,IUPred, remove_temp_files, python2)
 
         # 13. Filter the significant results
@@ -203,4 +244,22 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    args = parser.parse_args()
+    main(args.reads,args.gtf,args.genome,args.transcript,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,
+         args.netMHCpan,args.mosea,args.orfs,args.output,args.repeats,args.thres,args.tumor_specific,args.mut,
+         args.chess,args.Rudin,args.temp,args.username)
+
+    # readcounts_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/readCounts_TEST.tab"
+    # bam_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/STAR"
+    # gtf_path =  "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
+    # genome_path =  "/media/trincadojl/data/Projects/annotation/hg19.fa"
+    # mosea_path =  "/home/trincadojl/Software/MoSEA"
+    # #mosea_path =  "/home/shinoda/Software/MoSEA-py3"
+    # max_length = 500
+    # threshold = 5
+    # n_randomizations = 100
+    # repeats_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/hg19_repeats_TEST.bed"
+    # output_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations"
+    #
+    # main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, 500, 5, 100)
+
