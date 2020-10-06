@@ -11,7 +11,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 import logging, sys, os, re
 import subprocess
 from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
+# from Bio.Alphabet import IUPAC
 
 # create logger
 logger = logging.getLogger(__name__)
@@ -73,32 +73,13 @@ def check_exonization(exonization, exons):
         flag_exit = True
         return True
 
-# def get_expression(sample_id,transcript_id,CA46,HL_60,THP_1):
-#     if(sample_id=="CA46"):
-#         if(transcript_id in CA46):
-#             return CA46[transcript_id]
-#         else:
-#             return -1
-#     elif(sample_id=="HL-60"):
-#         if(transcript_id in HL_60):
-#             return HL_60[transcript_id]
-#         else:
-#             return -1
-#     elif(sample_id == "THP-1"):
-#         if (transcript_id in THP_1):
-#             return THP_1[transcript_id]
-#         else:
-#             return -1
-#     else:
-#         return -1
-
 def get_expression(sample_id,transcript_id,transcript_expression):
     if (transcript_id in transcript_expression[sample_id]):
         return transcript_expression[sample_id][transcript_id]
     else:
         return -1
 
-def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, codons_gtf_path, output_peptide_path,
+def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
                          output_sequence_path, output_path2, output_path3, output_path4, output_path5, mosea,
                          fast_genome, orfs_scripts, interpro, IUPred, remove_temp_files, python2):
 
@@ -124,7 +105,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     else:
                         logger.info("Repeated transcript " + transcript + " in transcript_expression")
 
-        # 2. Get the association gene - transcript from the gtf
+        # 2. Get the association gene - transcript from the gtf and the start and end codon from each transcript
+        transcript_start_codon, transcript_stop_codon = {}, {}
         gene_transcript = {}
         with open(gtf_path) as f:
             logger.info("Loading genes - transcripts...")
@@ -133,44 +115,62 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     pass
                 else:
                     tokens = line.rstrip().split("\t")
-                    gene_id = re.sub("\"", "", tokens[8].split(";")[0].split("gene_id")[1]).strip()
-                    transcript_id = re.sub("\"", "",
-                                           tokens[8].split(";")[1].split("transcript_id")[1]).strip()
-                    if (gene_id not in gene_transcript):
-                        gene_transcript[gene_id] = [transcript_id]
+                    # Save the information from the exonic regions
+                    if (tokens[2]=="exon"):
+                        gene_id = re.sub("\"", "", tokens[8].split(";")[0].split("gene_id")[1]).strip()
+                        transcript_id = re.sub("\"", "",
+                                               tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+                        if (gene_id not in gene_transcript):
+                            gene_transcript[gene_id] = [transcript_id]
+                        else:
+                            if (transcript_id not in gene_transcript[gene_id]):
+                                gene_transcript[gene_id].append(transcript_id)
+                    # Save the information from the codons
                     else:
-                        if (transcript_id not in gene_transcript[gene_id]):
-                            gene_transcript[gene_id].append(transcript_id)
+                        if (re.search("start_codon", line)):
+                            start = tokens[3]
+                            end = tokens[4]
+                            transcript_id = re.sub("\"", "", tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+                            if (transcript_id not in transcript_start_codon):
+                                transcript_start_codon[transcript_id] = (start, end)
 
-        # 3. Get the start and end codon from each transcript
-        transcript_start_codon, transcript_stop_codon = {}, {}
-        with open(codons_gtf_path) as f:
-            logger.info("Loading start and end codons...")
-            for line in f:
-                if (re.search("#", line)):
-                    pass
-                else:
-                    tokens = line.rstrip().split("\t")
-                    if (re.search("start_codon", line)):
-                        start = tokens[3]
-                        end = tokens[4]
-                        transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
-                        if(transcript_id not in transcript_start_codon):
-                            transcript_start_codon[transcript_id] = (start,end)
-                        else:
-                            # logger.info("Repeated start codon for " + str(transcript))
-                            pass
-                    elif (re.search("stop_codon", line)):
-                        start = tokens[3]
-                        end = tokens[4]
-                        transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
-                        if(transcript_id not in transcript_stop_codon):
-                            transcript_stop_codon[transcript_id] = (start,end)
-                        else:
-                            # logger.info("Repeated end codon for " + str(transcript))
-                            pass
-                    else:
-                        pass
+                        elif (re.search("stop_codon", line)):
+                            start = tokens[3]
+                            end = tokens[4]
+                            transcript_id = re.sub("\"", "", tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+                            if (transcript_id not in transcript_stop_codon):
+                                transcript_stop_codon[transcript_id] = (start, end)
+
+
+        # # 3. Get the start and end codon from each transcript
+        # transcript_start_codon, transcript_stop_codon = {}, {}
+        # with open(codons_gtf_path) as f:
+        #     logger.info("Loading start and end codons...")
+        #     for line in f:
+        #         if (re.search("#", line)):
+        #             pass
+        #         else:
+        #             tokens = line.rstrip().split("\t")
+        #             if (re.search("start_codon", line)):
+        #                 start = tokens[3]
+        #                 end = tokens[4]
+        #                 transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+        #                 if(transcript_id not in transcript_start_codon):
+        #                     transcript_start_codon[transcript_id] = (start,end)
+        #                 else:
+        #                     # logger.info("Repeated start codon for " + str(transcript))
+        #                     pass
+        #             elif (re.search("stop_codon", line)):
+        #                 start = tokens[3]
+        #                 end = tokens[4]
+        #                 transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+        #                 if(transcript_id not in transcript_stop_codon):
+        #                     transcript_stop_codon[transcript_id] = (start,end)
+        #                 else:
+        #                     # logger.info("Repeated end codon for " + str(transcript))
+        #                     pass
+        #             else:
+        #                 pass
 
         # 4. Load the gtf as a pandas dataframe
         logger.info("Loading gtf file...")
@@ -343,16 +343,16 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                 # 5.2.2. Get the sequence from Mosea
                 # logger.info("Obtaining fasta exonizations sequence...")
-                command1 = "module load " + python2 + "; module load BEDTools; python " + mosea + " getfasta --bedfile " + \
+                command1 = "python " + mosea + " getfasta --bedfile " + \
                            path1 + "/aux_exonization_Exoniz.bed --genome " + fast_genome + " --output " + path1 + \
-                           "/aux_exonization_Exoniz.fa" + "; module unload " + python2
+                           "/aux_exonization_Exoniz.fa"
                 # print(command1)
                 os.system(command1)
 
                 # logger.info("Obtaining fasta reference sequence...")
-                command2 = "module load " + python2 + "; module load BEDTools; python " + mosea + " getfasta --bedfile " + \
+                command2 = "python " + mosea + " getfasta --bedfile " + \
                            path1 + "/aux_reference_Exoniz.bed --genome " + fast_genome + " --output " + path1 + \
-                           "/aux_reference_Exoniz.fa" + "; module unload " + python2
+                           "/aux_reference_Exoniz.fa"
                 # print(command2)
                 os.system(command2)
 
@@ -528,9 +528,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                     # 5.3.2.1. Run extract_orfs.py for obtaining all possible ORFs in the sequence
                     # logger.info("Obtaining ORFs...")
-                    command1 = "module load Python/2.7.11; python " + orfs_scripts + " " + path1 + \
-                               "/aux_sequence_total_EX_Exoniz.fa" + " 50 > " + path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa" \
-                               + " ; module unload Python/2.7.11"
+                    command1 = "python " + orfs_scripts + " " + path1 + \
+                               "/aux_sequence_total_EX_Exoniz.fa" + " 50 > " + path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa"
                     os.system(command1)
 
                     if (exonization_strand == "-"):
@@ -555,7 +554,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                     # 5.3.3. Get the translation from the ORFs (reference and exonization)
                     ORF_EX_f = ORF_EX.replace("T", "U")
-                    messenger_rna = Seq(ORF_EX_f, IUPAC.unambiguous_rna)
+                    # messenger_rna = Seq(ORF_EX_f, IUPAC.unambiguous_rna)
+                    messenger_rna = Seq(ORF_EX_f)
                     peptide_exonizations = messenger_rna.translate()
 
                     # If the gene is in reverse, get the rev_compl from the sequence_total_REF
@@ -563,7 +563,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                         my_seq = Seq(sequence_total_REF)
                         sequence_total_REF = my_seq.reverse_complement()
                     ORF_REF_f = sequence_total_REF.replace("T", "U")
-                    messenger_rna = Seq(ORF_REF_f, IUPAC.unambiguous_rna)
+                    # messenger_rna = Seq(ORF_REF_f, IUPAC.unambiguous_rna)
+                    messenger_rna = Seq(ORF_REF_f)
                     peptide_reference = messenger_rna.translate()
 
                     # 5.4. Save both DNA and peptidic sequences to the output
