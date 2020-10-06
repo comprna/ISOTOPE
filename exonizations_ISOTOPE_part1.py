@@ -143,17 +143,19 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.bam,args.gtf,args.genome,args.mosea,args.output,args.max,args.thres,args.rand,args.repeats)
 
-    # readcounts_path = "/home/shinoda/Desktop/ISOTOPE_TEST//data/readCounts_TEST.tab"
-    # bam_path = "/home/shinoda/Desktop/ISOTOPE_TEST//data/STAR"
-    # gtf_path =  "/home/shinoda/Desktop/ISOTOPE_TEST/annotation/Homo_sapiens.GRCh37.75.TEST.gtf"
-    # genome_path =  "/home/shinoda/Software/MoSEA-master/test_files/genome/hg19.fa"
-    # mosea_path =  "/home/shinoda/Software/MoSEA"
+    # readcounts_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/readCounts_TEST.tab"
+    # bam_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/STAR"
+    # gtf_path =  "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
+    # genome_path =  "/media/trincadojl/data/Projects/annotation/hg19.fa"
+    # mosea_path =  "/home/trincadojl/Software/MoSEA"
     # #mosea_path =  "/home/shinoda/Software/MoSEA-py3"
     # max_length = 500
     # threshold = 5
     # n_randomizations = 100
-    # repeats_path = "/home/shinoda/Desktop/ISOTOPE_TEST/annotation/hg19_repeats_TEST.bed"
-    # output_path = "/home/shinoda/Desktop/ISOTOPE_TEST/exonizations"
+    # repeats_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/hg19_repeats_TEST.bed"
+    # output_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations"
     #
     # main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, 500, 5, 100)
+
+
 

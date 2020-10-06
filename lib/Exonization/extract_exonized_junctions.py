@@ -337,6 +337,7 @@ def extract_exonized_junctions(input_path, gtf_path, genome_path, max_length, ou
         # command1 = "conda init bash; conda activate python2.7; python " + mosea_path + "/mosea.py getfasta --bedfile " + \
         #            path1 + "/bed5.bed --genome " + mosea_path + "/test_files/genome/hg19.fa " \
         #                    "--output " + path1 + "/bed5.fasta; conda deactivate;"
+
         command1 = "python " + mosea_path + "/mosea.py getfasta --bedfile " + \
                    path1 + "/bed5.bed --genome " + genome_path + " " \
                            "--output " + path1 + "/bed5.fasta;"
