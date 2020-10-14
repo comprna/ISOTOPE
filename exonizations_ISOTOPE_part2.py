@@ -75,7 +75,7 @@ parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, h
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("--remove_temp_files", type=str2bool, nargs='?',const=True, default=True,help="Remove temp files")
-parser.add_argument("--mutations", required=False, help = "Mutations path")
+parser.add_argument("-mut","--mutations", required=False, help = "Mutations path")
 parser.add_argument("--CHESS", required=False, help = "CHESS SE path")
 
 def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path,
@@ -262,4 +262,3 @@ if __name__ == '__main__':
     # output_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations"
     #
     # main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, 500, 5, 100)
-
