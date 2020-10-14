@@ -76,7 +76,7 @@ parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, def
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("--remove_temp_files", type=str2bool, nargs='?',const=True, default=True,help="Remove temp files")
 parser.add_argument("-mut","--mutations", required=False, help = "Mutations path")
-parser.add_argument("--CHESS", required=False, help = "CHESS SE path")
+parser.add_argument("--chess", required=False, help = "CHESS SE path")
 
 def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path,
          mosea_path, orfs_scripts, output_path, repeats_path, threshold, tumor_specific, mutations_path, CHESS_SE_path, flag_Rudin, remove_temp_files, name_user):
