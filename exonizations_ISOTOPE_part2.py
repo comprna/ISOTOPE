@@ -246,7 +246,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.gtf,args.genome,args.transcript,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,
-         args.netMHCpan,args.mosea,args.orfs,args.output,args.repeats,args.thres,args.tumor_specific,args.mut,
+         args.netMHCpan,args.mosea,args.orfs,args.output,args.repeats,args.thres,args.tumor_specific,args.mutations,
          args.chess,args.Rudin,args.temp,args.username)
 
     # readcounts_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/readCounts_TEST.tab"
