@@ -115,6 +115,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
 
         # 6. Create the folder, if it doesn't exists
         logger.info("Part6...")
+        logger.info("Moving all coverageBed files...")
         if not os.path.exists(output_path + "/coverageBed"):
             os.makedirs(output_path + "/coverageBed")
         # Move all the coverage.sorted files to the created directory
