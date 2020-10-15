@@ -177,7 +177,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
-        gtf = gtf[gtf['type2'].isin("exon")]
+        gtf = gtf[gtf['type2'].isin(["exon"])]
         gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
         #Add the chr suffix
         gtf['chr'] = 'chr' + gtf['chr'].astype(str)
