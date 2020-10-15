@@ -79,7 +79,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
         # Save this variables as bed file
         path1 = "/".join(output_path.split("/")[:-1])
         bed = [("chr", chr), ("start", start), ("end", end), ("id", new_exon_unique),("score", 0),("strand", strand)]
-        bed_file = pd.DataFrame.from_items(bed)
+        # bed_file = pd.DataFrame.from_items(bed)
+        bed_file = pd.DataFrame.from_dict(dict(bed))
         # bed_file['score'] = 0
         bed_file.to_csv(path1 + "/exonizations.bed", sep="\t", index=False, header=False)
 
@@ -126,7 +127,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
         bed2 = [('chr', intersection_f.iloc[:,6].tolist()), ('start', intersection_f.iloc[:,7].tolist()),
                 ('end', intersection_f.iloc[:,8].tolist()), ('id', intersection_f['mut_id'].tolist()),
                  ('score', 0), ('strand', intersection_f.iloc[:,5].tolist())]
-        event_info_bed = pd.DataFrame.from_items(bed2)
+        # event_info_bed = pd.DataFrame.from_items(bed2)
+        event_info_bed = pd.DataFrame.from_dict(dict(bed2))
         bedtrack_output_file = open(path1 + "/Exonizations_track.bed", 'w')
         bedtrack_output_file.write("track name=Mutations description=\"Mutations\" color=138,0,0\n")
         event_info_bed.to_csv(bedtrack_output_file, sep="\t", index=False, header=False, mode='a')
@@ -134,7 +136,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
         start2 = list(map(lambda x: int(x.split(";")[1])-1,new_exon_unique))
         end2 = list(map(lambda x: int(x.split(";")[2])+1,new_exon_unique))
         bed2 = [("chr", chr), ("start", start2), ("end", end2), ("id", new_exon_unique),("score", 0),("strand", strand)]
-        bed_file2 = pd.DataFrame.from_items(bed2)
+        # bed_file2 = pd.DataFrame.from_items(bed2)
+        bed_file2 = pd.DataFrame.from_dict(dict(bed2))
         bedtrack_output_file.write("track name=Exonizations description=\"Exonizations\" color=0,0,0\n")
         bed_file2.to_csv(bedtrack_output_file, sep="\t", index=False, header=False, mode='a')
         bedtrack_output_file.close()
