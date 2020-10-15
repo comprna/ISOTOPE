@@ -178,7 +178,11 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+        #Add the chr suffix
+        gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
+        print("First three rows of the data frame:")
+        print(gtf.iloc[:3])
 
         # 5. Get the peptidic sequences of the reference and the transcript with the exonization
         peptide_change, frame_shift, NMD, Stalling = {}, {}, {}, {}
