@@ -81,7 +81,7 @@ def get_expression(sample_id,transcript_id,transcript_expression):
 
 def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
                          output_sequence_path, output_path2, output_path3, output_path4, output_path5, mosea,
-                         fast_genome, orfs_scripts, interpro, IUPred, remove_temp_files, python2):
+                         fast_genome, MxFinder_path, remove_temp_files):
 
     try:
         logger.info("Starting execution")
@@ -174,7 +174,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
         # 4. Load the gtf as a pandas dataframe
         logger.info("Loading gtf file...")
-        gtf = pd.read_table(gtf_path, delimiter="\t",header=None)
+        gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
 
@@ -530,7 +530,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                     # 5.3.2.1. Run extract_orfs.py for obtaining all possible ORFs in the sequence
                     # logger.info("Obtaining ORFs...")
-                    command1 = "python " + orfs_scripts + " " + path1 + \
+                    command1 = "python " + MxFinder_path + "/extract_orfs.py " + path1 + \
                                "/aux_sequence_total_EX_Exoniz.fa" + " 50 > " + path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa"
                     os.system(command1)
 
@@ -788,22 +788,19 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         sys.exit(1)
 
 # if __name__ == '__main__':
-    # exonizations_path = sys.argv[1]
-    # transcript_expression_path = sys.argv[2]
-    # gtf_path = sys.argv[3]
-    # codons_gtf_path = sys.argv[4]
-    # output_peptide_path = sys.argv[5]
-    # output_sequence_path = sys.argv[6]
-    # output_path2 = sys.argv[7]
-    # output_path3 = sys.argv[8]
-    # output_path4 = sys.argv[9]
-    # output_path5 = sys.argv[10]
-    # mosea = sys.argv[11]
-    # fast_genome = sys.argv[12]
-    # orfs_scripts = sys.argv[13]
-    # interpro = sys.argv[14]
-    # IUPred = sys.argv[15]
-    # remove_temp_files = sys.argv[16]
-    # get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, codons_gtf_path, output_peptide_path,
-    #                      output_sequence_path, output_path2, output_path3, output_path4, output_path5, mosea,
-    #                      fast_genome, orfs_scripts, interpro, IUPred, remove_temp_files, python2)
+#     exonizations_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations/all_exonizations.tab"
+#     transcript_expression_path = "/home/trincadojl/Desktop/ISOTOPE_test/annotation/iso_tpm.txt"
+#     gtf_path = "/media/trincadojl/data/Projects/annotation/Homo_sapiens.GRCh37.75.gtf"
+#     output_peptide_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations" + "/exonizations_peptide_sequence.fa"
+#     output_sequence_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations" + "/exonizations_fasta_sequence.fa"
+#     output_path2 = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations" + "/all_exonizations_ORF.tab"
+#     output_path3 = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations" + "/all_exonizations_ORF_sequences.tab"
+#     output_path4 = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations" + "/all_exonizations_Interpro.tab"
+#     output_path5 = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations" + "/all_exonizations_IUPred.tab"
+#     mosea = "/home/trincadojl/Software/MoSEA"
+#     fast_genome = "/home/trincadojl/Desktop/ISOTOPE_test/annotation/hg19.fa"
+#     MxFinder_path = "/home/trincadojl/Software/MxFinder"
+#     remove_temp_files = False
+#     get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
+#                          output_sequence_path, output_path2, output_path3, output_path4, output_path5, mosea,
+#                          fast_genome, MxFinder_path, remove_temp_files)

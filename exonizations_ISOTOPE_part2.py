@@ -195,7 +195,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
         get_peptide_sequence(output_path_aux13, transcript_expression_path, gtf_path,
                              output_path_peptide, output_path_dna, output_path_aux14,
                              output_path_aux15, output_path_aux16, output_path_aux17, mosea_path, genome_path, orfs_scripts,
-                             interpro,IUPred, remove_temp_files, python2)
+                             remove_temp_files)
 
         # 13. Filter the significant results
         logger.info("Part12...")
