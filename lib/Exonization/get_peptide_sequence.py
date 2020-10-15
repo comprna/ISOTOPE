@@ -345,14 +345,14 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                 # 5.2.2. Get the sequence from Mosea
                 # logger.info("Obtaining fasta exonizations sequence...")
-                command1 = "python " + mosea + " getfasta --bedfile " + \
+                command1 = "python " + mosea + "/mosea.py getfasta --bedfile " + \
                            path1 + "/aux_exonization_Exoniz.bed --genome " + fast_genome + " --output " + path1 + \
                            "/aux_exonization_Exoniz.fa"
                 # print(command1)
                 os.system(command1)
 
                 # logger.info("Obtaining fasta reference sequence...")
-                command2 = "python " + mosea + " getfasta --bedfile " + \
+                command2 = "python " + mosea + "/mosea.py getfasta --bedfile " + \
                            path1 + "/aux_reference_Exoniz.bed --genome " + fast_genome + " --output " + path1 + \
                            "/aux_reference_Exoniz.fa"
                 # print(command2)

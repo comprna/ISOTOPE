@@ -201,7 +201,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
         logger.info("Part12...")
         output_path_aux18 = output_path + "/all_exonizations_filtered.tab"
         output_path_aux19 = output_path + "/all_exonizations_filtered_peptide_change.tab"
-        command4="module load R; Rscript "+dir_path+"/lib/Exonization/filter_results.R "+output_path_aux14+" "+output_path_aux18+" "+output_path_aux19
+        command4="Rscript "+dir_path+"/lib/Exonization/filter_results.R "+output_path_aux14+" "+output_path_aux18+" "+output_path_aux19
         os.system(command4)
 
         # 14. Select the fasta candidates for being run to the epitope analysis
