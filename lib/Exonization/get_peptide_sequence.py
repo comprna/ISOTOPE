@@ -327,7 +327,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 bed = [("chr", exons_associated_with_exonization['chr']), ("start", exons_associated_with_exonization['start']),
                 ("end", exons_associated_with_exonization['end']), ("id", exonization_formatted),
                 ("strand", exons_associated_with_exonization['strand'])]
-                bed_file = pd.DataFrame.from_items(bed)
+                # bed_file = pd.DataFrame.from_items(bed)
+                bed_file = pd.DataFrame.from_dict(dict(bed))
                 bed_file['score'] = 0
                 bed_file.to_csv(path1 + "/aux_exonization_Exoniz.bed", sep="\t", index=False, header=False)
                 # Format the reference transcript in a bed format
@@ -337,7 +338,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 bed = [("chr", exons_associated['chr']), ("start", exons_associated['start']),
                 ("end", exons_associated['end']), ("id", exonization_formatted),
                 ("strand", exons_associated['strand'])]
-                bed_file = pd.DataFrame.from_items(bed)
+                # bed_file = pd.DataFrame.from_items(bed)
+                bed_file = pd.DataFrame.from_dict(dict(bed))
                 bed_file['score'] = 0
                 bed_file.to_csv(path1 + "/aux_reference_Exoniz.bed", sep="\t", index=False, header=False)
 
@@ -594,39 +596,38 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     outFile_peptide_IUPred.write(str(peptide_exonizations).replace("*","")+"\n")
                     outFile_peptide_IUPred.close()
 
-                    # Run IUPred for obtaining the disordered regions
-                    command4 = "module load Python; python " + IUPred + "/iupred2a.py " + path1 + \
-                               "/Exonizations_peptide_sequence_IUPred.temp long > " + path1 + \
-                               "/Exonizations_peptide_sequence_IUPred.temp.out; " \
-                                                                            "module unload Python;"
-                    os.system(command4)
-
-                    # Process the output of IUPred
-                    flag_new_interval = True
-                    length = 0
-                    with open(path1 + "/Exonizations_peptide_sequence_IUPred.temp.out") as f:
-                        for line in f:
-                            if(re.search("#",line)):
-                                continue
-                            else:
-                                tokens = line.rstrip().split("\t")
-                                prediction_value = float(tokens[2])
-                                AA_position = int(tokens[0])
-                                if(prediction_value>0.5 and flag_new_interval):
-                                    flag_new_interval = False
-                                    start = AA_position
-                                    length = 1
-                                elif(not flag_new_interval):
-                                    if(prediction_value>0.5):
-                                        length += 1
-                                        continue
-                                    else:
-                                        flag_new_interval = True
-                                        end = AA_position-1
-                                        #Close the interval and save it if the length of the interval is greater than 5
-                                        if(length>=5):
-                                            outFile_IUPred.write(exonization+"\tIDR\tDisordered_region\t"+str(start)+
-                                                                 "\t"+str(end)+"\n")
+                    # # Run IUPred for obtaining the disordered regions
+                    # command4 = "python " + IUPred + "/iupred2a.py " + path1 + \
+                    #            "/Exonizations_peptide_sequence_IUPred.temp long > " + path1 + \
+                    #            "/Exonizations_peptide_sequence_IUPred.temp.out; "
+                    # os.system(command4)
+                    #
+                    # # Process the output of IUPred
+                    # flag_new_interval = True
+                    # length = 0
+                    # with open(path1 + "/Exonizations_peptide_sequence_IUPred.temp.out") as f:
+                    #     for line in f:
+                    #         if(re.search("#",line)):
+                    #             continue
+                    #         else:
+                    #             tokens = line.rstrip().split("\t")
+                    #             prediction_value = float(tokens[2])
+                    #             AA_position = int(tokens[0])
+                    #             if(prediction_value>0.5 and flag_new_interval):
+                    #                 flag_new_interval = False
+                    #                 start = AA_position
+                    #                 length = 1
+                    #             elif(not flag_new_interval):
+                    #                 if(prediction_value>0.5):
+                    #                     length += 1
+                    #                     continue
+                    #                 else:
+                    #                     flag_new_interval = True
+                    #                     end = AA_position-1
+                    #                     #Close the interval and save it if the length of the interval is greater than 5
+                    #                     if(length>=5):
+                    #                         outFile_IUPred.write(exonization+"\tIDR\tDisordered_region\t"+str(start)+
+                    #                                              "\t"+str(end)+"\n")
 
                     # 5.5. If there is a peptide change, check if the exonized sequence will go to NMD
                     peptide_change[exonization] = (not peptide_reference==peptide_exonizations)
@@ -756,10 +757,10 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         outFile2.close()
         outFile3.close()
 
-        # 7. Run Interpro
-        logger.info("Run Interpro...")
-        command3 = "module load Java; "+interpro + " -i " + path1 + "/Exonizations_peptide_sequence_Interpro.temp -f tsv -o " + output_path4
-        os.system(command3)
+        # # 7. Run Interpro
+        # logger.info("Run Interpro...")
+        # command3 = "module load Java; "+interpro + " -i " + path1 + "/Exonizations_peptide_sequence_Interpro.temp -f tsv -o " + output_path4
+        # os.system(command3)
 
         logger.info("Saved "+output_sequence_path)
         logger.info("Saved "+output_peptide_path)
@@ -779,7 +780,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
             os.remove(path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa")
             os.remove(path1 + "/Exonizations_peptide_sequence_Interpro.temp")
             os.remove(path1 + "/Exonizations_peptide_sequence_IUPred.temp")
-            os.remove(path1 + "/Exonizations_peptide_sequence_IUPred.temp.out")
+            # os.remove(path1 + "/Exonizations_peptide_sequence_IUPred.temp.out")
 
     except Exception as error:
         logger.error('ERROR: ' + repr(error))
