@@ -132,7 +132,7 @@ def run_netMHC_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_path,
                         # Output this to an auxiliary script
                         open_peptides_file = open(path1 + "/aux.sh", "w")
                         open_peptides_file.write("#!/bin/sh\n")
-                        open_peptides_file.write("#SBATCH --partition=lowmem\n")
+                        # open_peptides_file.write("#SBATCH --partition=lowmem\n")
                         open_peptides_file.write("#SBATCH --mem 2000\n")
                         open_peptides_file.write("#SBATCH -e " + path1 + "/" + index + "_" + x + ".err" + "\n")
                         open_peptides_file.write("#SBATCH -o " + path1 + "/" + index + "_" + x + ".out" + "\n")
