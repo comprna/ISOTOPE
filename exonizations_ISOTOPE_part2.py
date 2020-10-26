@@ -218,9 +218,9 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
         if not os.path.exists(output_path + "/exonizations_NetMHC-4.0_files"):
             os.makedirs(output_path + "/exonizations_NetMHC-4.0_files")
         run_netMHC_classI_slurm_part1(output_path_aux19, HLAclass_path, HLAtypes_path,
-                                      output_path + "/exonization_fasta_files",output_path + "/exonizations_NetMHC-4.0_files", output_path + "/exonizations_NetMHC-4.0_neoantigens_type_3.tab",
-                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_3_all.tab", output_path + "/exonizations_NetMHC-4.0_neoantigens_type_2.tab",
-                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_2_all.tab", output_path + "/exonizations_NetMHC-4.0_junctions_ORF_neoantigens.tab",
+                                      output_path + "/exonization_fasta_files",output_path + "/exonizations_NetMHC-4.0_files", output_path + "/exonizations_NetMHC-4.0_neoantigens_type_gained.tab",
+                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_gained_all.tab", output_path + "/exonizations_NetMHC-4.0_neoantigens_type_lost.tab",
+                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_lost_all.tab", output_path + "/exonizations_NetMHC-4.0_junctions_ORF_neoantigens.tab",
                                       netMHC_path)
 
         # 16. Run netMHCpan-4.0_part1
@@ -228,9 +228,9 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
         if not os.path.exists(output_path + "/exonizations_NetMHCpan-4.0_files"):
             os.makedirs(output_path + "/exonizations_NetMHCpan-4.0_files")
         run_netMHCpan_classI_slurm_part1(output_path_aux19, HLAclass_path, HLAtypes_pan_path,
-                                      output_path + "/exonization_fasta_files",output_path + "/exonizations_NetMHCpan-4.0_files", output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_3.tab",
-                                      output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_3_all.tab", output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_2.tab",
-                                      output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_2_all.tab", output_path + "/exonizations_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
+                                      output_path + "/exonization_fasta_files",output_path + "/exonizations_NetMHCpan-4.0_files", output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_gained.tab",
+                                      output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_gained_all.tab", output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_lost.tab",
+                                      output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_lost_all.tab", output_path + "/exonizations_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
                                       netMHC_pan_path)
         logger.info("Wait until all jobs have finished. Then, go on with part3")
 
