@@ -71,10 +71,10 @@ def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pa
                                       HLAtypes_path,
                                       output_path + "/exonization_fasta_files",
                                       output_path + "/exonizations_NetMHC-4.0_files",
-                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_3.tab",
-                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_3_all.tab",
-                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_2.tab",
-                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_2_all.tab",
+                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_gained.tab",
+                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_gained_all.tab",
+                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_lost.tab",
+                                      output_path + "/exonizations_NetMHC-4.0_neoantigens_type_lost_all.tab",
                                       output_path + "/exonizations_NetMHC-4.0_junctions_ORF_neoantigens.tab",
                                       netMHC_path)
 
@@ -84,10 +84,10 @@ def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pa
                                          HLAclass_path, HLAtypes_pan_path,
                                          output_path + "/exonization_fasta_files",
                                          output_path + "/exonizations_NetMHCpan-4.0_files",
-                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_3.tab",
-                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_3_all.tab",
-                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_2.tab",
-                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_2_all.tab",
+                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_gained.tab",
+                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_gained_all.tab",
+                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_lost.tab",
+                                         output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_lost_all.tab",
                                          output_path + "/exonizations_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
                                          netMHC_pan_path)
 
