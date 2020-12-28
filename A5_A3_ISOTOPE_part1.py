@@ -38,6 +38,35 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
+description = \
+"Description: Get alternative splice site events\n\n"
+
+parser = ArgumentParser(description=description, formatter_class=RawTextHelpFormatter,
+                        add_help=True)
+parser.add_argument("-r", "--reads", required=True, help = "reads mapped to junctions")
+parser.add_argument("-trans", "--transcript", required=True, help = "transcript expression file")
+parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
+parser.add_argument("-c", "--conversion", required=True, help = "gene name conversion")
+parser.add_argument("-m", "--max", required=False, type=int, default=500)
+parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
+parser.add_argument("-chunks", "--size_chunks", required=False, type=int, default=1, help="For paralellization, this values indicates number of jobs to run")
+parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
+parser.add_argument("-mut","--mutations", required=False, help = "Mutations path")
+parser.add_argument("--chessA5", required=False, help = "CHESS A5 path")
+parser.add_argument("--chessA3", required=False, help = "CHESS A3 path")
+parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
+parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
+parser.add_argument("-orfs", "--orfs", required=True, help = "MxFinder path")
+parser.add_argument("-genome", "--genome", required=True, help = "Genome annotation")
+parser.add_argument("-HLAclass", "--HLAclass", required=True, help = "HLA genotype of the samples")
+parser.add_argument("-HLAtypes", "--HLAtypes", required=True, help = "HLA alelles recognized by NetMHC")
+parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help = "HLA alelles recognized by NetMHCpan")
+parser.add_argument("-netMHC", "--netMHC", required=True, help = "netMHC path")
+parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpan path")
+parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
+parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
+parser.add_argument("--username", required=True, help = "Cluster user name")
+
 def chunks(iterable, n):
    "chunks(ABCDE,2) => AB CD E"
    iterable = iter(iterable)
@@ -45,39 +74,44 @@ def chunks(iterable, n):
        yield chain([next(iterable)], islice(iterable, n-1))
 
 
-def main():
+# def main():
+def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
+         threshold, size_chunks, repeats_path, mutations_path, CHESS_A5_path, CHESS_A3_path,
+         tumor_specific, mosea, orfs_scripts, fasta_genome, HLAclass_path, HLAtypes_path,
+         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
+         output_path, name_user):
+
     try:
 
         logger.info("Starting execution")
 
-        readcounts_path = "/projects_rg/SCLC_cohorts/George/PSI_Junction_Clustering/readCounts_George_Peifer_Rudin_Yokota.tab"
-        transcript_expression_path = "/projects_rg/SCLC_cohorts/George/tables/iso_tpm_George_Peifer_Rudin_Yokota.tab"
-        gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
-        conversion_names = "/projects_rg/SCLC_cohorts/tables/Ensembl_gene_conversion.txt"
-        max_length = 500
-        threshold = 5
-        threshold2 = 10
-        size_chunks = 100
-        repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
-        CHESS_A5_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_A5_strict.ioe"
-        CHESS_A3_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_A3_strict.ioe"
-        tumor_specific = True
-        mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
-        fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
-        orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
-        interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
-        IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
-        HLAclass_path = "/projects_rg/SCLC_cohorts/tables/PHLAT_summary_ClassI_all_samples.out"
-        HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
-        HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
-        netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
-        netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
-        remove_temp_files = True
-        flag_Rudin = False
-        output_path = "/users/genomics/juanluis/SCLC_cohorts/SCLC/epydoor/A5_A3"
-        name_user = "juanluis"
+        # readcounts_path = "/projects_rg/SCLC_cohorts/George/PSI_Junction_Clustering/readCounts_George_Peifer_Rudin_Yokota.tab"
+        # transcript_expression_path = "/projects_rg/SCLC_cohorts/George/tables/iso_tpm_George_Peifer_Rudin_Yokota.tab"
+        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
+        # codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
+        # conversion_names = "/projects_rg/SCLC_cohorts/tables/Ensembl_gene_conversion.txt"
+        # max_length = 500
+        # threshold = 5
+        # size_chunks = 100
+        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
+        # mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
+        # CHESS_A5_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_A5_strict.ioe"
+        # CHESS_A3_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_A3_strict.ioe"
+        # tumor_specific = False
+        # mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
+        # fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
+        # orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
+        # interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
+        # IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
+        # HLAclass_path = "/projects_rg/SCLC_cohorts/tables/PHLAT_summary_ClassI_all_samples.out"
+        # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
+        # HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
+        # netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
+        # netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
+        # remove_temp_files = True
+        # flag_Rudin = False
+        # output_path = "/users/genomics/juanluis/SCLC_cohorts/SCLC/epydoor/A5_A3"
+        # name_user = "juanluis"
 
         # 1. Identify the junctions that could generate an alternative splice site
         logger.info("Part1...")
@@ -110,7 +144,7 @@ def main():
 
         # 7. Separate the mutated from the non-mutated cases
         logger.info("Part7...")
-        command1="module load R; Rscript "+dir_path+"/lib/A5_A3/separate_mutated_cases.R "+ output_path + "/A5_A3_by_sample_coverage_mut.tab " \
+        command1="Rscript "+dir_path+"/lib/A5_A3/separate_mutated_cases.R "+ output_path + "/A5_A3_by_sample_coverage_mut.tab " \
                  + output_path + "/A5_A3_mutated.tab " + output_path + "/A5_A3_non_mutated.tab "
         os.system(command1)
 
@@ -125,7 +159,7 @@ def main():
             output_Rudin_path_aux3 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads_repeatitions.tab"
             overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
             output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
-            get_significant_exonizations(output_Rudin_path_aux3, threshold2, output_Rudin_path_aux4)
+            get_significant_exonizations(output_Rudin_path_aux3, threshold, output_Rudin_path_aux4)
 
             logger.info("Part8.2...")
             output_Intropolis_path_aux2 = output_path + "/new_A5_A3_junctions_Intropolis_reads.tab"
@@ -133,7 +167,7 @@ def main():
             output_Intropolis_path_aux3 = output_path + "/new_A5_A3_junctions_Intropolis_reads_repeatitions.tab"
             overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
             output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
-            get_significant_exonizations(output_Intropolis_path_aux3, threshold2, output_Intropolis_path_aux4)
+            get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
 
             logger.info("Part8.3...")
             output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
@@ -160,6 +194,7 @@ def main():
         # 10. Get the peptide sequence associated
 
         # 10.1. Split the input file into n pieces. Run a job per piece. When all jobs have finished, we will assemble all the pieces
+        logger.info("Part9...")
         logger.info("get_peptide_sequence: Split the file into pieces and run get_peptide_sequence by chunk")
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -179,13 +214,12 @@ def main():
                 #Run a job per file
                 logger.info("Processing " + "chunk_" + str(i) + "...")
                 command1 = "module load Python; python " + dir_path + "/get_peptide_sequence.py " + output_path_aux13 + " " + \
-                transcript_expression_path + " " + gtf_path + " " + codons_gtf_path + " " + output_path + "/A5_A3_peptide_sequence.fa " + \
+                transcript_expression_path + " " + gtf_path + " " + output_path + "/A5_A3_peptide_sequence.fa " + \
                 output_path + "/A5_A3_fasta_sequence.fa " + output_path + "/A5_A3_ORF.tab " + output_path + "/A5_A3_ORF_sequences.tab " + \
-                output_path + "/A5_A3_Interpro.tab " + output_path + "/A5_A3_IUPred.tab " + mosea + " " + fasta_genome + " " + \
-                orfs_scripts + " " + interpro + " " + IUPred + " " + remove_temp_files
+                mosea + " " + fasta_genome + " " + orfs_scripts + " " + remove_temp_files
                 open_peptides_file = open(output_path + "/aux.sh", "w")
                 open_peptides_file.write("#!/bin/sh\n")
-                open_peptides_file.write("#SBATCH --partition=normal\n")
+                # open_peptides_file.write("#SBATCH --partition=normal\n")
                 open_peptides_file.write("#SBATCH --mem 3000\n")
                 open_peptides_file.write(
                     "#SBATCH -e " + output_path + "/" + "get_peptide_sequence" + "_chunk_" + str(i) + ".err" + "\n")
@@ -223,16 +257,8 @@ def main():
 
         logger.info("get_peptide_sequence:All jobs finished.\n\n")
 
-
-        # # 10. Get the peptide sequence associated
-        # logger.info("Part10...")
-        # get_peptide_sequence(output_path_aux13, transcript_expression_path, gtf_path, codons_gtf_path,
-        #                      output_path + "/A5_A3_peptide_sequence.fa", output_path + "/A5_A3_fasta_sequence.fa",
-        #                      output_path + "/A5_A3_ORF.tab", output_path + "/A5_A3_ORF_sequences.tab", output_path + "/A5_A3_Interpro.tab",
-        #                      output_path + "/A5_A3_IUPred.tab", mosea, fasta_genome, orfs_scripts, interpro,IUPred, remove_temp_files)
-
         # 11. Filter the relevant results
-        command4 = "module load R; Rscript " + dir_path + "/lib/A5_A3/filter_results.R " + output_path + "/A5_A3_ORF.tab " \
+        command4 = "Rscript " + dir_path + "/lib/A5_A3/filter_results.R " + output_path + "/A5_A3_ORF.tab " \
                    + conversion_names + " " + output_path + "/A5_A3_ORF_filtered.tab " + output_path + "/A5_A3_ORF_filtered_peptide_change.tab"
         os.system(command4)
 
@@ -284,4 +310,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    args = parser.parse_args()
+    main(args.reads,args.transcript,args.gtf,args.conversion,args.mosea,args.output,args.repeats,args.max,args.thres,args.rand)
