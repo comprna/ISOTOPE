@@ -57,13 +57,6 @@ def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pa
 
         logger.info("Starting execution")
 
-        # HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
-        # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
-        # HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
-        # netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
-        # netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
-        # output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/exonizations"
-
         #17. Run netMHC-4.0_part2
         logger.info("Part16...")
         output_path_aux19 = output_path + "/all_exonizations_filtered_peptide_change.tab"

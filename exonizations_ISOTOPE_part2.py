@@ -84,35 +84,6 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
 
         logger.info("Starting execution exonizations_ISOTOPE_part2")
 
-        # tumor_specific = True
-        # readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
-        # transcript_expression_path = "/projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt"
-        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        # codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
-        # mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
-        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        # CHESS_SE_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_SE_strict.ioe"
-        # mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
-        # genome_path = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
-        # orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
-        interpro = None
-        IUPred = None
-        # HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
-        # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
-        # HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
-        # netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
-        # netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
-        # remove_temp_files = True
-        # flag_Rudin = False
-        # threshold = 10
-        # name_user = "juanluis"
-        # output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/exonizations"
-
-        # ONLY FOR MARVIN
-        #python2 = "Python/2.7.14-foss-2017b"
-        # ONLY FOR HYDRA
-        python2 = "Python/2.7.11"
-
         # 6. Create the folder, if it doesn't exists
         logger.info("Part6...")
         logger.info("Moving all coverageBed files...")
@@ -249,17 +220,3 @@ if __name__ == '__main__':
     main(args.reads,args.gtf,args.genome,args.transcript,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,
          args.netMHCpan,args.mosea,args.orfs,args.output,args.repeats,args.thres,args.tumor_specific,args.mutations,
          args.chess,args.Rudin,args.temp,args.username)
-
-    # readcounts_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/readCounts_TEST.tab"
-    # bam_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/STAR"
-    # gtf_path =  "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-    # genome_path =  "/media/trincadojl/data/Projects/annotation/hg19.fa"
-    # mosea_path =  "/home/trincadojl/Software/MoSEA"
-    # #mosea_path =  "/home/shinoda/Software/MoSEA-py3"
-    # max_length = 500
-    # threshold = 5
-    # n_randomizations = 100
-    # repeats_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/hg19_repeats_TEST.bed"
-    # output_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations"
-    #
-    # main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, 500, 5, 100)

@@ -56,15 +56,6 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
 
         logger.info("Starting execution exonizations_ISOTOPE_part1")
 
-        # readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
-        # bam_path = "/projects_rg/SCLC_cohorts/Smart/STAR"
-        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        # max_length = 500
-        # threshold = 5
-        # n_randomizations = 100
-        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        # output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/exonizations"
-
         # 1. Identify the junctions that could generate an exonization
         logger.info("Part1...")
         dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -142,20 +133,3 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.bam,args.gtf,args.genome,args.mosea,args.output,args.repeats,args.max,args.thres,args.rand)
-
-    # readcounts_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/readCounts_TEST.tab"
-    # bam_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/data/STAR"
-    # gtf_path =  "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-    # genome_path =  "/media/trincadojl/data/Projects/annotation/hg19.fa"
-    # mosea_path =  "/home/trincadojl/Software/MoSEA"
-    # #mosea_path =  "/home/shinoda/Software/MoSEA-py3"
-    # max_length = 500
-    # threshold = 5
-    # n_randomizations = 100
-    # repeats_path = "/media/trincadojl/WINDOWS 10/Work/SCLC/ISOTOPE_TEST/annotation/hg19_repeats_TEST.bed"
-    # output_path = "/home/trincadojl/Desktop/ISOTOPE_test/exonizations"
-    #
-    # main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, 500, 5, 100)
-
-
-
