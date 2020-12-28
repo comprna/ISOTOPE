@@ -1,6 +1,8 @@
 # ISOTOPE
 ISOform-guided prediction of epiTOPEs in cancer
 
+![ISOTOPE_pipeline.jpg](https://user-images.githubusercontent.com/23315833/103201760-f84bcc00-48f0-11eb-9c3e-613cfc7f4b1a.png)
+
 The following pipeline have been developed for the identification of cancer-specific splicing-derived epitopes from RNA-seq. 
 
 The pipeline is divided in 4 parts, depending the event type the user wants to obtain:
