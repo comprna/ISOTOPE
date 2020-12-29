@@ -277,7 +277,9 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                           ascending=False)
 
-                    # Check if the neoskiipping is included on this transcript
+                    # Check if the A5_A3 event is included on this transcript
+                    print("exons_associated: \n")
+                    print(exons_associated)
                     if (check_exonization(id, exons_associated) and transcript in transcript_expression):
                         # Get the TPM expression and the id. We will take the transcript with the greatest expression
                         if (float(transcript_expression[transcript]) > TPM_associated):
