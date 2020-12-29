@@ -1038,23 +1038,18 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         sys.exit(1)
 
 
-# if __name__ == '__main__':
-#     exonizations_path = sys.argv[1]
-#     transcript_expression_path = sys.argv[2]
-#     gtf_path = sys.argv[3]
-#     codons_gtf_path = sys.argv[4]
-#     output_peptide_path = sys.argv[5]
-#     output_sequence_path = sys.argv[6]
-#     output_path2 = sys.argv[7]
-#     output_path3 = sys.argv[8]
-#     output_path4 = sys.argv[9]
-#     output_path5 = sys.argv[10]
-#     mosea = sys.argv[11]
-#     fast_genome = sys.argv[12]
-#     orfs_scripts = sys.argv[13]
-#     interpro = sys.argv[14]
-#     IUPred = sys.argv[15]
-#     remove_temp_files = sys.argv[16]
-#     get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, codons_gtf_path, output_peptide_path,
-#                          output_sequence_path, output_path2, output_path3, output_path4, output_path5, mosea,
-#                          fast_genome, orfs_scripts, interpro, IUPred, remove_temp_files)
+if __name__ == '__main__':
+    exonizations_path = sys.argv[1]
+    transcript_expression_path = sys.argv[2]
+    gtf_path = sys.argv[3]
+    output_peptide_path = sys.argv[4]
+    output_sequence_path = sys.argv[5]
+    output_path2 = sys.argv[7]
+    output_path3 = sys.argv[8]
+    mosea = sys.argv[9]
+    fast_genome = sys.argv[10]
+    orfs_scripts = sys.argv[11]
+    remove_temp_files = sys.argv[12]
+    get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
+                         output_sequence_path, output_path2, output_path3, mosea,
+                         fast_genome, orfs_scripts, remove_temp_files)

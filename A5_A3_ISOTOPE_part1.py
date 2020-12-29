@@ -220,22 +220,24 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
         with open(output_path_aux13) as f_aux:
-            header = f_aux.readline().strip()
+            header = f_aux.readline()
 
         dict_jobs = {}
         with open(output_path_aux13) as bigfile:
-            logger.info("Specified "+str(size_chunks)+" chunks")
+            logger.info("Specified chunk size "+str(size_chunks))
             for i, lines in enumerate(chunks(bigfile, size_chunks)):
                 file_split = '{}.{}'.format(output_path_aux13, i)
+                print(file_split+"\n")
                 f = open(file_split, 'w')
                 #Output the header, if it's not the first chunk
                 if(i!=0):
                     f.writelines(header)
                 with f:
                     f.writelines(lines)
+                f.close()
                 #Run a job per file
                 logger.info("Processing " + "chunk_" + str(i) + "...")
-                command1 = "python " + dir_path + "/lib/A5_A3/get_peptide_sequence.py " + output_path_aux13 + " " + \
+                command1 = "python " + dir_path + "/lib/A5_A3/get_peptide_sequence.py " + file_split + " " + \
                 transcript_expression_path + " " + gtf_path + " " + output_path + "/A5_A3_peptide_sequence.fa " + \
                 output_path + "/A5_A3_fasta_sequence.fa " + output_path + "/A5_A3_ORF.tab " + output_path + "/A5_A3_ORF_sequences.tab " + \
                 mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
