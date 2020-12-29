@@ -136,7 +136,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         #Add the chr suffix
         gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         #Save the gtf in external file
-        gtf.to_csv(gtf_path_exon,index=False,header=False,sep ='\t',quotechar="")
+        gtf.to_csv(gtf_path_exon,index=False,header=False,sep ='\t',quoting=csv.QUOTE_NONE)
 
         exit()
 
