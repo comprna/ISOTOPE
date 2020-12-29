@@ -9,8 +9,6 @@ import pandas as pd
 from argparse import ArgumentParser, RawTextHelpFormatter
 import logging, sys, os, re
 import subprocess
-from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 
 # create logger
 logger = logging.getLogger(__name__)

@@ -11,7 +11,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 import logging, sys, os, re
 import subprocess
 from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
+# from Bio.Alphabet import IUPAC
 
 # create logger
 logger = logging.getLogger(__name__)
@@ -543,7 +543,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                     # 5.3.3. Get the translation from the ORFs (reference and exonization)
                     ORF_EX_f = ORF_EX.replace("T", "U")
-                    messenger_rna = Seq(ORF_EX_f, IUPAC.unambiguous_rna)
+                    # messenger_rna = Seq(ORF_EX_f, IUPAC.unambiguous_rna)
+                    messenger_rna = Seq(ORF_EX_f)
                     peptide_exonizations = messenger_rna.translate()
 
                     # If the gene is in reverse, get the rev_compl from the sequence_total_REF
@@ -551,7 +552,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                         my_seq = Seq(sequence_total_REF)
                         sequence_total_REF = my_seq.reverse_complement()
                     ORF_REF_f = str(sequence_total_REF).replace("T", "U")
-                    messenger_rna = Seq(ORF_REF_f, IUPAC.unambiguous_rna)
+                    # messenger_rna = Seq(ORF_REF_f, IUPAC.unambiguous_rna)
+                    messenger_rna = Seq(ORF_REF_f)
                     peptide_reference = messenger_rna.translate()
 
                     # 5.4. Save both DNA and peptidic sequences to the output
