@@ -266,6 +266,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                 TPM_associated = 0
                 transcript_id = "None"
+                print("associated_transcripts: \n")
+                print(associated_transcripts)
                 for transcript in associated_transcripts:
 
                     # Get the exons associated to this transcript
