@@ -86,7 +86,6 @@ def chunks(iterable, n):
        yield chain([next(iterable)], islice(iterable, n-1))
 
 
-# def main():
 def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
          threshold, size_chunks, repeats_path, mutations_path, CHESS_A5_path, CHESS_A3_path,
          tumor_specific, mosea, orfs_scripts, fasta_genome, HLAclass_path, HLAtypes_path,
@@ -323,4 +322,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.reads,args.transcript,args.gtf,args.conversion,args.mosea,args.output,args.repeats,args.max,args.thres,args.rand)
+    main(args.reads,args.transcript,args.gtf,args.conversion,args.conversion,args.max,args.thres,args.size_chunks,
+         args.repeats,args.mutations,args.chessA5,args.chessA3,args.tumor_specific,args.mosea,args.orfs,
+         args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
+         args.Rudin,args.username)
