@@ -138,8 +138,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         #Save the gtf in external file
         gtf.to_csv(gtf_path_exon,index=False,header=False,sep ='\t',quoting=csv.QUOTE_NONE)
 
-        exit()
-
         # 1. Identify the junctions that could generate an alternative splice site
         logger.info("Part1...")
         output_path_aux = output_path+"/new_A5_A3_junctions.tab"
