@@ -43,7 +43,8 @@ def overlap_with_repeats(input_path, repeats_path, output_path):
         # Save this variables as bed file
         path1 = "/".join(input_path.split("/")[:-1])
         bed = [("chr", chr), ("start", start), ("end", end), ("id", junction_reads['Alt_Exon_id']),("strand", strand)]
-        bed_file = pd.DataFrame.from_items(bed)
+        # bed_file = pd.DataFrame.from_items(bed)
+        bed_file = pd.DataFrame.from_dict(dict(bed))
         bed_file['score'] = 0
         #Put columns in order
         cols = bed_file.columns.tolist()
