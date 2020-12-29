@@ -1028,9 +1028,9 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
             os.remove(path1 + "/aux_reference_A5_A3.fa")
             os.remove(path1 + "/aux_sequence_total_EX_A5_A3.fa")
             os.remove(path1 + "/aux_sequence_total_EX_ORF_A5_A3.fa")
-            os.remove(path1 + "/A5_A3_peptide_sequence_Interpro.temp")
-            os.remove(path1 + "/A5_A3_peptide_sequence_IUPred.temp")
-            os.remove(path1 + "/A5_A3_peptide_sequence_IUPred.temp.out")
+            # os.remove(path1 + "/A5_A3_peptide_sequence_Interpro.temp")
+            # os.remove(path1 + "/A5_A3_peptide_sequence_IUPred.temp")
+            # os.remove(path1 + "/A5_A3_peptide_sequence_IUPred.temp.out")
 
     except Exception as error:
         logger.error('ERROR: ' + repr(error))

@@ -213,72 +213,77 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
             output_path_aux13 = output_path + "/all_A5_A3.tab"
 
         # 10. Get the peptide sequence associated
-
-        # 10.1. Split the input file into n pieces. Run a job per piece. When all jobs have finished, we will assemble all the pieces
         logger.info("Part9...")
-        logger.info("get_peptide_sequence: Split the file into pieces and run get_peptide_sequence by chunk")
-        dir_path = os.path.dirname(os.path.realpath(__file__))
+        get_peptide_sequence(output_path_aux13, transcript_expression_path, gtf_path,
+                             output_path + "/A5_A3_peptide_sequence.fa", output_path + "/A5_A3_fasta_sequence.fa",
+                             output_path + "/A5_A3_ORF.tab", output_path + "/A5_A3_ORF_sequences.tab",
+                             mosea, fasta_genome, mxfinder, bool(remove_temp_files))
 
-        with open(output_path_aux13) as f_aux:
-            header = f_aux.readline()
-
-        dict_jobs = {}
-        with open(output_path_aux13) as bigfile:
-            logger.info("Specified chunk size "+str(size_chunks))
-            for i, lines in enumerate(chunks(bigfile, size_chunks)):
-                file_split = '{}.{}'.format(output_path_aux13, i)
-                f = open(file_split, 'w')
-                #Output the header, if it's not the first chunk
-                if(i!=0):
-                    f.writelines(header)
-                with f:
-                    f.writelines(lines)
-                f.close()
-                #Run a job per file
-                logger.info("Processing " + "chunk_" + str(i) + "...")
-                command1 = "python " + dir_path + "/lib/A5_A3/get_peptide_sequence.py " + file_split + " " + \
-                transcript_expression_path + " " + gtf_path + " " + '{}.{}'.format(output_path + "/A5_A3_peptide_sequence.fa", i) + " " + \
-                '{}.{}'.format(output_path + "/A5_A3_fasta_sequence.fa", i) + " " + '{}.{}'.format(output_path + "/A5_A3_ORF.tab", i) + " " + \
-                '{}.{}'.format(output_path + "/A5_A3_ORF_sequences.tab", i) + " " + mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
-                open_peptides_file = open(output_path + "/aux.sh", "w")
-                open_peptides_file.write("#!/bin/sh\n")
-                # open_peptides_file.write("#SBATCH --partition=normal\n")
-                open_peptides_file.write("#SBATCH --mem 3000\n")
-                open_peptides_file.write(
-                    "#SBATCH -e " + output_path + "/" + "get_peptide_sequence" + "_chunk_" + str(i) + ".err" + "\n")
-                open_peptides_file.write(
-                    "#SBATCH -o " + output_path + "/" + "get_peptide_sequence" + "_chunk_" + str(i) + ".out" + "\n")
-                open_peptides_file.write(command1 + ";\n")
-                open_peptides_file.close()
-                command2 = "sbatch -J " + "get_peptide_sequence" + "_chunk_" + str(i) + " " + output_path + "/aux.sh; sleep 0.5;"
-                # os.system(command2)
-                job_message = subprocess.check_output(command2, shell=True)
-                # Get the job id and store it
-                job_id = (str(job_message).rstrip().split(" ")[-1])[:-3]
-                dict_jobs[job_id] = 1
-
-        logger.info("get_peptide_sequence: Waiting for all the jobs to finished...")
-        flag_exit = False
-        while (not flag_exit):
-            # Initialize the dictionary with the pending jobs in the cluster
-            pending_jobs = {}
-            os.system("sleep 10")
-            p = subprocess.Popen(["squeue", "-u", name_user], stdout=subprocess.PIPE)
-            # Skip the first line (the header)
-            line = p.stdout.readline()
-            for line in p.stdout:
-                flag_exit = True
-                # Get the id of the job
-                job_id_aux = str(line).rstrip().split()[1]
-                # Save the id of the jobs
-                pending_jobs[job_id_aux] = 1
-                # If there is any job on the cluster on dict_jobs, break the loop and wait for another 10 seconds
-                # to check the status of the jobs in the cluster
-                if (job_id_aux in dict_jobs):
-                    flag_exit = False
-                    break
-
-        logger.info("get_peptide_sequence:All jobs finished.\n\n")
+        # # 10.1. Split the input file into n pieces. Run a job per piece. When all jobs have finished, we will assemble all the pieces
+        # logger.info("Part9...")
+        # logger.info("get_peptide_sequence: Split the file into pieces and run get_peptide_sequence by chunk")
+        # dir_path = os.path.dirname(os.path.realpath(__file__))
+        #
+        # with open(output_path_aux13) as f_aux:
+        #     header = f_aux.readline()
+        #
+        # dict_jobs = {}
+        # with open(output_path_aux13) as bigfile:
+        #     logger.info("Specified chunk size "+str(size_chunks))
+        #     for i, lines in enumerate(chunks(bigfile, size_chunks)):
+        #         file_split = '{}.{}'.format(output_path_aux13, i)
+        #         f = open(file_split, 'w')
+        #         #Output the header, if it's not the first chunk
+        #         if(i!=0):
+        #             f.writelines(header)
+        #         with f:
+        #             f.writelines(lines)
+        #         f.close()
+        #         #Run a job per file
+        #         logger.info("Processing " + "chunk_" + str(i) + "...")
+        #         command1 = "python " + dir_path + "/lib/A5_A3/get_peptide_sequence.py " + file_split + " " + \
+        #         transcript_expression_path + " " + gtf_path + " " + '{}.{}'.format(output_path + "/A5_A3_peptide_sequence.fa", i) + " " + \
+        #         '{}.{}'.format(output_path + "/A5_A3_fasta_sequence.fa", i) + " " + '{}.{}'.format(output_path + "/A5_A3_ORF.tab", i) + " " + \
+        #         '{}.{}'.format(output_path + "/A5_A3_ORF_sequences.tab", i) + " " + mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
+        #         open_peptides_file = open(output_path + "/aux.sh", "w")
+        #         open_peptides_file.write("#!/bin/sh\n")
+        #         # open_peptides_file.write("#SBATCH --partition=normal\n")
+        #         open_peptides_file.write("#SBATCH --mem 3000\n")
+        #         open_peptides_file.write(
+        #             "#SBATCH -e " + output_path + "/" + "get_peptide_sequence" + "_chunk_" + str(i) + ".err" + "\n")
+        #         open_peptides_file.write(
+        #             "#SBATCH -o " + output_path + "/" + "get_peptide_sequence" + "_chunk_" + str(i) + ".out" + "\n")
+        #         open_peptides_file.write(command1 + ";\n")
+        #         open_peptides_file.close()
+        #         command2 = "sbatch -J " + "get_peptide_sequence" + "_chunk_" + str(i) + " " + output_path + "/aux.sh; sleep 0.5;"
+        #         # os.system(command2)
+        #         job_message = subprocess.check_output(command2, shell=True)
+        #         # Get the job id and store it
+        #         job_id = (str(job_message).rstrip().split(" ")[-1])[:-3]
+        #         dict_jobs[job_id] = 1
+        #
+        # logger.info("get_peptide_sequence: Waiting for all the jobs to finished...")
+        # flag_exit = False
+        # while (not flag_exit):
+        #     # Initialize the dictionary with the pending jobs in the cluster
+        #     pending_jobs = {}
+        #     os.system("sleep 10")
+        #     p = subprocess.Popen(["squeue", "-u", name_user], stdout=subprocess.PIPE)
+        #     # Skip the first line (the header)
+        #     line = p.stdout.readline()
+        #     for line in p.stdout:
+        #         flag_exit = True
+        #         # Get the id of the job
+        #         job_id_aux = str(line).rstrip().split()[1]
+        #         # Save the id of the jobs
+        #         pending_jobs[job_id_aux] = 1
+        #         # If there is any job on the cluster on dict_jobs, break the loop and wait for another 10 seconds
+        #         # to check the status of the jobs in the cluster
+        #         if (job_id_aux in dict_jobs):
+        #             flag_exit = False
+        #             break
+        #
+        # logger.info("get_peptide_sequence:All jobs finished.\n\n")
 
         # 11. Filter the relevant results
         command4 = "Rscript " + dir_path + "/lib/A5_A3/filter_results.R " + output_path + "/A5_A3_ORF.tab " \

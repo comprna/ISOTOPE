@@ -70,73 +70,73 @@ def main():
         # ONLY FOR HYDRA
         python2 = "Python/2.7.11"
 
-    # 1. Identify the junctions that could generate an alternative splice site
-    logger.info("Part1...")
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    output_path_aux = output_path + "/new_Neoskipping_junctions.tab"
-    extract_neoskipping_junctions(readcounts_path, gtf_path, threshold, output_path_aux)
+        # 1. Identify the junctions that could generate an alternative splice site
+        logger.info("Part1...")
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        output_path_aux = output_path + "/new_Neoskipping_junctions.tab"
+        extract_neoskipping_junctions(readcounts_path, gtf_path, threshold, output_path_aux)
 
-    # 2. Get the tumor specific neoskipping events
-    if (tumor_specific):
+        # 2. Get the tumor specific neoskipping events
+        if (tumor_specific):
 
-        logger.info("Part2...")
-        # Get also the significant neoskipping from Rudin and Intropolis
-        output_Rudin_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
-        readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
-        extract_neoskipping_junctions(readCounts_Rudin_path, gtf_path, threshold, output_Rudin_path_aux)
+            logger.info("Part2...")
+            # Get also the significant neoskipping from Rudin and Intropolis
+            output_Rudin_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
+            readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
+            extract_neoskipping_junctions(readCounts_Rudin_path, gtf_path, threshold, output_Rudin_path_aux)
 
-        output_Intropolis_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
-        readCounts_Intropolis_path = "/projects_rg/Annotation/Intropolis/intropolis.v1.hg19.filtered.tsv"
-        extract_neoskipping_junctions_Intropolis(readcounts_path, readCounts_Intropolis_path, gtf_path, threshold,
-                                                 output_Intropolis_path_aux)
+            output_Intropolis_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
+            readCounts_Intropolis_path = "/projects_rg/Annotation/Intropolis/intropolis.v1.hg19.filtered.tsv"
+            extract_neoskipping_junctions_Intropolis(readcounts_path, readCounts_Intropolis_path, gtf_path, threshold,
+                                                     output_Intropolis_path_aux)
 
-        filter_neoskipping(output_path_aux, output_Rudin_path_aux, output_Intropolis_path_aux,
-                           output_path + "/new_Neoskipping_junctions_filtered.tab", flag_Rudin)
-        filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered.tab", CHESS_SE_path,
-                                 output_path + "/new_Neoskipping_junctions_filtered2.tab")
-        output_path2 = output_path + "/new_Neoskipping_junctions_filtered2.tab"
+            filter_neoskipping(output_path_aux, output_Rudin_path_aux, output_Intropolis_path_aux,
+                               output_path + "/new_Neoskipping_junctions_filtered.tab", flag_Rudin)
+            filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered.tab", CHESS_SE_path,
+                                     output_path + "/new_Neoskipping_junctions_filtered2.tab")
+            output_path2 = output_path + "/new_Neoskipping_junctions_filtered2.tab"
 
-    else:
-        output_path2 = output_path + "/new_Neoskipping_junctions.tab"
+        else:
+            output_path2 = output_path + "/new_Neoskipping_junctions.tab"
 
-    # 3. Get the mutations nearby
-    logger.info("Part3...")
-    check_mutations_nearby(output_path2, mutations_path, 200, output_path + "/new_Neoskipping_junctions_mut.tab")
+        # 3. Get the mutations nearby
+        logger.info("Part3...")
+        check_mutations_nearby(output_path2, mutations_path, 200, output_path + "/new_Neoskipping_junctions_mut.tab")
 
-    # 4. Get the gene ids
-    logger.info("Part4...")
-    command1 = "module load R; Rscript " + dir_path + "/lib/Neoskipping/get_Gene_ids_BiomaRt.R " + output_path + "/new_Neoskipping_junctions_mut.tab " + output_path + "/new_Neoskipping_junctions_mut2.tab"
-    os.system(command1)
+        # 4. Get the gene ids
+        logger.info("Part4...")
+        command1 = "module load R; Rscript " + dir_path + "/lib/Neoskipping/get_Gene_ids_BiomaRt.R " + output_path + "/new_Neoskipping_junctions_mut.tab " + output_path + "/new_Neoskipping_junctions_mut2.tab"
+        os.system(command1)
 
-    # 5. Get the peptide sequences
-    logger.info("Part5...")
-    output_path_peptide = output_path + "/neoskipping_peptide_sequence.fa"
-    output_path_dna = output_path + "/neoskipping_fasta_sequence.fa"
-    output_path_aux14 = output_path + "/all_neoskipping_ORF.tab"
-    output_path_aux15 = output_path + "/all_neoskipping_ORF_sequences.tab"
-    output_path_aux16 = output_path + "/all_neoskipping_Interpro.tab"
-    output_path_aux17 = output_path + "/all_neoskipping_IUPred.tab"
-    get_peptide_sequence(output_path + "/new_Neoskipping_junctions_mut2.tab", transcript_expression_path, gtf_path,
-                         codons_gtf_path,
-                         output_path_peptide, output_path_dna, output_path_aux14,
-                         output_path_aux15, output_path_aux16, output_path_aux17, mosea, fasta_genome, orfs_scripts,
-                         interpro, IUPred, remove_temp_files, python2)
+        # 5. Get the peptide sequences
+        logger.info("Part5...")
+        output_path_peptide = output_path + "/neoskipping_peptide_sequence.fa"
+        output_path_dna = output_path + "/neoskipping_fasta_sequence.fa"
+        output_path_aux14 = output_path + "/all_neoskipping_ORF.tab"
+        output_path_aux15 = output_path + "/all_neoskipping_ORF_sequences.tab"
+        output_path_aux16 = output_path + "/all_neoskipping_Interpro.tab"
+        output_path_aux17 = output_path + "/all_neoskipping_IUPred.tab"
+        get_peptide_sequence(output_path + "/new_Neoskipping_junctions_mut2.tab", transcript_expression_path, gtf_path,
+                             codons_gtf_path,
+                             output_path_peptide, output_path_dna, output_path_aux14,
+                             output_path_aux15, output_path_aux16, output_path_aux17, mosea, fasta_genome, orfs_scripts,
+                             interpro, IUPred, remove_temp_files, python2)
 
-    # 6. Filter the cases for running netMHC
-    logger.info("Part6...")
-    output_path_aux18 = output_path + "/all_neoskipping_filtered.tab"
-    command2 = "module load R; Rscript " + dir_path + "/lib/Neoskipping/filter_results.R " + output_path_aux14 + " " + output_path_aux18 + " " + output_path + "/all_neoskipping_filtered_peptide_change.tab"
-    os.system(command2)
+        # 6. Filter the cases for running netMHC
+        logger.info("Part6...")
+        output_path_aux18 = output_path + "/all_neoskipping_filtered.tab"
+        command2 = "module load R; Rscript " + dir_path + "/lib/Neoskipping/filter_results.R " + output_path_aux14 + " " + output_path_aux18 + " " + output_path + "/all_neoskipping_filtered_peptide_change.tab"
+        os.system(command2)
 
-    # 7. Select the fasta candidates for being run to the epitope analysis
-    logger.info("Part7...")
-    output_path_aux20 = output_path + "/neoskipping_peptide_sequence.fa"
-    output_path_aux21 = output_path + "/neoskipping_peptide_sequence_filtered.fa"
-    # Create the folder, if it doesn't exists
-    if not os.path.exists(output_path + "/neoskipping_fasta_files"):
-        os.makedirs(output_path + "/neoskipping_fasta_files")
-    select_fasta_candidates(output_path + "/all_neoskipping_filtered_peptide_change.tab", output_path_aux20,
-                            output_path_aux21, output_path + "/neoskipping_fasta_files")
+        # 7. Select the fasta candidates for being run to the epitope analysis
+        logger.info("Part7...")
+        output_path_aux20 = output_path + "/neoskipping_peptide_sequence.fa"
+        output_path_aux21 = output_path + "/neoskipping_peptide_sequence_filtered.fa"
+        # Create the folder, if it doesn't exists
+        if not os.path.exists(output_path + "/neoskipping_fasta_files"):
+            os.makedirs(output_path + "/neoskipping_fasta_files")
+        select_fasta_candidates(output_path + "/all_neoskipping_filtered_peptide_change.tab", output_path_aux20,
+                                output_path_aux21, output_path + "/neoskipping_fasta_files")
 
         # 8. Run netMHC-4.0_part1
         logger.info("Part8...")
