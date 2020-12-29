@@ -227,7 +227,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
             logger.info("Specified chunk size "+str(size_chunks))
             for i, lines in enumerate(chunks(bigfile, size_chunks)):
                 file_split = '{}.{}'.format(output_path_aux13, i)
-                print(file_split+"\n")
                 f = open(file_split, 'w')
                 #Output the header, if it's not the first chunk
                 if(i!=0):
