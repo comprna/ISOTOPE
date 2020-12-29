@@ -78,6 +78,7 @@ parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpa
 parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("--username", required=True, help = "Cluster user name")
+parser.add_argument("-o", "--output", required=True, help = "Output path")
 
 def chunks(iterable, n):
    "chunks(ABCDE,2) => AB CD E"
@@ -90,7 +91,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
          threshold, size_chunks, repeats_path, mutations_path, CHESS_A5_path, CHESS_A3_path,
          tumor_specific, mosea, orfs_scripts, fasta_genome, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
-         output_path, name_user):
+         name_user, output_path):
 
     try:
 
@@ -322,7 +323,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.reads,args.transcript,args.gtf,args.conversion,args.conversion,args.max,args.thres,args.size_chunks,
+    main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres,args.size_chunks,
          args.repeats,args.mutations,args.chessA5,args.chessA3,args.tumor_specific,args.mosea,args.orfs,
          args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
-         args.Rudin,args.username)
+         args.Rudin,args.username, args.output)
