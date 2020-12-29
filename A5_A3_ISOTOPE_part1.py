@@ -238,9 +238,9 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
                 #Run a job per file
                 logger.info("Processing " + "chunk_" + str(i) + "...")
                 command1 = "python " + dir_path + "/lib/A5_A3/get_peptide_sequence.py " + file_split + " " + \
-                transcript_expression_path + " " + gtf_path + " " + output_path + "/A5_A3_peptide_sequence.fa " + \
-                output_path + "/A5_A3_fasta_sequence.fa " + output_path + "/A5_A3_ORF.tab " + output_path + "/A5_A3_ORF_sequences.tab " + \
-                mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
+                transcript_expression_path + " " + gtf_path + " " + '{}.{}'.format(output_path + "/A5_A3_peptide_sequence.fa", i) + " " + \
+                '{}.{}'.format(output_path + "/A5_A3_fasta_sequence.fa", i) + " " + '{}.{}'.format(output_path + "/A5_A3_ORF.tab", i) + " " + \
+                '{}.{}'.format(output_path + "/A5_A3_ORF_sequences.tab", i) + " " + mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
                 open_peptides_file = open(output_path + "/aux.sh", "w")
                 open_peptides_file.write("#!/bin/sh\n")
                 # open_peptides_file.write("#SBATCH --partition=normal\n")
