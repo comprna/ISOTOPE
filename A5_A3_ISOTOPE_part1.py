@@ -68,7 +68,7 @@ parser.add_argument("--chessA5", required=False, help = "CHESS A5 path")
 parser.add_argument("--chessA3", required=False, help = "CHESS A3 path")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
-parser.add_argument("-orfs", "--orfs", required=True, help = "MxFinder path")
+parser.add_argument("-mxfinder", "--mxfinder", required=True, help = "MxFinder path")
 parser.add_argument("-genome", "--genome", required=True, help = "Genome annotation")
 parser.add_argument("-HLAclass", "--HLAclass", required=True, help = "HLA genotype of the samples")
 parser.add_argument("-HLAtypes", "--HLAtypes", required=True, help = "HLA alelles recognized by NetMHC")
@@ -89,7 +89,7 @@ def chunks(iterable, n):
 
 def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
          threshold, size_chunks, repeats_path, mutations_path, CHESS_A5_path, CHESS_A3_path,
-         tumor_specific, mosea, orfs_scripts, fasta_genome, HLAclass_path, HLAtypes_path,
+         tumor_specific, mosea, mxfinder, fasta_genome, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
          name_user, output_path):
 
@@ -112,7 +112,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         # tumor_specific = False
         # mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
         # fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
-        # orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
+        # mxfinder = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
         # interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
         # IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
         # HLAclass_path = "/projects_rg/SCLC_cohorts/tables/PHLAT_summary_ClassI_all_samples.out"
@@ -228,7 +228,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
                 command1 = "module load Python; python " + dir_path + "/get_peptide_sequence.py " + output_path_aux13 + " " + \
                 transcript_expression_path + " " + gtf_path + " " + output_path + "/A5_A3_peptide_sequence.fa " + \
                 output_path + "/A5_A3_fasta_sequence.fa " + output_path + "/A5_A3_ORF.tab " + output_path + "/A5_A3_ORF_sequences.tab " + \
-                mosea + " " + fasta_genome + " " + orfs_scripts + " " + remove_temp_files
+                mosea + " " + fasta_genome + " " + mxfinder + " " + remove_temp_files
                 open_peptides_file = open(output_path + "/aux.sh", "w")
                 open_peptides_file.write("#!/bin/sh\n")
                 # open_peptides_file.write("#SBATCH --partition=normal\n")
