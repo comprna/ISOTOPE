@@ -324,6 +324,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres,args.size_chunks,
-         args.repeats,args.mutations,args.chessA5,args.chessA3,args.tumor_specific,args.mosea,args.orfs,
+         args.repeats,args.mutations,args.chessA5,args.chessA3,args.tumor_specific,args.mosea,args.mxfinder,
          args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
          args.Rudin,args.username, args.output)
