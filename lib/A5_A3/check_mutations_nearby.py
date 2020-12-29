@@ -96,8 +96,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
 
         # Run interesectBed for obtaining the new exons that are not in coding regions
         logger.info("Running intersectBed...")
-        command = "module load BEDTools; intersectBed -wao -a " + path1 + "/exonizations.bed -b " + mutations_path + " > " + \
-                  path1 + "/intersection_mutations.bed; module unload module load BEDTools"
+        command = "intersectBed -wao -a " + path1 + "/exonizations.bed -b " + mutations_path + " > " + \
+                  path1 + "/intersection_mutations.bed"
         os.system(command)
 
         # Take from the output file the exons obtained with intersectBed

@@ -63,7 +63,7 @@ parser.add_argument("-m", "--max", required=False, type=int, default=500)
 parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-chunks", "--size_chunks", required=False, type=int, default=1, help="For paralellization, this values indicates number of jobs to run")
 parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
-parser.add_argument("-mut","--mutations", required=False, help = "Mutations path")
+parser.add_argument("-mut","--mutations", required=False, default="No file", help = "Mutations path")
 parser.add_argument("--chessA5", required=False, help = "CHESS A5 path")
 parser.add_argument("--chessA3", required=False, help = "CHESS A3 path")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
@@ -152,56 +152,65 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
         # 6. Check if in the A5_A3 there are mutations nearby
         logger.info("Part6...")
-        check_mutations_nearby(output_path + "/A5_A3_by_sample_coverage.tab", mutations_path, 200, output_path + "/A5_A3_by_sample_coverage_mut.tab")
+        if(mutations_path!="No file"):
+            check_mutations_nearby(output_path + "/A5_A3_by_sample_coverage.tab", mutations_path, 200, output_path + "/A5_A3_by_sample_coverage_mut.tab")
+            # 7. Separate the mutated from the non-mutated cases
+            logger.info("Part7...")
+            command1 = "Rscript " + dir_path + "/lib/A5_A3/separate_mutated_cases.R " + output_path + "/A5_A3_by_sample_coverage_mut.tab " \
+                       + output_path + "/A5_A3_mutated.tab " + output_path + "/A5_A3_non_mutated.tab "
+            os.system(command1)
 
-        # 7. Separate the mutated from the non-mutated cases
-        logger.info("Part7...")
-        command1="Rscript "+dir_path+"/lib/A5_A3/separate_mutated_cases.R "+ output_path + "/A5_A3_by_sample_coverage_mut.tab " \
-                 + output_path + "/A5_A3_mutated.tab " + output_path + "/A5_A3_non_mutated.tab "
-        os.system(command1)
+            # 8. Get the tumor specific events
+            if (tumor_specific):
 
-        # 8. Get the tumor specific events
-        if(tumor_specific):
+                # Get also the significant A5_A3 from Rudin and Intropolis
+                logger.info("Part8.1...")
+                output_Rudin_path_aux2 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads.tab"
+                readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
+                get_reads_exonizations(output_path + "/new_A5_A3_junctions.tab", readCounts_Rudin_path,
+                                       output_Rudin_path_aux2)
+                output_Rudin_path_aux3 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads_repeatitions.tab"
+                overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
+                output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
+                get_significant_exonizations(output_Rudin_path_aux3, threshold, output_Rudin_path_aux4)
 
-            # Get also the significant A5_A3 from Rudin and Intropolis
-            logger.info("Part8.1...")
-            output_Rudin_path_aux2 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads.tab"
-            readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
-            get_reads_exonizations(output_path+"/new_A5_A3_junctions.tab", readCounts_Rudin_path, output_Rudin_path_aux2)
-            output_Rudin_path_aux3 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads_repeatitions.tab"
-            overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
-            output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
-            get_significant_exonizations(output_Rudin_path_aux3, threshold, output_Rudin_path_aux4)
+                logger.info("Part8.2...")
+                output_Intropolis_path_aux2 = output_path + "/new_A5_A3_junctions_Intropolis_reads.tab"
+                get_reads_exonizations(output_path + "/new_A5_A3_junctions.tab", readcounts_path,
+                                       output_Intropolis_path_aux2)
+                output_Intropolis_path_aux3 = output_path + "/new_A5_A3_junctions_Intropolis_reads_repeatitions.tab"
+                overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
+                output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
+                get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
 
-            logger.info("Part8.2...")
-            output_Intropolis_path_aux2 = output_path + "/new_A5_A3_junctions_Intropolis_reads.tab"
-            get_reads_exonizations(output_path+"/new_A5_A3_junctions.tab", readcounts_path, output_Intropolis_path_aux2)
-            output_Intropolis_path_aux3 = output_path + "/new_A5_A3_junctions_Intropolis_reads_repeatitions.tab"
-            overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
-            output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
-            get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
+                logger.info("Part8.3...")
+                output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
+                output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
+                output_path_aux11 = output_path + "/A5_A3_non_mutated_filtered.tab"
+                filter_exonizations(output_path + "/A5_A3_non_mutated.tab", output_Rudin_path_aux4,
+                                    output_Intropolis_path_aux4, output_path_aux11, flag_Rudin)
+                output_path_aux12 = output_path + "/A5_A3_non_mutated_filtered2.tab"
+                filter_exonizations_CHESS(output_path_aux11, CHESS_A5_path, CHESS_A3_path, output_path_aux12)
 
-            logger.info("Part8.3...")
-            output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
-            output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
-            output_path_aux11 = output_path + "/A5_A3_non_mutated_filtered.tab"
-            filter_exonizations(output_path + "/A5_A3_non_mutated.tab", output_Rudin_path_aux4, output_Intropolis_path_aux4, output_path_aux11, flag_Rudin)
-            output_path_aux12 = output_path + "/A5_A3_non_mutated_filtered2.tab"
-            filter_exonizations_CHESS(output_path_aux11, CHESS_A5_path, CHESS_A3_path, output_path_aux12)
+                # 9. Join the mutated and non_mutated cases
+                logger.info("Part8.4...")
+                output_path_aux13 = output_path + "/all_A5_A3.tab"
+                command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path_aux12 + " >> " + output_path_aux13
+                os.system(command3)
 
-            # 9. Join the mutated and non_mutated cases
-            logger.info("Part8.4...")
-            output_path_aux13 = output_path + "/all_A5_A3.tab"
-            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path_aux12 + " >> " + output_path_aux13
-            os.system(command3)
+            else:
+
+                # 9. Join the mutated and non_mutated cases
+                logger.info("Part8...")
+                output_path_aux13 = output_path + "/all_A5_A3.tab"
+                command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/A5_A3_non_mutated.tab" + " >> " + output_path_aux13
+                os.system(command3)
 
         else:
-
-            # 9. Join the mutated and non_mutated cases
-            logger.info("Part8...")
+            logger.info("No mutation file specified")
+            #Rename the file before the mutation step
+            os.rename(output_path + "/A5_A3_by_sample_coverage.tab", output_path + "/all_A5_A3.tab")
             output_path_aux13 = output_path + "/all_A5_A3.tab"
-            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/A5_A3_non_mutated.tab" + " >> " + output_path_aux13
-            os.system(command3)
 
         # 10. Get the peptide sequence associated
 
@@ -215,6 +224,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
         dict_jobs = {}
         with open(output_path_aux13) as bigfile:
+            logger.info("Specified "+str(size_chunks)+" chunks")
             for i, lines in enumerate(chunks(bigfile, size_chunks)):
                 file_split = '{}.{}'.format(output_path_aux13, i)
                 f = open(file_split, 'w')
