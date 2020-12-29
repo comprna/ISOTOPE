@@ -235,7 +235,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
                     f.writelines(lines)
                 #Run a job per file
                 logger.info("Processing " + "chunk_" + str(i) + "...")
-                command1 = "python " + dir_path + "/A5_A3/get_peptide_sequence.py " + output_path_aux13 + " " + \
+                command1 = "python " + dir_path + "/lib/A5_A3/get_peptide_sequence.py " + output_path_aux13 + " " + \
                 transcript_expression_path + " " + gtf_path + " " + output_path + "/A5_A3_peptide_sequence.fa " + \
                 output_path + "/A5_A3_fasta_sequence.fa " + output_path + "/A5_A3_ORF.tab " + output_path + "/A5_A3_ORF_sequences.tab " + \
                 mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
