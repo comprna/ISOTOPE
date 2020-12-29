@@ -18,8 +18,9 @@ from lib.A5_A3.select_fasta_candidates import *
 from lib.A5_A3.run_netMHC_classI_slurm_part1 import *
 from lib.A5_A3.run_netMHCpan_classI_slurm_part1 import *
 from itertools import chain, islice
-import inspect,os
+import os
 
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 # create logger
 logger = logging.getLogger(__name__)
@@ -37,6 +38,16 @@ ch.setFormatter(formatter)
 
 # add ch to logger
 logger.addHandler(ch)
+
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 description = \
 "Description: Get alternative splice site events\n\n"

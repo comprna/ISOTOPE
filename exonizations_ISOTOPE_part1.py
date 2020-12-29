@@ -4,9 +4,6 @@
 exonizations_ISOTOPE.py: get significat exonizations
 """
 
-import os
-import pandas as pd
-
 from lib.Exonization.extract_exonized_junctions import *
 from lib.Exonization.get_reads_exonizations import *
 from lib.Exonization.overlap_with_repeats import *
