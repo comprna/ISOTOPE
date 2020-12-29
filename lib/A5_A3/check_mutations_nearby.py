@@ -89,7 +89,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
         # Save this variables as bed file
         path1 = "/".join(output_path.split("/")[:-1])
         bed = [("chr", chr), ("start", start), ("end", end), ("id", id),("score", 0),("strand", exonizations["strand"])]
-        bed_file = pd.DataFrame.from_items(bed)
+        # bed_file = pd.DataFrame.from_items(bed)
+        bed_file = pd.DataFrame.from_dict(dict(bed))
         # bed_file['score'] = 0
         bed_file.to_csv(path1 + "/exonizations.bed", sep="\t", index=False, header=False)
 
@@ -137,7 +138,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
         bed2 = [('chr', intersection_f.iloc[:,6].tolist()), ('start', intersection_f.iloc[:,7].tolist()),
                 ('end', intersection_f.iloc[:,8].tolist()), ('id', intersection_f['mut_id'].tolist()),
                  ('score', 0), ('strand', intersection_f.iloc[:,5].tolist())]
-        event_info_bed = pd.DataFrame.from_items(bed2)
+        # event_info_bed = pd.DataFrame.from_items(bed2)
+        event_info_bed = pd.DataFrame.from_dict(dict(bed2))
         #Get unique rows from the df
         event_info_bed2 = event_info_bed.drop_duplicates()
         bedtrack_output_file = open(path1 + "/A5_A3_junctions_track.bed", 'w')
@@ -150,7 +152,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
         end2 = intersection_f.iloc[:,2].apply(lambda x: int(x)-window)
         bed2 = [("chr", intersection_f.iloc[:,6].tolist()), ("start", start2.tolist()), ("end", end2.tolist()),
                 ("id", id.tolist()),("score", 0),("strand", intersection_f.iloc[:,5].tolist())]
-        bed_file2 = pd.DataFrame.from_items(bed2)
+        # bed_file2 = pd.DataFrame.from_items(bed2)
+        bed_file2 = pd.DataFrame.from_dict(dict(bed2))
         #Get unique rows from the df
         bed_file3 = bed_file2.drop_duplicates()
         bedtrack_output_file.write("track name=A5_A3_junctions description=\"A5_A3_junctions\" color=0,0,0\n")

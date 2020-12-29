@@ -359,7 +359,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                            ("start", exons_associated_with_exonization['start']),
                            ("end", exons_associated_with_exonization['end']), ("id", id_formatted),
                            ("strand", exons_associated_with_exonization['strand'])]
-                    bed_file = pd.DataFrame.from_items(bed)
+                    # bed_file = pd.DataFrame.from_items(bed)
+                    bed_file = pd.DataFrame.from_dict(dict(bed))
                     bed_file['score'] = 0
                     bed_file.to_csv(path1 + "/aux_exonization_A5_A3.bed", sep="\t", index=False, header=False)
                     # Format the reference transcript in a bed format
@@ -370,7 +371,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     bed = [("chr", exons_associated['chr']), ("start", exons_associated['start']),
                            ("end", exons_associated['end']), ("id", id_formatted),
                            ("strand", exons_associated['strand'])]
-                    bed_file = pd.DataFrame.from_items(bed)
+                    # bed_file = pd.DataFrame.from_items(bed)
+                    bed_file = pd.DataFrame.from_dict(dict(bed))
                     bed_file['score'] = 0
                     bed_file.to_csv(path1 + "/aux_reference_A5_A3.bed", sep="\t", index=False, header=False)
 

@@ -300,7 +300,8 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                     bed = [("chr", exons_associated_with_neoskipping['chr']), ("start", exons_associated_with_neoskipping['start']),
                     ("end", exons_associated_with_neoskipping['end']), ("id", id_formatted),
                     ("strand", exons_associated_with_neoskipping['strand'])]
-                    bed_file = pd.DataFrame.from_items(bed)
+                    # bed_file = pd.DataFrame.from_items(bed)
+                    bed_file = pd.DataFrame.from_dict(dict(bed))
                     bed_file['score'] = 0
                     bed_file.to_csv(path1 + "/aux_neoskipping_Exoniz.bed", sep="\t", index=False, header=False)
                     # Format the reference transcript in a bed format
@@ -311,7 +312,8 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                     bed = [("chr", exons_associated['chr']), ("start", exons_associated['start']),
                     ("end", exons_associated['end']), ("id", id_formatted),
                     ("strand", exons_associated['strand'])]
-                    bed_file = pd.DataFrame.from_items(bed)
+                    # bed_file = pd.DataFrame.from_items(bed)
+                    bed_file = pd.DataFrame.from_dict(dict(bed))
                     bed_file['score'] = 0
                     bed_file.to_csv(path1 + "/aux_reference_Exoniz.bed", sep="\t", index=False, header=False)
 
