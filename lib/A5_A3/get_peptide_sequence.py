@@ -226,7 +226,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         path1 = "/".join(output_peptide_path.split("/")[:-1])
         outFile_peptide = open(output_peptide_path, 'w')
         outFile_sequence = open(output_sequence_path, 'w')
-        outFile_peptide_Interpro = open(path1 + "/A5_A3_peptide_sequence_Interpro.temp", 'w')
+        # outFile_peptide_Interpro = open(path1 + "/A5_A3_peptide_sequence_Interpro.temp", 'w')
         # outFile_IUPred = open(output_path5, 'w')
         # outFile_IUPred.write("transcript\tfeatureType\tfeature_id\tstart\tend\n")
         cont1 = 0
@@ -840,14 +840,14 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                             index_AA_ex[id] = str(peptide_exonizations)
 
                             # Output only the peptide sequence of the exonizations (for the Intrepro prediction)
-                            outFile_peptide_Interpro.write(">" + id + "\n")
-                            outFile_peptide_Interpro.write(str(peptide_exonizations).replace("*", "") + "\n")
-
-                            # Output only the peptide sequence of the exonizations (for the IUPred prediction)
-                            outFile_peptide_IUPred = open(path1 + "/A5_A3_peptide_sequence_IUPred.temp", 'w')
-                            outFile_peptide_IUPred.write(">" + id + "\n")
-                            outFile_peptide_IUPred.write(str(peptide_exonizations).replace("*", "") + "\n")
-                            outFile_peptide_IUPred.close()
+                            # outFile_peptide_Interpro.write(">" + id + "\n")
+                            # outFile_peptide_Interpro.write(str(peptide_exonizations).replace("*", "") + "\n")
+                            #
+                            # # Output only the peptide sequence of the exonizations (for the IUPred prediction)
+                            # outFile_peptide_IUPred = open(path1 + "/A5_A3_peptide_sequence_IUPred.temp", 'w')
+                            # outFile_peptide_IUPred.write(">" + id + "\n")
+                            # outFile_peptide_IUPred.write(str(peptide_exonizations).replace("*", "") + "\n")
+                            # outFile_peptide_IUPred.close()
 
                             # # Run IUPred for obtaining the disordered regions
                             # command4 = "module load Python; python " + IUPred + "/iupred2a.py " + path1 + \
@@ -963,7 +963,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
         outFile_peptide.close()
         outFile_sequence.close()
-        outFile_peptide_Interpro.close()
+        # outFile_peptide_Interpro.close()
         # outFile_IUPred.close()
 
         # 6. Add the columns to the initial list
@@ -1050,6 +1050,7 @@ if __name__ == '__main__':
     fast_genome = sys.argv[9]
     orfs_scripts = sys.argv[10]
     remove_temp_files = bool(sys.argv[11])
+    print(sys.version)
     get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
                          output_sequence_path, output_path2, output_path3, mosea,
                          fast_genome, orfs_scripts, remove_temp_files)
