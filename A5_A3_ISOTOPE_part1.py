@@ -238,7 +238,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
                 command1 = "python " + dir_path + "/get_peptide_sequence.py " + output_path_aux13 + " " + \
                 transcript_expression_path + " " + gtf_path + " " + output_path + "/A5_A3_peptide_sequence.fa " + \
                 output_path + "/A5_A3_fasta_sequence.fa " + output_path + "/A5_A3_ORF.tab " + output_path + "/A5_A3_ORF_sequences.tab " + \
-                mosea + " " + fasta_genome + " " + mxfinder + " " + remove_temp_files
+                mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
                 open_peptides_file = open(output_path + "/aux.sh", "w")
                 open_peptides_file.write("#!/bin/sh\n")
                 # open_peptides_file.write("#SBATCH --partition=normal\n")
