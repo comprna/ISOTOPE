@@ -125,11 +125,25 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         # output_path = "/users/genomics/juanluis/SCLC_cohorts/SCLC/epydoor/A5_A3"
         # name_user = "juanluis"
 
+        # 0. Create a gtf with only the exon information
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        gtf_path_exon = '{}.{}'.format(gtf_path, "exon")
+        gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
+        #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
+        gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
+        gtf = gtf[gtf['type2'].isin(["exon"])]
+        gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+        #Add the chr suffix
+        gtf['chr'] = 'chr' + gtf['chr'].astype(str)
+        #Save the gtf in external file
+        gtf.to_csv(gtf_path_exon,index=False,header=False)
+
+        exit()
+
         # 1. Identify the junctions that could generate an alternative splice site
         logger.info("Part1...")
-        dir_path = os.path.dirname(os.path.realpath(__file__))
         output_path_aux = output_path+"/new_A5_A3_junctions.tab"
-        extract_exonized_junctions(readcounts_path, gtf_path, fasta_genome, max_length, output_path_aux, mosea)
+        extract_exonized_junctions(readcounts_path, gtf_path_exon, fasta_genome, max_length, output_path_aux, mosea)
 
         # 2. Given the list with the possible A5_A3, get the reads associate to each of them
         logger.info("Part2...")
@@ -148,7 +162,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         # 5. for applying some filtering on the list of A5_A3 junctions, we are gonna compare the readcounts for each
         # junction against other new junctions associated to the same gene
         logger.info("Part5...")
-        compare_reads_random_junctions(output_path + "/A5_A3_by_sample.tab", readcounts_path, gtf_path, output_path + "/A5_A3_by_sample_coverage.tab")
+        compare_reads_random_junctions(output_path + "/A5_A3_by_sample.tab", readcounts_path, gtf_path_exon, output_path + "/A5_A3_by_sample_coverage.tab")
 
         # 6. Check if in the A5_A3 there are mutations nearby
         logger.info("Part6...")
