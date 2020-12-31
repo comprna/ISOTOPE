@@ -173,12 +173,9 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         output_path_dna = output_path + "/neoskipping_fasta_sequence.fa"
         output_path_aux14 = output_path + "/all_neoskipping_ORF.tab"
         output_path_aux15 = output_path + "/all_neoskipping_ORF_sequences.tab"
-        output_path_aux16 = output_path + "/all_neoskipping_Interpro.tab"
-        output_path_aux17 = output_path + "/all_neoskipping_IUPred.tab"
         get_peptide_sequence(output_path + "/new_Neoskipping_junctions_mut2.tab", transcript_expression_path, gtf_path,
                              output_path_peptide, output_path_dna, output_path_aux14,
-                             output_path_aux15, output_path_aux16, output_path_aux17, mosea, fasta_genome, mxfinder,
-                             remove_temp_files)
+                             output_path_aux15, mosea, fasta_genome, mxfinder, remove_temp_files)
 
         # 6. Filter the cases for running netMHC
         logger.info("Part6...")
