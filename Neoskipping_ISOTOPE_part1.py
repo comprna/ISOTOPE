@@ -128,7 +128,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         # 1. Identify the junctions that could generate an alternative splice site
         logger.info("Part1...")
         output_path_aux = output_path + "/new_Neoskipping_junctions.tab"
-        extract_neoskipping_junctions(readcounts_path, gtf_path, threshold, output_path_aux)
+        extract_neoskipping_junctions(readcounts_path, gtf_path_exon, threshold, output_path_aux)
 
         # 2. Get the tumor specific neoskipping events
         if (tumor_specific):
@@ -137,11 +137,11 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
             # Get also the significant neoskipping from Rudin and Intropolis
             output_Rudin_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
             readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
-            extract_neoskipping_junctions(readCounts_Rudin_path, gtf_path, threshold, output_Rudin_path_aux)
+            extract_neoskipping_junctions(readCounts_Rudin_path, gtf_path_exon, threshold, output_Rudin_path_aux)
 
             output_Intropolis_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
             readCounts_Intropolis_path = "/projects_rg/Annotation/Intropolis/intropolis.v1.hg19.filtered.tsv"
-            extract_neoskipping_junctions_Intropolis(readcounts_path, readCounts_Intropolis_path, gtf_path, threshold,
+            extract_neoskipping_junctions_Intropolis(readcounts_path, readCounts_Intropolis_path, gtf_path_exon, threshold,
                                                      output_Intropolis_path_aux)
 
             filter_neoskipping(output_path_aux, output_Rudin_path_aux, output_Intropolis_path_aux,
