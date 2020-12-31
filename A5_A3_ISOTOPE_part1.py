@@ -97,34 +97,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
         logger.info("Starting execution")
 
-        # readcounts_path = "/projects_rg/SCLC_cohorts/George/PSI_Junction_Clustering/readCounts_George_Peifer_Rudin_Yokota.tab"
-        # transcript_expression_path = "/projects_rg/SCLC_cohorts/George/tables/iso_tpm_George_Peifer_Rudin_Yokota.tab"
-        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        # codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
-        # conversion_names = "/projects_rg/SCLC_cohorts/tables/Ensembl_gene_conversion.txt"
-        # max_length = 500
-        # threshold = 5
-        # size_chunks = 100
-        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        # mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
-        # CHESS_A5_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_A5_strict.ioe"
-        # CHESS_A3_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_A3_strict.ioe"
-        # tumor_specific = False
-        # mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
-        # fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
-        # mxfinder = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
-        # interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
-        # IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
-        # HLAclass_path = "/projects_rg/SCLC_cohorts/tables/PHLAT_summary_ClassI_all_samples.out"
-        # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
-        # HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
-        # netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
-        # netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
-        # remove_temp_files = True
-        # flag_Rudin = False
-        # output_path = "/users/genomics/juanluis/SCLC_cohorts/SCLC/epydoor/A5_A3"
-        # name_user = "juanluis"
-
         # 0. Create a gtf with only the exon information
         dir_path = os.path.dirname(os.path.realpath(__file__))
         gtf_path_exon = '{}.{}'.format(gtf_path, "exon")

@@ -90,14 +90,14 @@ def get_expression(sample_id,transcript_id,transcript_expression):
     else:
         return -1
 
-def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path, codons_gtf_path, output_peptide_path,
-                         output_sequence_path, output_path2, output_path3, output_path4, output_path5, mosea,
-                         fast_genome, orfs_scripts, interpro, IUPred, remove_temp_files, python2):
+def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path, output_peptide_path,
+                         output_sequence_path, output_path2, output_path3, mosea,
+                         fast_genome, MxFinder_path, remove_temp_files):
 
     try:
         logger.info("Starting execution")
 
-        # Create a dict per cell line
+        # 1. Load the expression associated to each transcript
         logger.info("Load the expression associated to each transcript...")
         transcript_expression = {}
         with open(transcript_expression_path) as f:
@@ -116,7 +116,8 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                     else:
                         logger.info("Repeated transcript " + transcript + " in transcript_expression")
 
-        # 2. Get the association gene - transcript from the gtf
+        # 2. Get the association gene - transcript from the gtf and the start and end codon from each transcript
+        transcript_start_codon, transcript_stop_codon = {}, {}
         gene_transcript = {}
         with open(gtf_path) as f:
             logger.info("Loading genes - transcripts...")
@@ -125,48 +126,71 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                     pass
                 else:
                     tokens = line.rstrip().split("\t")
-                    gene_id = re.sub("\"", "", tokens[8].split(";")[0].split("gene_id")[1]).strip()
-                    transcript_id = re.sub("\"", "", tokens[8].split(";")[1].split("transcript_id")[1]).strip()
-                    if(gene_id not in gene_transcript):
-                        gene_transcript[gene_id] = [transcript_id]
+                    # Save the information from the exonic regions
+                    if (tokens[2]=="exon"):
+                        gene_id = re.sub("\"", "", tokens[8].split(";")[0].split("gene_id")[1]).strip()
+                        transcript_id = re.sub("\"", "",
+                                               tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+                        if (gene_id not in gene_transcript):
+                            gene_transcript[gene_id] = [transcript_id]
+                        else:
+                            if (transcript_id not in gene_transcript[gene_id]):
+                                gene_transcript[gene_id].append(transcript_id)
+                    # Save the information from the codons
                     else:
-                        if(transcript_id not in gene_transcript[gene_id]):
-                            gene_transcript[gene_id].append(transcript_id)
+                        if (re.search("start_codon", line)):
+                            start = tokens[3]
+                            end = tokens[4]
+                            transcript_id = re.sub("\"", "", tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+                            if (transcript_id not in transcript_start_codon):
+                                transcript_start_codon[transcript_id] = (start, end)
 
-        # 3. Get the start and end codon from each transcript
-        transcript_start_codon, transcript_stop_codon = {}, {}
-        with open(codons_gtf_path) as f:
-            logger.info("Loading start and end codons...")
-            for line in f:
-                if (re.search("#", line)):
-                    pass
-                else:
-                    tokens = line.rstrip().split("\t")
-                    if (re.search("start_codon", line)):
-                        start = tokens[3]
-                        end = tokens[4]
-                        transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
-                        if(transcript_id not in transcript_start_codon):
-                            transcript_start_codon[transcript_id] = (start,end)
-                        else:
-                            # logger.info("Repeated start codon for " + str(transcript))
-                            pass
-                    elif (re.search("stop_codon", line)):
-                        start = tokens[3]
-                        end = tokens[4]
-                        transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
-                        if(transcript_id not in transcript_stop_codon):
-                            transcript_stop_codon[transcript_id] = (start,end)
-                        else:
-                            # logger.info("Repeated end codon for " + str(transcript))
-                            pass
-                    else:
-                        pass
+                        elif (re.search("stop_codon", line)):
+                            start = tokens[3]
+                            end = tokens[4]
+                            transcript_id = re.sub("\"", "", tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+                            if (transcript_id not in transcript_stop_codon):
+                                transcript_stop_codon[transcript_id] = (start, end)
+
+        # # 3. Get the start and end codon from each transcript
+        # transcript_start_codon, transcript_stop_codon = {}, {}
+        # with open(codons_gtf_path) as f:
+        #     logger.info("Loading start and end codons...")
+        #     for line in f:
+        #         if (re.search("#", line)):
+        #             pass
+        #         else:
+        #             tokens = line.rstrip().split("\t")
+        #             if (re.search("start_codon", line)):
+        #                 start = tokens[3]
+        #                 end = tokens[4]
+        #                 transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+        #                 if(transcript_id not in transcript_start_codon):
+        #                     transcript_start_codon[transcript_id] = (start,end)
+        #                 else:
+        #                     # logger.info("Repeated start codon for " + str(transcript))
+        #                     pass
+        #             elif (re.search("stop_codon", line)):
+        #                 start = tokens[3]
+        #                 end = tokens[4]
+        #                 transcript_id = re.sub("\"","",tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+        #                 if(transcript_id not in transcript_stop_codon):
+        #                     transcript_stop_codon[transcript_id] = (start,end)
+        #                 else:
+        #                     # logger.info("Repeated end codon for " + str(transcript))
+        #                     pass
+        #             else:
+        #                 pass
 
         # 4. Load the gtf as a pandas dataframe
         logger.info("Loading gtf file...")
-        gtf = pd.read_table(gtf_path, delimiter="\t",header=None)
+        gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
+        #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
+        gtf = gtf[gtf['type2'].isin(["exon"])]
+        gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+        #Add the chr suffix
+        gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
 
         # 5. Get the peptidic sequences of the reference and the transcript with the neoskipping
@@ -176,9 +200,9 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
         path1 = "/".join(output_peptide_path.split("/")[:-1])
         outFile_peptide = open(output_peptide_path, 'w')
         outFile_sequence = open(output_sequence_path, 'w')
-        outFile_peptide_Interpro = open(path1 + "/Neoskippings_peptide_sequence_Interpro.temp", 'w')
-        outFile_IUPred = open(output_path5, 'w')
-        outFile_IUPred.write("transcript\tfeatureType\tfeature_id\tstart\tend\n")
+        # outFile_peptide_Interpro = open(path1 + "/Neoskippings_peptide_sequence_Interpro.temp", 'w')
+        # outFile_IUPred = open(output_path5, 'w')
+        # outFile_IUPred.write("transcript\tfeatureType\tfeature_id\tstart\tend\n")
         cont1 = 0
         with open(neoskipping_path) as f:
             logger.info("Processing neoskipping file...")
@@ -193,8 +217,6 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                 sample_id = tokens[Sample_id_pos].rstrip()
                 cont1+=1
                 logger.info(str(cont1))
-                # if(cont1==213):
-                #     print("guiuoh")
                 gene_neoskipping = gene + ";" + neoskipping
                 # Intitialize the dictionaries
                 peptide_change[gene_neoskipping] = False
@@ -231,8 +253,6 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                             if (TPM > TPM_associated):
                                 TPM_associated = TPM
                                 transcript_id = transcript
-
-
 
                 #If no transcript has been chosen, that means that there is no transcript in the annotation with this neoskipping
                 if(transcript_id == "None"):
@@ -319,16 +339,16 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
 
                     # 5.2.2. Get the sequence from Mosea
                     # logger.info("Obtaining fasta neoskipping sequence...")
-                    command1 = "module load " + python2 + " ; module load BEDTools; python " + mosea + " getfasta --bedfile " + \
+                    command1 = "python " + mosea + "/mosea.py getfasta --bedfile " + \
                                path1 + "/aux_neoskipping_Exoniz.bed --genome " + fast_genome + " --output " + path1 + \
-                               "/aux_neoskipping_Exoniz.fa" + "; module unload " + python2
+                               "/aux_neoskipping_Exoniz.fa"
                     # print(command1)
                     os.system(command1)
 
                     # logger.info("Obtaining fasta reference sequence...")
-                    command2 = "module load " + python2 + " ; module load BEDTools; python " + mosea + " getfasta --bedfile " + \
+                    command2 = "python " + mosea + "/mosea.py getfasta --bedfile " + \
                                path1 + "/aux_reference_Exoniz.bed --genome " + fast_genome + " --output " + path1 + \
-                               "/aux_reference_Exoniz.fa" + "; module unload " + python2
+                               "/aux_reference_Exoniz.fa"
                     # print(command2)
                     os.system(command2)
 
@@ -516,9 +536,8 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
 
                         # 5.3.2.1. Run extract_orfs.py for obtaining all possible ORFs in the sequence
                         # logger.info("Obtaining ORFs...")
-                        command1 = "module load " + python2 + " ; python " + orfs_scripts + " " + path1 + \
-                                   "/aux_sequence_total_EX_Exoniz.fa" + " 50 > " + path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa" \
-                                   + " ; module unload " + python2
+                        command1 = "python " + MxFinder_path + " " + path1 + \
+                                   "/aux_sequence_total_EX_Exoniz.fa" + " 50 > " + path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa"
                         # print(command1)
                         os.system(command1)
 
@@ -658,49 +677,49 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                         index_AA_ref[gene_neoskipping] = str(peptide_reference)
                         index_AA_ex[gene_neoskipping] = str(peptide_neoskipping)
 
-                        # Output only the peptide sequence of the neoskipping (for the Intrepro prediction)
-                        outFile_peptide_Interpro.write(">"+neoskipping+"\n")
-                        outFile_peptide_Interpro.write(str(peptide_neoskipping).replace("*","")+"\n")
-
-                        # Output only the peptide sequence of the neoskipping (for the IUPred prediction)
-                        outFile_peptide_IUPred = open(path1 + "/Neoskippings_peptide_sequence_IUPred.temp", 'w')
-                        outFile_peptide_IUPred.write(">"+neoskipping+"\n")
-                        outFile_peptide_IUPred.write(str(peptide_neoskipping).replace("*","")+"\n")
-                        outFile_peptide_IUPred.close()
-
-                        # Run IUPred for obtaining the disordered regions
-                        command4 = "module load "+python2+" ; python " + IUPred + "/iupred2a.py " + path1 + \
-                                   "/Neoskippings_peptide_sequence_IUPred.temp long > " + path1 + \
-                                   "/Neoskippings_peptide_sequence_IUPred.temp.out; " \
-                                                                                "module unload "+python2+";"
-                        os.system(command4)
-
-                        # Process the output of IUPred
-                        flag_new_interval = True
-                        length = 0
-                        with open(path1 + "/Neoskippings_peptide_sequence_IUPred.temp.out") as f:
-                            for line in f:
-                                if(re.search("#",line)):
-                                    continue
-                                else:
-                                    tokens = line.rstrip().split("\t")
-                                    prediction_value = float(tokens[2])
-                                    AA_position = int(tokens[0])
-                                    if(prediction_value>0.5 and flag_new_interval):
-                                        flag_new_interval = False
-                                        start = AA_position
-                                        length = 1
-                                    elif(not flag_new_interval):
-                                        if(prediction_value>0.5):
-                                            length += 1
-                                            continue
-                                        else:
-                                            flag_new_interval = True
-                                            end = AA_position-1
-                                            #Close the interval and save it if the length of the interval is greater than 5
-                                            if(length>=5):
-                                                outFile_IUPred.write(neoskipping+"\tIDR\tDisordered_region\t"+str(start)+
-                                                                     "\t"+str(end)+"\n")
+                        # # Output only the peptide sequence of the neoskipping (for the Intrepro prediction)
+                        # outFile_peptide_Interpro.write(">"+neoskipping+"\n")
+                        # outFile_peptide_Interpro.write(str(peptide_neoskipping).replace("*","")+"\n")
+                        #
+                        # # Output only the peptide sequence of the neoskipping (for the IUPred prediction)
+                        # outFile_peptide_IUPred = open(path1 + "/Neoskippings_peptide_sequence_IUPred.temp", 'w')
+                        # outFile_peptide_IUPred.write(">"+neoskipping+"\n")
+                        # outFile_peptide_IUPred.write(str(peptide_neoskipping).replace("*","")+"\n")
+                        # outFile_peptide_IUPred.close()
+                        #
+                        # # Run IUPred for obtaining the disordered regions
+                        # command4 = "module load "+python2+" ; python " + IUPred + "/iupred2a.py " + path1 + \
+                        #            "/Neoskippings_peptide_sequence_IUPred.temp long > " + path1 + \
+                        #            "/Neoskippings_peptide_sequence_IUPred.temp.out; " \
+                        #                                                         "module unload "+python2+";"
+                        # os.system(command4)
+                        #
+                        # # Process the output of IUPred
+                        # flag_new_interval = True
+                        # length = 0
+                        # with open(path1 + "/Neoskippings_peptide_sequence_IUPred.temp.out") as f:
+                        #     for line in f:
+                        #         if(re.search("#",line)):
+                        #             continue
+                        #         else:
+                        #             tokens = line.rstrip().split("\t")
+                        #             prediction_value = float(tokens[2])
+                        #             AA_position = int(tokens[0])
+                        #             if(prediction_value>0.5 and flag_new_interval):
+                        #                 flag_new_interval = False
+                        #                 start = AA_position
+                        #                 length = 1
+                        #             elif(not flag_new_interval):
+                        #                 if(prediction_value>0.5):
+                        #                     length += 1
+                        #                     continue
+                        #                 else:
+                        #                     flag_new_interval = True
+                        #                     end = AA_position-1
+                        #                     #Close the interval and save it if the length of the interval is greater than 5
+                        #                     if(length>=5):
+                        #                         outFile_IUPred.write(neoskipping+"\tIDR\tDisordered_region\t"+str(start)+
+                        #                                              "\t"+str(end)+"\n")
 
                         # 5.5. If there is a peptide change, check if the exonized sequence will go to NMD
                         # if(gene_neoskipping not in peptide_change or gene_neoskipping not in NMD):
@@ -796,8 +815,8 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
 
         outFile_peptide.close()
         outFile_sequence.close()
-        outFile_peptide_Interpro.close()
-        outFile_IUPred.close()
+        # outFile_peptide_Interpro.close()
+        # outFile_IUPred.close()
 
         # 6. Add the columns to the initial list
         logger.info("Processing output file...")
@@ -859,17 +878,17 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
         outFile2.close()
         outFile3.close()
 
-        # 7. Run Interpro
-        logger.info("Run Interpro...")
-        command3 = interpro + " -i " + path1 + "/Neoskippings_peptide_sequence_Interpro.temp -f tsv -o " + output_path4
-        os.system(command3)
+        # # 7. Run Interpro
+        # logger.info("Run Interpro...")
+        # command3 = interpro + " -i " + path1 + "/Neoskippings_peptide_sequence_Interpro.temp -f tsv -o " + output_path4
+        # os.system(command3)
 
         logger.info("Saved "+output_sequence_path)
         logger.info("Saved "+output_peptide_path)
         logger.info("Saved "+output_path2)
         logger.info("Saved "+output_path3)
-        logger.info("Saved "+output_path4)
-        logger.info("Saved "+output_path5)
+        # logger.info("Saved "+output_path4)
+        # logger.info("Saved "+output_path5)
         logger.info("Done. Exiting program.")
 
         #Remove temporary files
@@ -880,9 +899,9 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
             os.remove(path1 + "/aux_reference_Exoniz.fa")
             os.remove(path1 + "/aux_sequence_total_EX_Exoniz.fa")
             os.remove(path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa")
-            os.remove(path1 + "/Neoskippings_peptide_sequence_Interpro.temp")
-            os.remove(path1 + "/Neoskippings_peptide_sequence_IUPred.temp")
-            os.remove(path1 + "/Neoskippings_peptide_sequence_IUPred.temp.out")
+            # os.remove(path1 + "/Neoskippings_peptide_sequence_Interpro.temp")
+            # os.remove(path1 + "/Neoskippings_peptide_sequence_IUPred.temp")
+            # os.remove(path1 + "/Neoskippings_peptide_sequence_IUPred.temp.out")
 
     except Exception as error:
         logger.error('ERROR: ' + repr(error))

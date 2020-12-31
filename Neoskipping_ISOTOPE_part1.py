@@ -4,7 +4,6 @@
 Neoskipping_ISOTOPE.py: get significant neoskipping events
 """
 
-import os
 
 from lib.Neoskipping.extract_neoskipping_junctions import *
 from lib.Neoskipping.extract_neoskipping_junctions_Intropolis import *
@@ -15,6 +14,10 @@ from lib.Neoskipping.get_peptide_sequence import *
 from lib.Neoskipping.select_fasta_candidates import *
 from lib.Neoskipping.run_netMHC_classI_slurm_part1 import *
 from lib.Neoskipping.run_netMHCpan_classI_slurm_part1 import *
+import os
+
+from argparse import ArgumentParser, RawTextHelpFormatter
+import argparse
 
 # create logger
 logger = logging.getLogger(__name__)
@@ -33,46 +36,97 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
-def main():
+description = \
+"Description: Get alternative splice site events\n\n"
+
+parser = ArgumentParser(description=description, formatter_class=RawTextHelpFormatter,
+                        add_help=True)
+parser.add_argument("-r", "--reads", required=True, help = "reads mapped to junctions")
+parser.add_argument("-trans", "--transcript", required=True, help = "transcript expression file")
+parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
+parser.add_argument("-c", "--conversion", required=True, help = "gene name conversion")
+parser.add_argument("-m", "--max", required=False, type=int, default=500)
+parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
+parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
+parser.add_argument("-mut","--mutations", required=False, default="No file", help = "Mutations path")
+parser.add_argument("--chessSE", required=False, help = "CHESS SE path")
+parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
+parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
+parser.add_argument("-mxfinder", "--mxfinder", required=True, help = "MxFinder path")
+parser.add_argument("-genome", "--genome", required=True, help = "Genome annotation")
+parser.add_argument("-HLAclass", "--HLAclass", required=True, help = "HLA genotype of the samples")
+parser.add_argument("-HLAtypes", "--HLAtypes", required=True, help = "HLA alelles recognized by NetMHC")
+parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help = "HLA alelles recognized by NetMHCpan")
+parser.add_argument("-netMHC", "--netMHC", required=True, help = "netMHC path")
+parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpan path")
+parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
+parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
+parser.add_argument("--username", required=True, help = "Cluster user name")
+parser.add_argument("-o", "--output", required=True, help = "Output path")
+
+# def main():
+def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
+         threshold, repeats_path, mutations_path, CHESS_SE_path,
+         tumor_specific, mosea, mxfinder, fasta_genome, HLAclass_path, HLAtypes_path,
+         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
+         name_user, output_path):
+
     try:
 
         logger.info("Starting execution")
 
 
-        readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
-        transcript_expression_path = "/projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt"
-        gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
-        conversion_names = "/projects_rg/SCLC_cohorts/tables/Ensembl_gene_conversion.txt"
-        max_length = 500
-        threshold = 5
-        threshold2 = 10
-        repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
-        CHESS_SE_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_SE_strict.ioe"
-        tumor_specific = True
-        mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
-        fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
-        orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
-        interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
-        IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
-        HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
-        HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
-        HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
-        netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
-        netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
-        remove_temp_files = True
-        flag_Rudin = False
-        output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/neoskipping"
-        # ONLY FOR MARVIN
-        #python2 = "Python/2.7.14-foss-2017b"
-        # ONLY FOR HYDRA
-        python2 = "Python/2.7.11"
+        # readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
+        # transcript_expression_path = "/projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt"
+        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
+        # codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
+        # conversion_names = "/projects_rg/SCLC_cohorts/tables/Ensembl_gene_conversion.txt"
+        # max_length = 500
+        # threshold = 5
+        # threshold2 = 10
+        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
+        # mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
+        # CHESS_SE_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_SE_strict.ioe"
+        # tumor_specific = True
+        # mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
+        # fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
+        # orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
+        # interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
+        # IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
+        # HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
+        # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
+        # HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
+        # netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
+        # netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
+        # remove_temp_files = True
+        # flag_Rudin = False
+        # output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/neoskipping"
+
+        # 0. Create a gtf with only the exon information
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        gtf_path_exon = '{}.{}'.format(gtf_path, "exon")
+        gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
+        #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
+        gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
+        gtf = gtf[gtf['type2'].isin(["exon"])]
+        gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+        #Add the chr suffix
+        gtf['chr'] = 'chr' + gtf['chr'].astype(str)
+        #Save the gtf in external file
+        gtf.to_csv(gtf_path_exon,index=False,header=False,sep ='\t',quoting=csv.QUOTE_NONE)
 
         # 1. Identify the junctions that could generate an alternative splice site
         logger.info("Part1...")
-        dir_path = os.path.dirname(os.path.realpath(__file__))
         output_path_aux = output_path + "/new_Neoskipping_junctions.tab"
         extract_neoskipping_junctions(readcounts_path, gtf_path, threshold, output_path_aux)
 
@@ -101,11 +155,16 @@ def main():
 
         # 3. Get the mutations nearby
         logger.info("Part3...")
-        check_mutations_nearby(output_path2, mutations_path, 200, output_path + "/new_Neoskipping_junctions_mut.tab")
+        if(mutations_path!="No file"):
+            check_mutations_nearby(output_path2, mutations_path, 200, output_path + "/new_Neoskipping_junctions_mut.tab")
+
+        else:
+            os.rename(output_path2, output_path + "/new_Neoskipping_junctions_mut.tab")
 
         # 4. Get the gene ids
         logger.info("Part4...")
-        command1 = "module load R; Rscript " + dir_path + "/lib/Neoskipping/get_Gene_ids_BiomaRt.R " + output_path + "/new_Neoskipping_junctions_mut.tab " + output_path + "/new_Neoskipping_junctions_mut2.tab"
+        command1 = "Rscript " + dir_path + "/lib/Neoskipping/get_Gene_ids_BiomaRt.R " + output_path + "/new_Neoskipping_junctions_mut.tab " + \
+                   output_path + "/new_Neoskipping_junctions_mut2.tab"
         os.system(command1)
 
         # 5. Get the peptide sequences
@@ -117,10 +176,9 @@ def main():
         output_path_aux16 = output_path + "/all_neoskipping_Interpro.tab"
         output_path_aux17 = output_path + "/all_neoskipping_IUPred.tab"
         get_peptide_sequence(output_path + "/new_Neoskipping_junctions_mut2.tab", transcript_expression_path, gtf_path,
-                             codons_gtf_path,
                              output_path_peptide, output_path_dna, output_path_aux14,
-                             output_path_aux15, output_path_aux16, output_path_aux17, mosea, fasta_genome, orfs_scripts,
-                             interpro, IUPred, remove_temp_files, python2)
+                             output_path_aux15, output_path_aux16, output_path_aux17, mosea, fasta_genome, mxfinder,
+                             remove_temp_files)
 
         # 6. Filter the cases for running netMHC
         logger.info("Part6...")
@@ -169,5 +227,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-
+    args = parser.parse_args()
+    main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres,
+         args.repeats,args.mutations,args.chessSE,args.tumor_specific,args.mosea,args.mxfinder,
+         args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
+         args.Rudin,args.username, args.output)
