@@ -15,6 +15,7 @@ from lib.Neoskipping.select_fasta_candidates import *
 from lib.Neoskipping.run_netMHC_classI_slurm_part1 import *
 from lib.Neoskipping.run_netMHCpan_classI_slurm_part1 import *
 import os
+import csv
 
 from argparse import ArgumentParser, RawTextHelpFormatter
 import argparse
@@ -74,7 +75,6 @@ parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=Fals
 parser.add_argument("--username", required=True, help = "Cluster user name")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
-# def main():
 def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
          threshold, repeats_path, mutations_path, CHESS_SE_path,
          tumor_specific, mosea, mxfinder, fasta_genome, HLAclass_path, HLAtypes_path,
