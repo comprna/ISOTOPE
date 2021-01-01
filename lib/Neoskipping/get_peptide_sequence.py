@@ -536,7 +536,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
 
                         # 5.3.2.1. Run extract_orfs.py for obtaining all possible ORFs in the sequence
                         # logger.info("Obtaining ORFs...")
-                        command1 = "python " + MxFinder_path + " " + path1 + \
+                        command1 = "python " + MxFinder_path + "/extract_orfs.py " + path1 + \
                                    "/aux_sequence_total_EX_Exoniz.fa" + " 50 > " + path1 + "/aux_sequence_total_EX_ORF_Exoniz.fa"
                         # print(command1)
                         os.system(command1)
