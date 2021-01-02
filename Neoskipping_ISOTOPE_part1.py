@@ -135,7 +135,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         # 1.1. Get those that are over a threshold
         logger.info("Part1.1...")
         get_significant_exonizations(output_path_aux, threshold, output_path + "/new_Neoskipping_junctions_filtered.tab")
-        
+
         exit()
 
         # 2. Get the tumor specific neoskipping events
@@ -233,7 +233,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres,
+    main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres, args.fold,
          args.repeats,args.mutations,args.chessSE,args.tumor_specific,args.mosea,args.mxfinder,
          args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
-         args.Rudin,args.username, args.output)
+         args.Rudin, args.output)
