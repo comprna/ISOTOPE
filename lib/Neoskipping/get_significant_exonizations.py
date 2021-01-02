@@ -45,8 +45,8 @@ def get_significant_exonizations(exonization_file, threshold, fold, output_file)
         if(not fold_flag):
             df_filtered = exonizations_reads[exonizations_reads['mean_skipped_ReadCounts'] >= threshold]
         else:
-            df_filtered = exonizations_reads[exonizations_reads['mean_skipped_ReadCounts'] >= threshold &
-                                             exonizations_reads['Fold'] >= fold]
+            df_filtered = exonizations_reads[(exonizations_reads['mean_skipped_ReadCounts'] >= threshold) &
+                                             (exonizations_reads['Fold'] >= fold)]
         df_filtered.to_csv(output_file,index=False,header=False,sep ='\t',quoting=csv.QUOTE_NONE)
         logger.info("Saved "+ output_file)
         logger.info("Done. Exiting program.")
