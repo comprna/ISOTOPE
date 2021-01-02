@@ -8,6 +8,7 @@ Neoskipping_ISOTOPE.py: get significant neoskipping events
 from lib.Neoskipping.extract_neoskipping_junctions import *
 from lib.Neoskipping.extract_neoskipping_junctions_Intropolis import *
 from lib.Neoskipping.check_mutations_nearby import *
+from lib.Neoskipping.get_significant_exonizations import *
 from lib.Neoskipping.filter_neoskipping import *
 from lib.Neoskipping.filter_neoskipping_CHESS import *
 from lib.Neoskipping.get_peptide_sequence import *
@@ -58,6 +59,7 @@ parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
 parser.add_argument("-c", "--conversion", required=True, help = "gene name conversion")
 parser.add_argument("-m", "--max", required=False, type=int, default=500)
 parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
+parser.add_argument("-f", "--fold", required=False, type=int, default=0, help="Minimum fold of reads mapping the neoskipping with respect to the spanned junctions")
 parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
 parser.add_argument("-mut","--mutations", required=False, default="No file", help = "Mutations path")
 parser.add_argument("--chessSE", required=False, help = "CHESS SE path")
@@ -76,10 +78,10 @@ parser.add_argument("--username", required=True, help = "Cluster user name")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
 def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
-         threshold, repeats_path, mutations_path, CHESS_SE_path,
+         threshold, fold, repeats_path, mutations_path, CHESS_SE_path,
          tumor_specific, mosea, mxfinder, fasta_genome, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
-         name_user, output_path):
+         output_path):
 
     try:
 
@@ -129,6 +131,12 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         logger.info("Part1...")
         output_path_aux = output_path + "/new_Neoskipping_junctions.tab"
         extract_neoskipping_junctions(readcounts_path, gtf_path_exon, threshold, output_path_aux)
+
+        # 1.1. Get those that are over a threshold
+        logger.info("Part1.1...")
+        get_significant_exonizations(output_path_aux, threshold, output_path + "/new_Neoskipping_junctions_filtered.tab")
+        
+        exit()
 
         # 2. Get the tumor specific neoskipping events
         if (tumor_specific):
