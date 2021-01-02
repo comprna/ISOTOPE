@@ -134,7 +134,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
         # 1.1. Get those that are over a threshold
         logger.info("Part1.1...")
-        get_significant_exonizations(output_path_aux, threshold, output_path + "/new_Neoskipping_junctions_filtered.tab")
+        get_significant_exonizations(output_path_aux, threshold, fold, output_path + "/new_Neoskipping_junctions_filtered.tab")
 
         exit()
 
