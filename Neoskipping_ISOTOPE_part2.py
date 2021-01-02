@@ -99,4 +99,5 @@ def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pa
 
 
 if __name__ == '__main__':
-    main()
+    args = parser.parse_args()
+    main(args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,args.output)
