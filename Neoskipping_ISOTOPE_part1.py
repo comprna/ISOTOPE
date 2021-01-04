@@ -136,8 +136,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         logger.info("Part1.1...")
         get_significant_exonizations(output_path_aux, threshold, fold, output_path + "/new_Neoskipping_junctions_filtered.tab")
 
-        exit()
-
         # 2. Get the tumor specific neoskipping events
         if (tumor_specific):
 
