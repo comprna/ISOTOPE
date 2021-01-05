@@ -97,8 +97,8 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
 
         # 1. Get the IR expressed
         logger.info("Part1...")
-        # extract_significant_IR(output_path + "/IR_formatted.tab", TPM_threshold, output_path + "/IR_expressed.tab")
-        extract_significant_IR(introns_path, TPM_threshold, output_path + "/IR_expressed.tab")
+        extract_significant_IR(output_path + "/IR_formatted.tab", TPM_threshold, output_path + "/IR_expressed.tab")
+        # extract_significant_IR(introns_path, TPM_threshold, output_path + "/IR_expressed.tab")
 
         # 2. Obtain the gene ids for the introns.
         logger.info("Part2...")
