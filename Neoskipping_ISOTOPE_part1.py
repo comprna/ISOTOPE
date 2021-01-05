@@ -49,18 +49,15 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 description = \
-"Description: Get alternative splice site events\n\n"
+"Description: Get neoskipping events\n\n"
 
 parser = ArgumentParser(description=description, formatter_class=RawTextHelpFormatter,
                         add_help=True)
 parser.add_argument("-r", "--reads", required=True, help = "reads mapped to junctions")
 parser.add_argument("-trans", "--transcript", required=True, help = "transcript expression file")
 parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
-parser.add_argument("-c", "--conversion", required=True, help = "gene name conversion")
-parser.add_argument("-m", "--max", required=False, type=int, default=500)
 parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-f", "--fold", required=False, type=int, default=0, help="Minimum fold of reads mapping the neoskipping with respect to the spanned junctions")
-parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
 parser.add_argument("-mut","--mutations", required=False, default="No file", help = "Mutations path")
 parser.add_argument("--chessSE", required=False, help = "CHESS SE path")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
@@ -77,8 +74,8 @@ parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=Fals
 parser.add_argument("--username", required=True, help = "Cluster user name")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
-def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
-         threshold, fold, repeats_path, mutations_path, CHESS_SE_path,
+def main(readcounts_path, transcript_expression_path, gtf_path,
+         threshold, fold, mutations_path, CHESS_SE_path,
          tumor_specific, mosea, mxfinder, fasta_genome, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
          output_path):
@@ -86,33 +83,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
     try:
 
         logger.info("Starting execution")
-
-
-        # readcounts_path = "/projects_rg/SCLC_cohorts/Smart/STAR/readCounts.tab"
-        # transcript_expression_path = "/projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt"
-        # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
-        # codons_gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.codons.gtf"
-        # conversion_names = "/projects_rg/SCLC_cohorts/tables/Ensembl_gene_conversion.txt"
-        # max_length = 500
-        # threshold = 5
-        # threshold2 = 10
-        # repeats_path = "/projects_rg/SCLC_cohorts/cis_analysis/tables/hg19_repeats.bed"
-        # mutations_path = "/projects_rg/babita/TCGA/mutation/mut_pipeline/juanlu_sclc/src_files/SCLC_mutations_sorted.bed.mut.out"
-        # CHESS_SE_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_SE_strict.ioe"
-        # tumor_specific = True
-        # mosea = "/genomics/users/juanluis/Software/MoSEA-master/mosea.py"
-        # fasta_genome = "/genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa"
-        # orfs_scripts = "/genomics/users/juanluis/comprna/MxFinder/extract_orfs.py"
-        # interpro = "/soft/EB_repo/bio/sequence/programs/noarch/interproscan/5.33-72.0/interproscan.sh"
-        # IUPred = "/projects_rg/SCLC_cohorts/soft/IUPred2A"
-        # HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
-        # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
-        # HLAtypes_pan_path = "/projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab"
-        # netMHC_path = "/projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC"
-        # netMHC_pan_path = "/projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan"
-        # remove_temp_files = True
-        # flag_Rudin = False
-        # output_path = "/users/genomics/juanluis/SCLC_cohorts/Smart/epydoor/neoskipping"
 
         # 0. Create a gtf with only the exon information
         dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -231,7 +201,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres, args.fold,
-         args.repeats,args.mutations,args.chessSE,args.tumor_specific,args.mosea,args.mxfinder,
+    main(args.reads,args.transcript,args.gtf,args.thres, args.fold,
+         args.mutations,args.chessSE,args.tumor_specific,args.mosea,args.mxfinder,
          args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
          args.Rudin, args.output)
