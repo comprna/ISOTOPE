@@ -95,8 +95,6 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
         command0 = "Rscript " + dir_path + "/lib/IR/format_intron_file.R " + introns_path + " " + output_path + "/IR_formatted.tab"
         os.system(command0)
 
-        exit()
-
         # 1. Get the IR expressed
         logger.info("Part1...")
         # extract_significant_IR(output_path + "/IR_formatted.tab", TPM_threshold, output_path + "/IR_expressed.tab")
