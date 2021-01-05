@@ -193,5 +193,5 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.introns,args.bam,args.gtf,args.introns_Normal, args.introns_GTEX,
+    main(args.introns,args.bam,args.gtf,args.introns_normal, args.introns_GTEX,
          args.thres,args.tumor_specific,args.Rudin, args.output)
