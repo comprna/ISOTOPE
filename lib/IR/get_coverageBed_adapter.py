@@ -106,16 +106,27 @@ def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, na
             dict_jobs[job_id] = 1
 
         logger.info("Waiting for all the jobs to finished...")
+
+        print(dict_jobs)
+
         flag_exit = False
         while(not flag_exit):
+
             logger.info("Waiting for all the jobs to finished repeat...")
+
             # Initialize the dictionary with the pending jobs in the cluster
             pending_jobs = {}
-            os.system("sleep 10")
+            os.system("sleep 20")
             p = subprocess.Popen(["squeue","-u", name_user], stdout=subprocess.PIPE)
             # Skip the first line (the header)
             line = p.stdout.readline()
+
+            print(line)
+
             for line in p.stdout:
+
+                print(line)
+
                 flag_exit = True
                 #Get the id of the job
                 job_id_aux = str(line).rstrip().split()[1]
