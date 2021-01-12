@@ -1,6 +1,5 @@
 #!/bin/sh
 
-#SBATCH --partition=normal
 #SBATCH --mem 15000
 
 module load BEDTools
