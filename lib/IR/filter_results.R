@@ -5,9 +5,9 @@ args = commandArgs(trailingOnly=TRUE)
 cat("Obtaining cases modifying the peptide...")
 
 junctions <- read.table(file=args[1],sep="\t",header = TRUE)
-#Get transcripts with a minimum expresion TPM > 1
-junctions_f <- junctions[which(junctions$Transcript_TPM>1),]
-#Get only the cases in which there is significance (All cases are singificant, this has been prefiltered before)
+#Get introns with a minimum expresion TPM > 1
+junctions_f <- junctions[which(junctions$Transcript_TPM>=as.integer(args[3])),]
+#Get only the cases in which there is significance
 junctions_f2 <- junctions_f[which(junctions_f$pvalue_coverage<=0.05),]
 #Save this file
 write.table(junctions_f2,file=args[2],sep="\t",quote = FALSE,row.names = FALSE)
@@ -36,6 +36,6 @@ junctions_f3$Index <- seq(1:nrow(junctions_f3))
 #329
 
 #Save this file (for running run_NetMHC.py)
-write.table(junctions_f3,file=args[3],sep="\t",quote = FALSE,row.names = FALSE)
+write.table(junctions_f3,file=args[4],sep="\t",quote = FALSE,row.names = FALSE)
 
 cat("Done.")

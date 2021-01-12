@@ -290,10 +290,10 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         run_netMHC_classI_slurm_part1(output_path + "/A5_A3_ORF_filtered_peptide_change.tab", HLAclass_path, HLAtypes_path,
                                       output_path + "/A5_A3_fasta_files",
                                       output_path + "/A5_A3_NetMHC-4.0_files",
-                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_3.tab",
-                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_3_all.tab",
-                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_2.tab",
-                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_2_all.tab",
+                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_gained.tab",
+                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_gained_all.tab",
+                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_lost.tab",
+                                      output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_lost_all.tab",
                                       output_path + "/A5_A3_NetMHC-4.0_junctions_ORF_neoantigens.tab",
                                       netMHC_path)
 
@@ -304,10 +304,10 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         run_netMHCpan_classI_slurm_part1(output_path + "/A5_A3_ORF_filtered_peptide_change.tab", HLAclass_path, HLAtypes_pan_path,
                                          output_path + "/A5_A3_fasta_files",
                                          output_path + "/A5_A3_NetMHCpan-4.0_files",
-                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_3.tab",
-                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_3_all.tab",
-                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_2.tab",
-                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_2_all.tab",
+                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_gained.tab",
+                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_gained_all.tab",
+                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_lost.tab",
+                                         output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_lost_all.tab",
                                          output_path + "/A5_A3_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
                                          netMHC_pan_path)
 

@@ -88,13 +88,12 @@ def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, na
                        + sample_formatted + ".tab"
             os.system(command1)
             # Create an auxiliary script
-            command3 = "module load Python; python "+dir_path+"/get_coverageBed.py " \
+            command3 = "python "+dir_path+"/get_coverageBed.py " \
                        + output_path+"/input.aux."+sample_formatted+".tab " + gtf_path + " " + coverage_path + " " + \
                        output_path + "/get_coverageBed_results." + sample_formatted + ".tab True"
             open_peptides_file = open(output_path + "/aux.sh", "w")
             open_peptides_file.write("#!/bin/sh\n")
-            open_peptides_file.write("#SBATCH --partition=normal\n")
-            open_peptides_file.write("#SBATCH --mem 10000\n")
+            open_peptides_file.write("#SBATCH --mem 5000\n")
             open_peptides_file.write("#SBATCH -e " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".err" + "\n")
             open_peptides_file.write("#SBATCH -o " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".out" + "\n")
             open_peptides_file.write(command3 + ";\n")

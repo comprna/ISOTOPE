@@ -1,7 +1,7 @@
 """
 @authors: Juan L. Trincado
 @email: juanluis.trincado@upf.edu
-IR_ISOTOPE.py: get significat intron retention
+IR_ISOTOPE.py: get significant intron retention
 """
 
 from lib.IR.extract_significant_IR import *
