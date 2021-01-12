@@ -108,8 +108,8 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
         os.system(command1)
         command2 = "grep -v kma_introns "+output_path + "/IR_expressed.tab > "+output_path + "/IR_no_kma_expressed.tab"
         os.system(command2)
-        IR_associate_gene_ids(output_path + "/IR_no_kma_expressed.tab", gtf_path, output_path + "/IR_no_kma_expressed_genes.tab")
-        IR_kma_associate_gene_ids(output_path + "/IR_kma_expressed.tab", gtf_path, output_path + "/IR_kma_expressed_genes.tab")
+        IR_associate_gene_ids(output_path + "/IR_no_kma_expressed.tab", gtf_path_exon, output_path + "/IR_no_kma_expressed_genes.tab")
+        IR_kma_associate_gene_ids(output_path + "/IR_kma_expressed.tab", gtf_path_exon, output_path + "/IR_kma_expressed_genes.tab")
         command3 = "cat "+output_path + "/IR_kma_expressed_genes.tab > "+output_path + "/IR_expressed_genes.tab; tail -n+2 "\
                    +output_path + "/IR_no_kma_expressed_genes.tab >> "+output_path + "/IR_expressed_genes.tab"
         os.system(command3)

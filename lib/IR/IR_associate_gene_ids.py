@@ -61,8 +61,8 @@ def IR_associate_gene_ids(introns_path, gtf_path, output_path):
         output_aux = "/".join(output_path.split("/")[:-1])+"/input_bedtools.bed"
         input_bedtools2.to_csv(output_aux, sep="\t", index=False, header=False)
         logger.info("Running bedtools...")
-        command = "module load BEDTools; intersectBed -wao -a " + output_aux + " -b " + gtf_path + " > " + \
-                  "/".join(output_path.split("/")[:-1]) + "/input_bedtools2.bed; module unload BEDTools;"
+        command = "intersectBed -wao -a " + output_aux + " -b " + gtf_path + " > " + \
+                  "/".join(output_path.split("/")[:-1]) + "/input_bedtools2.bed"
         os.system(command)
 
         # 3. Read the created file, saving all the genes associated to each intron
