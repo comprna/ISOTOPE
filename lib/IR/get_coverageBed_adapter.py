@@ -124,6 +124,7 @@ def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, na
             print(line)
 
             for line in p.stdout:
+                logger.info("Entering loop...")
 
                 print(line)
 
