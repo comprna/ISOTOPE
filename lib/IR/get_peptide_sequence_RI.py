@@ -103,7 +103,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
         # 2. Get the association gene - transcript from the gtf and the start and end codon from each transcript
         transcript_start_codon, transcript_stop_codon = {}, {}
-        gene_transcript = {}
+        gene_transcript, gene_strand = {}, {}
         with open(gtf_path) as f:
             logger.info("Loading genes - transcripts...")
             for line in f:
@@ -113,9 +113,11 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     tokens = line.rstrip().split("\t")
                     # Save the information from the exonic regions
                     if (tokens[2]=="exon"):
+                        strand = tokens[6]
                         gene_id = re.sub("\"", "", tokens[8].split(";")[0].split("gene_id")[1]).strip()
                         transcript_id = re.sub("\"", "",
                                                tokens[8].split(";")[1].split("transcript_id")[1]).strip()
+                        gene_strand[gene_id] = strand
                         if (gene_id not in gene_transcript):
                             gene_transcript[gene_id] = [transcript_id]
                         else:
