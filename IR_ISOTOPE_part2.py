@@ -140,7 +140,7 @@ def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAty
         # 7.3. Get the introns with a significant p_value
         logger.info("Part7.3...")
         command3="head -n1 "+output_path+"/IR_coverage.tab > "+output_path+"/IR_significant_introns.tab; " \
-                   "awk '{ if ($7 <= 0.05) print }' "+output_path+"/IR_coverage.tab >> "+output_path+"/IR_significant_introns.tab"
+                   "awk '{ if ($7 <= 0.05 && $6 > 0) print }' "+output_path+"/IR_coverage.tab >> "+output_path+"/IR_significant_introns.tab"
         os.system(command3)
 
         # 8. Get the peptide sequence associated
