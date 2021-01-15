@@ -232,7 +232,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 TPM_associated = 0
                 transcript_id = "None"
                 for transcript in associated_transcripts:
-                    logger.info("3...")
+                    logger.info("3..."+transcript)
                     # Get the exons associated to this transcript
                     if (IR_strand == "+"):
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start')
@@ -241,6 +241,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                                                                                      ascending=False)
 
                     # Check if the neoskiipping is included on this transcript
+                    logger.info("3.0.1...")
                     if (check_IR(exonization, exons_associated, IR_strand)):
                         logger.info("3.1...")
                         TPM = get_expression(sample_id,transcript,transcript_expression)
