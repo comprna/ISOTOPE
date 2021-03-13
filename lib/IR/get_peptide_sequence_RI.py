@@ -201,7 +201,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
             ir_id = header.index("Event_id")
             Sample_id_pos = header.index("Sample_id")
             for line in f:
-                logger.info("1...")
+                # logger.info("1...")
                 tokens = line.rstrip().split("\t")
                 gene = tokens[gene_id_pos]
                 exonization = tokens[ir_id]
@@ -218,7 +218,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 Stalling[exonization] = False
                 # Get the transcripts associated to the gene and the strand
                 if (gene in gene_transcript and gene in gene_strand):
-                    logger.info("2...")
+                    # logger.info("2...")
                     associated_transcripts = gene_transcript[gene]
                     IR_strand = gene_strand[gene]
                 else:
@@ -232,7 +232,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 TPM_associated = 0
                 transcript_id = "None"
                 for transcript in associated_transcripts:
-                    logger.info("3..."+transcript)
+                    # logger.info("3..."+transcript)
                     # Get the exons associated to this transcript
                     if (IR_strand == "+"):
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start')
@@ -241,9 +241,9 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                                                                                      ascending=False)
 
                     # Check if the neoskiipping is included on this transcript
-                    logger.info("3.0.1...")
+                    # logger.info("3.0.1...")
                     if (check_IR(exonization, exons_associated, IR_strand)):
-                        logger.info("3.1...")
+                        # logger.info("3.1...")
                         TPM = get_expression(sample_id,transcript,transcript_expression)
                         if (TPM != -1):
                             # Get the TPM expression and the id. We will take the transcript with the greatest expression
@@ -260,7 +260,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 exonization_transcript[exonization] = transcript_id
 
                 #Get the exons associated to this transcript
-                logger.info("3.2...")
+                # logger.info("3.2...")
                 if(IR_strand=="+"):
                     exons_associated = (gtf.loc[gtf['transcript_id'] == transcript_id]).sort_values('start')
                 else:
@@ -271,7 +271,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 end_prev = exons_associated.iloc[0, 4]
                 strand_prev = exons_associated.iloc[0, 6]
                 if(len(exons_associated.index)!=1):
-                    logger.info("4...")
+                    # logger.info("4...")
                     for i in range(1,len(exons_associated.index)):
                         start = exons_associated.iloc[i,3]
                         end = exons_associated.iloc[i,4]
@@ -330,7 +330,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 # 5.2 Get the dna sequence associated with this exons and the ones without the exonization, using MosEA
                 # 5.2.1. Format the exonization exons it in a bed format
                 # remember to substract 1 to the start position
-                logger.info("5...")
+                # logger.info("5...")
                 path1 = "/".join(output_peptide_path.split("/")[:-1])
                 exons_associated_with_exonization['start'] = exons_associated_with_exonization['start'].apply(lambda x: str(int(x) - 1))
                 #Include in the id the start and end of the exon
@@ -379,7 +379,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 else:
                     # 5.3.1.1. Check how many initial exons are similar. We will do this in order to obtain the part of the ORF
                     # reference that should be in common with the ORF exonization
-                    logger.info("6...")
+                    # logger.info("6...")
                     cont_same_exons = 0
                     cont_start_codon = 0
                     counter = 0
@@ -413,7 +413,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 if (cont_start_codon > cont_same_exons):
                     continue
                 else:
-                    logger.info("7...")
+                    # logger.info("7...")
                     # 5.3.1.2. Get the reference sequence given by the start and stop codons from the GTF
                     cont2 = 0
                     flag_start, flag_end, flag_same_exons = False, False, True
@@ -519,7 +519,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     # 5.3.2. Get the ORFs associated to the exonization DNA sequence
                     # If this is strand negative, we have to reverse the sequences before
                     sequence_total_EX = ""
-                    logger.info("7...")
+                    # logger.info("7...")
                     with open(path1 + "/aux_exonization_IR.fa") as f:
                         for line in f:
                             # If its header, pass the line
@@ -571,7 +571,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                         continue
 
                     # 5.3.3. Get the translation from the ORFs (reference and exonization)
-                    logger.info("8...")
+                    # logger.info("8...")
                     ORF_EX_f = ORF_EX.replace("T", "U")
                     # messenger_rna = Seq(ORF_EX_f, IUPAC.unambiguous_rna)
                     messenger_rna = Seq(ORF_EX_f)
@@ -647,7 +647,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     #                                              "\t" + str(end) + "\n")
 
                     # 5.5. If there is a peptide change, check if the exonized sequence will go to NMD
-                    logger.info("9...")
+                    # logger.info("9...")
                     peptide_change[exonization] = (not peptide_reference==peptide_exonizations)
                     if(peptide_reference==peptide_exonizations):
                         NMD[exonization] = False
