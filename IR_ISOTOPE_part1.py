@@ -52,15 +52,15 @@ parser = ArgumentParser(description=description, formatter_class=RawTextHelpForm
 parser.add_argument("-i", "--introns", required=True, help = "transcript expression to introns")
 parser.add_argument("-b", "--bam", required=True, help = "path to STAR output")
 parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
-parser.add_argument("-introns_normal", "--introns_normal", required=False, help = "transcript expression to introns on normal controls")
+parser.add_argument("-introns_normal", "--introns_normal", required=False, default="Missing", help = "transcript expression to introns on normal controls")
 parser.add_argument("-introns_GTEX", "--introns_GTEX", required=False, help = "transcript expression to introns on GTEX samples")
 parser.add_argument("-t", "--thres", required=False,  type=int, default=1, help="TPM threshold")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
-parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
+# parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
 def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_path,
-         TPM_threshold, tumor_specific, flag_Rudin, output_path):
+         TPM_threshold, tumor_specific, output_path):
 
     try:
 
@@ -117,7 +117,7 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
         # 3. Get the IR tumor specific
         if(tumor_specific):
 
-            if(flag_Rudin):
+            if(introns_Normal_path!="Missing"):
                 #Get the significant introns for the set of normal
                 extract_significant_IR(introns_Normal_path, TPM_threshold, output_path + "/IR_expressed_Normal.tab")
 
@@ -192,4 +192,4 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.introns,args.bam,args.gtf,args.introns_normal, args.introns_GTEX,
-         args.thres,args.tumor_specific,args.Rudin, args.output)
+         args.thres,args.tumor_specific, args.output)
