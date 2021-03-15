@@ -56,23 +56,12 @@ description = \
 
 parser = ArgumentParser(description=description, formatter_class=RawTextHelpFormatter,
                         add_help=True)
-parser.add_argument("-trans", "--transcript", required=True, help="transcript expression file")
-parser.add_argument("-g", "--gtf", required=True, help="gtf annotation")
-parser.add_argument("-genome", "--genome", required=True, help="Genome annotation")
 parser.add_argument("-HLAclass", "--HLAclass", required=True, help="HLA genotype of the samples")
 parser.add_argument("-HLAtypes", "--HLAtypes", required=True, help="HLA alelles recognized by NetMHC")
 parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help="HLA alelles recognized by NetMHCpan")
 parser.add_argument("-netMHC", "--netMHC", required=True, help="netMHC path")
 parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help="netMHCpan path")
-parser.add_argument("-t", "--thres", required=False, type=int, default=1,
-                    help="Minimum expression to consider an intron")
-parser.add_argument("-mosea", "--mosea", required=True, help="MoSEA path")
-parser.add_argument("-mxfinder", "--mxfinder", required=True, help="MxFinder path")
 parser.add_argument("-o", "--output", required=True, help="Output path")
-parser.add_argument("--username", required=True, help="Cluster user name")
-parser.add_argument("--tumor_specific", type=str2bool, nargs='?', const=True, default=False,
-                    help="Tumor specific mode")
-parser.add_argument("--temp", type=str2bool, nargs='?', const=True, default=False, help="Remove temp files")
 
 def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path, output_path):
 
