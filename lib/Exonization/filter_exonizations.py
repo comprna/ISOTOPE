@@ -39,20 +39,20 @@ def filter_exonizations(exonizations_path, control_path, intropolis_path, output
 
             #Load the exonizations
             exonizations = pd.read_table(exonizations_path, delimiter="\t")
-            #Load the Rudin exons
+            #Load the control exonizations
             control = pd.read_table(control_path, delimiter="\t")
-            #Load the Intropolis exons
+            #Load the Intropolis exonizations
             intropolis = pd.read_table(intropolis_path, delimiter="\t")
 
             #Merge the files and extract the exons that are not in the other files
             merge1 = exonizations.merge(control, on='New_exon', how='left', suffixes=('', '_y'))
             merge1_f = merge1[~merge1.Sample_id_y.notnull()]
-            #Get also the samples that would be filtered because of Rudin
+            #Get also the samples that would be filtered because of control
             merge1_f_null = merge1[merge1.Sample_id_y.notnull()]
             sample_counts = merge1_f_null["Sample_id"].value_counts()
             #Save this in an external file
             path1 = "/".join(output_path.split("/")[:-1])
-            sample_counts.to_csv(path1+"/samples_removed_Rudin.tab", sep="\t", index=True, header=True)
+            # sample_counts.to_csv(path1+"/samples_removed_controls.tab", sep="\t", index=True, header=True)
             merge2 = merge1_f.merge(intropolis, on='New_exon', how='left', suffixes=('', '_z'))
             merge2_f = merge2[~merge2.Sample_id_z.notnull()]
 
