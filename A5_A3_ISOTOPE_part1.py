@@ -95,7 +95,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
     try:
 
-        logger.info("Starting execution")
+        logger.info("Starting execution A5_A3_ISOTOPE_part1")
 
         # 0. Create a gtf with only the exon information
         dir_path = os.path.dirname(os.path.realpath(__file__))

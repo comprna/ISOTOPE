@@ -55,7 +55,7 @@ def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pa
 
     try:
 
-        logger.info("Starting execution")
+        logger.info("Starting execution exonizations_ISOTOPE_part3")
 
         #17. Run netMHC-4.0_part2
         logger.info("Part16...")

@@ -2,7 +2,7 @@ args = commandArgs(trailingOnly=TRUE)
 
 ####Filter the IR with peptide change ####
 
-cat("Obtaining cases modifying the peptide...")
+cat("Obtaining cases modifying the peptide...\n")
 
 junctions <- read.table(file=args[1],sep="\t",header = TRUE)
 #Get introns with a minimum expresion TPM > 1
@@ -38,4 +38,4 @@ junctions_f3$Index <- seq(1:nrow(junctions_f3))
 #Save this file (for running run_NetMHC.py)
 write.table(junctions_f3,file=args[4],sep="\t",quote = FALSE,row.names = FALSE)
 
-cat("Done.")
+cat("Done.\n")

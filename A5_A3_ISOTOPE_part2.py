@@ -56,7 +56,7 @@ parser.add_argument("-o", "--output", required=True, help = "Output path")
 def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path, output_path):
     try:
 
-        logger.info("Starting execution")
+        logger.info("Starting execution A5_A3_ISOTOPE_part2")
 
         #17. Run netMHC-4.0_part2
         logger.info("Part13...")

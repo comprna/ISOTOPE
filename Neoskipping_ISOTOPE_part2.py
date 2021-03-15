@@ -57,7 +57,7 @@ parser.add_argument("-o", "--output", required=True, help = "Output path")
 def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path, output_path):
     try:
 
-        logger.info("Starting execution")
+        logger.info("Starting execution Neoskipping_ISOTOPE_part2")
 
         # HLAclass_path = "/projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out"
         # HLAtypes_path = "/projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab"
