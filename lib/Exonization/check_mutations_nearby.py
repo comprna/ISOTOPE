@@ -84,77 +84,85 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
         # bed_file['score'] = 0
         bed_file.to_csv(path1 + "/exonizations.bed", sep="\t", index=False, header=False)
 
-        # Run interesectBed for obtaining the new exons that are not in coding regions
-        logger.info("Running intersectBed...")
-        command = "intersectBed -wao -a " + path1 + "/exonizations.bed -b " + mutations_path + " > " + \
-                  path1 + "/intersection_mutations.bed;"
-        os.system(command)
+        if(mutations_path!="Missing"):
+            # Run interesectBed for obtaining the new exons that are not in coding regions
+            logger.info("Running intersectBed...")
+            command = "intersectBed -wao -a " + path1 + "/exonizations.bed -b " + mutations_path + " > " + \
+                      path1 + "/intersection_mutations.bed;"
+            os.system(command)
 
-        # Take from the output file the exons obtained with intersectBed
-        logger.info("Obtain exonizations overlapping with mutations...")
-        intersection = pd.read_table(path1 + "/intersection_mutations.bed", delimiter="\t", header=None)
-        # intersection.columns = ['chr', 'start', 'end', 'exon_id','strand', 'score']
-        # Get the rows with a 1 in the last column
-        intersection_f = intersection.loc[intersection.iloc[:,21] == 1]
-        original_start = intersection_f[3].apply(lambda x: int(x.split(";")[1]))
-        original_end = intersection_f[3].apply(lambda x: int(x.split(";")[2]))
-        intersection_f["original_start"] = original_start
-        intersection_f["original_end"] = original_end
-        offset_A5 = intersection_f.apply(lambda x: get_offset_A5(x),axis=1)
-        offset_A3 = intersection_f.apply(lambda x: get_offset_A3(x),axis=1)
-        #Extract the samples per exon that has associated mutation
-        #Generate also bed tracks for the visualization of the mutations and the exonizations
-        exon_samples, exon_offset_A5, exon_offset_A3 = {},{},{}
-        mut_id = intersection_f.apply(lambda x: x[10]+":"+x[11]+">"+x[12], axis=1)
-        intersection_f["mut_id"] = mut_id
-        for i in range(0,len(intersection_f.index)):
-            exon = intersection_f.iloc[i, 3]
-            mut_id_aux = intersection_f.iloc[i].loc["mut_id"]
-            if(exon not in exon_samples):
-                exon_samples[exon] = [mut_id_aux]
-                exon_offset_A5[exon] = [offset_A5.iloc[i]]
-                exon_offset_A3[exon] = [offset_A3.iloc[i]]
-            else:
-                exon_samples[exon].append(mut_id_aux)
-                exon_offset_A5[exon].append(offset_A5.iloc[i])
-                exon_offset_A3[exon].append(offset_A3.iloc[i])
+            # Take from the output file the exons obtained with intersectBed
+            logger.info("Obtain exonizations overlapping with mutations...")
+            intersection = pd.read_table(path1 + "/intersection_mutations.bed", delimiter="\t", header=None)
+            # intersection.columns = ['chr', 'start', 'end', 'exon_id','strand', 'score']
+            # Get the rows with a 1 in the last column
+            intersection_f = intersection.loc[intersection.iloc[:,21] == 1]
+            original_start = intersection_f[3].apply(lambda x: int(x.split(";")[1]))
+            original_end = intersection_f[3].apply(lambda x: int(x.split(";")[2]))
+            intersection_f["original_start"] = original_start
+            intersection_f["original_end"] = original_end
+            offset_A5 = intersection_f.apply(lambda x: get_offset_A5(x),axis=1)
+            offset_A3 = intersection_f.apply(lambda x: get_offset_A3(x),axis=1)
+            #Extract the samples per exon that has associated mutation
+            #Generate also bed tracks for the visualization of the mutations and the exonizations
+            exon_samples, exon_offset_A5, exon_offset_A3 = {},{},{}
+            mut_id = intersection_f.apply(lambda x: x[10]+":"+x[11]+">"+x[12], axis=1)
+            intersection_f["mut_id"] = mut_id
+            for i in range(0,len(intersection_f.index)):
+                exon = intersection_f.iloc[i, 3]
+                mut_id_aux = intersection_f.iloc[i].loc["mut_id"]
+                if(exon not in exon_samples):
+                    exon_samples[exon] = [mut_id_aux]
+                    exon_offset_A5[exon] = [offset_A5.iloc[i]]
+                    exon_offset_A3[exon] = [offset_A3.iloc[i]]
+                else:
+                    exon_samples[exon].append(mut_id_aux)
+                    exon_offset_A5[exon].append(offset_A5.iloc[i])
+                    exon_offset_A3[exon].append(offset_A3.iloc[i])
 
-        #Generate bedtracks of the mutations
-        logger.info("Generating bedtracks...")
-        # event_info_bed = pd.DataFrame({'chr': intersection_f.iloc[:,6].tolist(), 'start': intersection_f.iloc[:,7].tolist(),
-        #                                'end': intersection_f.iloc[:,8].tolist(), 'id': intersection_f['mut_id'].tolist(),
-        #                                'score': 0, 'strand': intersection_f.iloc[:,4].tolist()})
-        bed2 = [('chr', intersection_f.iloc[:,6].tolist()), ('start', intersection_f.iloc[:,7].tolist()),
-                ('end', intersection_f.iloc[:,8].tolist()), ('id', intersection_f['mut_id'].tolist()),
-                 ('score', 0), ('strand', intersection_f.iloc[:,5].tolist())]
-        # event_info_bed = pd.DataFrame.from_items(bed2)
-        event_info_bed = pd.DataFrame.from_dict(dict(bed2))
-        bedtrack_output_file = open(path1 + "/Exonizations_track.bed", 'w')
-        bedtrack_output_file.write("track name=Mutations description=\"Mutations\" color=138,0,0\n")
-        event_info_bed.to_csv(bedtrack_output_file, sep="\t", index=False, header=False, mode='a')
-        #Generate bedtracks of the exonizations
-        start2 = list(map(lambda x: int(x.split(";")[1])-1,new_exon_unique))
-        end2 = list(map(lambda x: int(x.split(";")[2])+1,new_exon_unique))
-        bed2 = [("chr", chr), ("start", start2), ("end", end2), ("id", new_exon_unique),("score", 0),("strand", strand)]
-        # bed_file2 = pd.DataFrame.from_items(bed2)
-        bed_file2 = pd.DataFrame.from_dict(dict(bed2))
-        bedtrack_output_file.write("track name=Exonizations description=\"Exonizations\" color=0,0,0\n")
-        bed_file2.to_csv(bedtrack_output_file, sep="\t", index=False, header=False, mode='a')
-        bedtrack_output_file.close()
-        logger.info("Saved " + path1 + "/Exonizations_track.bed")
+            #Generate bedtracks of the mutations
+            logger.info("Generating bedtracks...")
+            # event_info_bed = pd.DataFrame({'chr': intersection_f.iloc[:,6].tolist(), 'start': intersection_f.iloc[:,7].tolist(),
+            #                                'end': intersection_f.iloc[:,8].tolist(), 'id': intersection_f['mut_id'].tolist(),
+            #                                'score': 0, 'strand': intersection_f.iloc[:,4].tolist()})
+            bed2 = [('chr', intersection_f.iloc[:,6].tolist()), ('start', intersection_f.iloc[:,7].tolist()),
+                    ('end', intersection_f.iloc[:,8].tolist()), ('id', intersection_f['mut_id'].tolist()),
+                     ('score', 0), ('strand', intersection_f.iloc[:,5].tolist())]
+            # event_info_bed = pd.DataFrame.from_items(bed2)
+            event_info_bed = pd.DataFrame.from_dict(dict(bed2))
+            bedtrack_output_file = open(path1 + "/Exonizations_track.bed", 'w')
+            bedtrack_output_file.write("track name=Mutations description=\"Mutations\" color=138,0,0\n")
+            event_info_bed.to_csv(bedtrack_output_file, sep="\t", index=False, header=False, mode='a')
+            #Generate bedtracks of the exonizations
+            start2 = list(map(lambda x: int(x.split(";")[1])-1,new_exon_unique))
+            end2 = list(map(lambda x: int(x.split(";")[2])+1,new_exon_unique))
+            bed2 = [("chr", chr), ("start", start2), ("end", end2), ("id", new_exon_unique),("score", 0),("strand", strand)]
+            # bed_file2 = pd.DataFrame.from_items(bed2)
+            bed_file2 = pd.DataFrame.from_dict(dict(bed2))
+            bedtrack_output_file.write("track name=Exonizations description=\"Exonizations\" color=0,0,0\n")
+            bed_file2.to_csv(bedtrack_output_file, sep="\t", index=False, header=False, mode='a')
+            bedtrack_output_file.close()
+            logger.info("Saved " + path1 + "/Exonizations_track.bed")
 
-        #Associate to each exon in the original file, the mutations
-        samples = exonizations['New_exon'].apply(lambda x: get_associated_samples(x,exon_samples))
-        aux_offset_A5 = exonizations['New_exon'].apply(lambda x: get_associated_samples(x,exon_offset_A5))
-        aux_offset_A3 = exonizations['New_exon'].apply(lambda x: get_associated_samples(x,exon_offset_A3))
-        exonizations["mut_samples"] = samples
-        exonizations["mut_offset_A5"] = aux_offset_A5
-        exonizations["mut_offset_A3"] = aux_offset_A3
-        #Check if any of the samples associated to the exonization has a mutation
-        coincidence = exonizations.apply(lambda x: check_coincidences(x), axis=1)
-        exonizations["mut_coincidence"] = coincidence
+            #Associate to each exon in the original file, the mutations
+            samples = exonizations['New_exon'].apply(lambda x: get_associated_samples(x,exon_samples))
+            aux_offset_A5 = exonizations['New_exon'].apply(lambda x: get_associated_samples(x,exon_offset_A5))
+            aux_offset_A3 = exonizations['New_exon'].apply(lambda x: get_associated_samples(x,exon_offset_A3))
+            exonizations["mut_samples"] = samples
+            exonizations["mut_offset_A5"] = aux_offset_A5
+            exonizations["mut_offset_A3"] = aux_offset_A3
+            #Check if any of the samples associated to the exonization has a mutation
+            coincidence = exonizations.apply(lambda x: check_coincidences(x), axis=1)
+            exonizations["mut_coincidence"] = coincidence
 
-        exonizations.to_csv(output_path, sep="\t", index=False, header=True)
+            exonizations.to_csv(output_path, sep="\t", index=False, header=True)
+
+        else:
+            exonizations["mut_samples"] = "[]"
+            exonizations["mut_offset_A5"] = "[]"
+            exonizations["mut_offset_A3"] = "[]"
+            exonizations["mut_coincidence"] = False
+
 
         logger.info("Saved "+output_path)
         logger.info("Done. Exiting program.")
