@@ -62,7 +62,7 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
         # 2. Given the list with the possible exonizations, get the reads associate to each of them
         logger.info("Part2...")
         output_path_aux2 = output_path+"/new_exonized_junctions_reads.tab"
-        get_reads_exonizations(output_path_aux, readcounts_path, output_path_aux2)
+        get_reads_exonizations(output_path_aux, readcounts_path, output_path_aux2, False)
 
         # 3. find the overlap between the nex exonizations and repeatitions (RepeatMasker)
         logger.info("Part3...")

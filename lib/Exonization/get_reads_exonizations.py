@@ -3,7 +3,6 @@
 @email: juanluis.trincado@upf.edu
 
 get_reads_exonizations: given the list with the possible exonizations, get the reads associate to each of them
-
 """
 
 import pandas as pd
@@ -28,7 +27,7 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
-def get_reads_exonizations(exonization_file, readCounts_file, output_file):
+def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intropolis_flag):
 
     try:
         logger.info("Starting execution")
@@ -45,25 +44,52 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file):
         # readCounts_file = "/projects_rg/SCLC_cohorts/George/PSI_Junction_Clustering/readCounts_George_Peifer_Rudin_Yokota.tab"
         # output_file = "/projects_rg/SCLC_cohorts/George/PSI_Junction_Clustering_v2/new_exonized_junctions_reads.tab"
 
-        # Load the readCounts
-        junction_reads, junction_reads1, junction_reads2 = {},{},{}
-        cont = 0
-        with open(readCounts_file) as f:
-            header = next(f).rstrip()
-            logger.info("Loading readCounts...")
-            for line in f:
-                # cont += 1
-                # print(str(cont))
-                # if (cont == 1000):
-                #     break
-                tokens = line.rstrip().split("\t")
-                junction_id = tokens[0]
-                reads = list(map(int,tokens[8:]))
-                # Save this reads in the dictionary
-                if(junction_id not in junction_reads):
-                    junction_reads[junction_id] = reads
-                else:
-                    raise Exception("Junction id "+junction_id+" repeated")
+        # Load the readCounts. They could come form Normal samples processed by Junckey or from Intropolis
+        if(not Intropolis_flag):
+            junction_reads = {}
+            cont = 0
+            with open(readCounts_file) as f:
+                header = next(f).rstrip()
+                logger.info("Loading readCounts...")
+                for line in f:
+                    # cont += 1
+                    # print(str(cont))
+                    # if (cont == 1000):
+                    #     break
+                    tokens = line.rstrip().split("\t")
+                    junction_id = tokens[0]
+                    reads = list(map(int,tokens[8:]))
+                    # Save this reads in the dictionary
+                    if(junction_id not in junction_reads):
+                        junction_reads[junction_id] = reads
+                    else:
+                        raise Exception("Junction id "+junction_id+" repeated")
+
+        else:
+            junction_reads = {}
+            cont = 0
+            with open(readCounts_file) as f:
+                logger.info("Loading readCounts from Intropolis...")
+                for line in f:
+                    cont += 1
+                    # print(str(cont))
+                    # if (cont == 100):
+                    #     break
+                    tokens = line.rstrip().split("\t")
+                    # junction_id = tokens[0]
+                    # junction_id = "chr"+tokens[0].split("_")[0]+";"+tokens[0].split("_")[1]+";"+tokens[0].split("_")[2]
+                    # Sustract 2 to the start and add 1 to the end
+                    junction_id = tokens[0] + ";" + str(int(tokens[1]) - 2) + ";" + str(int(tokens[2]) + 1) + ";" + str(
+                        tokens[3])
+                    # reads = list(map(int,tokens[8:]))
+                    # reads = np.max(tokens[7].split(","))
+                    reads = max(list(map(int, tokens[7].split(","))))
+                    # Save this reads in the dictionary
+                    if (junction_id not in junction_reads):
+                        junction_reads[junction_id] = reads
+                    else:
+                        logger.info("Junction id " + junction_id + " repeated")
+                        pass
 
         #Load the exonizations
         logger.info("Loading exonizations...")

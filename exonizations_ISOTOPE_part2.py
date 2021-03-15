@@ -73,13 +73,14 @@ parser.add_argument("-t", "--thres", required=False,  type=int, default=5, help=
 parser.add_argument("-m", "--max", required=False,  type=int, default=500)
 parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
+parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "reads mapped to junctions controls")
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
 parser.add_argument("-mut","--mutations", required=False, help = "Mutations path")
 parser.add_argument("--chess", required=False, help = "CHESS SE path")
 
 def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path,
-         mosea_path, orfs_scripts, output_path, repeats_path, threshold, tumor_specific, mutations_path, CHESS_SE_path, flag_Rudin, remove_temp_files, name_user):
+         mosea_path, orfs_scripts, output_path, repeats_path, threshold, max_length, tumor_specific, control_path, mutations_path, CHESS_SE_path, flag_Rudin, remove_temp_files, name_user):
     try:
 
         logger.info("Starting execution exonizations_ISOTOPE_part2")
@@ -117,33 +118,36 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
         # 10. Get the tumor specific events
         if(tumor_specific):
 
-            # Get also the significant exonizations from Rudin and Intropolis
-            output_Rudin_path_aux2 = output_path + "/new_exonized_junctions_Rudin_normal_reads.tab"
-            readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
-            get_reads_exonizations(output_path+"/new_exonized_junctions.tab", readCounts_Rudin_path, output_Rudin_path_aux2)
-            output_Rudin_path_aux3 = output_path + "/new_exonized_junctions_Rudin_normal_reads_repeatitions.tab"
-            overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
-            output_Rudin_path_aux4 = output_path + "/exonizations_by_sample_Rudin_normal.tab"
-            get_significant_exonizations(output_Rudin_path_aux3, threshold, output_Rudin_path_aux4)
-
+            # Get the significant exonizations from Intropolis (control)
             output_Intropolis_path_aux2 = output_path + "/new_exonized_junctions_Intropolis_reads.tab"
-            get_reads_exonizations(output_path+"/new_exonized_junctions.tab", readcounts_path, output_Intropolis_path_aux2)
+            get_reads_exonizations(output_path + "/new_exonized_junctions_Intropolis.tab", readcounts_path,
+                                   output_Intropolis_path_aux2, True)
             output_Intropolis_path_aux3 = output_path + "/new_exonized_junctions_Intropolis_reads_repeatitions.tab"
             overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
             output_Intropolis_path_aux4 = output_path + "/exonizations_by_sample_Intropolis.tab"
             get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
 
-            output_Rudin_path_aux4 = output_path + "/exonizations_by_sample_Rudin_normal.tab"
-            output_Intropolis_path_aux4 = output_path + "/exonizations_by_sample_Intropolis.tab"
-            output_path_aux11 = output_path + "/non_mutated_exonizations_filtered.tab"
-            filter_exonizations(output_path + "/non_mutated_exonizations.tab", output_Rudin_path_aux4, output_Intropolis_path_aux4, output_path_aux11, flag_Rudin)
-            output_path_aux12 = output_path + "/non_mutated_exonizations_filtered2.tab"
-            filter_exonizations_CHESS(output_path_aux11, CHESS_SE_path, output_path_aux12)
+            if(control_path!="Missing"):
+                # Get the significant exonizations from normal samples
+                extract_exonized_junctions(control_path, gtf_path, genome_path, max_length, output_path + "/exonized_junctions_control.tab", mosea_path)
+                get_reads_exonizations(output_path + "/exonized_junctions_control.tab", control_path, output_path + "/exonized_junctions_control_reads.tab", False)
+                get_significant_exonizations(output_path + "/exonized_junctions_control_reads.tab", threshold, output_path + "/exonizations_by_sample_control.tab")
+
+                #Filter exonizations
+                filter_exonizations(output_path + "/non_mutated_exonizations.tab", output_path + "/exonizations_by_sample_control.tab",
+                                    output_path + "/exonizations_by_sample_Intropolis.tab", output_path + "/non_mutated_exonizations_filtered.tab", control_path)
+                filter_exonizations_CHESS(output_path + "/non_mutated_exonizations_filtered.tab", CHESS_SE_path, output_path + "/non_mutated_exonizations_filtered2.tab")
+
+            else:
+                #Filter exonizations
+                filter_exonizations(output_path + "/non_mutated_exonizations.tab", "Missing",
+                                    output_path + "/exonizations_by_sample_Intropolis.tab", output_path + "/non_mutated_exonizations_filtered.tab", control_path)
+                filter_exonizations_CHESS(output_path + "/non_mutated_exonizations_filtered.tab", CHESS_SE_path, output_path + "/non_mutated_exonizations_filtered2.tab")
 
             # 11. Join the mutated and non_mutated cases
             logger.info("Part10...")
             output_path_aux13 = output_path + "/all_exonizations.tab"
-            command3 = "cat " + output_path + "/mutated_exonizations.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path_aux12 + " >> " + output_path_aux13
+            command3 = "cat " + output_path + "/mutated_exonizations.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/non_mutated_exonizations_filtered2.tab" + " >> " + output_path_aux13
             os.system(command3)
 
         else:
@@ -218,5 +222,5 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.gtf,args.genome,args.transcript,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,
-         args.netMHCpan,args.mosea,args.orfs,args.output,args.repeats,args.thres,args.tumor_specific,args.mutations,
+         args.netMHCpan,args.mosea,args.orfs,args.output,args.repeats,args.thres,args.max,args.tumor_specific,args.mutations,
          args.chess,args.Rudin,args.temp,args.username)
