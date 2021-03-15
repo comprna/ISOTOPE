@@ -112,6 +112,7 @@ def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, na
         flag_exit = False
         while(not flag_exit):
             # Initialize the dictionary with the pending jobs in the cluster
+            flag_exit = True
             pending_jobs = {}
             os.system("sleep 10")
             p = subprocess.Popen(["squeue","-u", name_user], stdout=subprocess.PIPE)
