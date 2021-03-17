@@ -109,6 +109,7 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             # if (cont == 3):
             #     break
             # By sample, sum all the reads by junctions
+            logger.info("Processing files2...")
             junction_list1_aux = junction_list1.split(",")
             totalCounts1 = None
             for junction in junction_list1_aux:
