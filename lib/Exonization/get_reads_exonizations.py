@@ -111,8 +111,10 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             # By sample, sum all the reads by junctions
             logger.info("Processing files2...")
             junction_list1_aux = junction_list1.split(",")
+            logger.info("Processing files3...")
             totalCounts1 = None
             for junction in junction_list1_aux:
+                logger.info(junction)
                 #Get the associated reads
                 # If the junctions is not in the junction reads file, assign a 0
                 if(junction in junction_reads):
@@ -126,6 +128,7 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
                     totalCounts1 = [x + y for x, y in zip(totalCounts1, readCounts1)]
             # totalCounts1_list.append(totalCounts1)
 
+            logger.info("Processing files4...")
             junction_list2_aux = junction_list2.split(",")
             totalCounts2 = None
             for junction in junction_list2_aux:
