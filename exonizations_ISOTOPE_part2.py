@@ -87,6 +87,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
 
         logger.info("Starting execution exonizations_ISOTOPE_part2")
 
+        logger.info("TESTING...")
 
 
         if(tumor_specific):
