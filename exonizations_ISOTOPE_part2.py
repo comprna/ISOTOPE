@@ -87,6 +87,26 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
 
         logger.info("Starting execution exonizations_ISOTOPE_part2")
 
+
+
+        if(tumor_specific):
+            logger.info("Get the tumor specific events...")
+
+            # Get the significant exonizations from Intropolis (control)
+            logger.info("Intropolis...")
+            output_path_aux = output_path + "/new_exonized_junctions.tab"
+            output_Intropolis_path_aux2 = output_path + "/new_exonized_junctions_Intropolis_reads.tab"
+            get_reads_exonizations(output_path_aux, Intropolis_path,
+                                   output_Intropolis_path_aux2, True)
+            output_Intropolis_path_aux3 = output_path + "/new_exonized_junctions_Intropolis_reads_repeatitions.tab"
+            overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
+            output_Intropolis_path_aux4 = output_path + "/exonizations_by_sample_Intropolis.tab"
+            get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
+
+
+
+
+
         # 6. Create the folder, if it doesn't exists
         logger.info("Part6...")
         logger.info("Moving all coverageBed files...")
