@@ -100,6 +100,8 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
         final_counts_list = []
         logger.info("Processing files...")
         cont = 0
+        logger.info(Junction_id3)
+        logger.info(Junction_id4)
         #By line, check all the possible reads associated to each junction.
         for junction_list1,junction_list2 in zip(Junction_id3,Junction_id4):
             # cont += 1
