@@ -132,6 +132,7 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             junction_list2_aux = junction_list2.split(",")
             totalCounts2 = None
             for junction in junction_list2_aux:
+                logger.info(junction)
                 #Get the associated reads
                 # If the junctions is not in the junction reads file, assign a 0
                 if(junction in junction_reads):
@@ -146,7 +147,9 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             # totalCounts2_list.append(totalCounts2)
 
             #From both lists, take the minimum value
+            logger.info("Processing files5...")
             final_counts = [str(min(x,y)) for x, y in zip(totalCounts1, totalCounts2)]
+            logger.info("Processing files6...")
             aux = "\t".join(final_counts)
             final_counts_list.append(aux)
 
