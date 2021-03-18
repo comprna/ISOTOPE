@@ -150,6 +150,11 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             logger.info("Processing files5...")
             logger.info(totalCounts1)
             logger.info(totalCounts2)
+            #Check if totalCounts are lists. If not, convert it to lists, to use zip
+            if not isinstance(totalCounts1, list):
+                totalCounts1 = list(totalCounts1)
+            if not isinstance(totalCounts2, list):
+                totalCounts2 = list(totalCounts2)
             logger.info(zip(totalCounts1, totalCounts2))
             final_counts = [str(min(x,y)) for x, y in zip(totalCounts1, totalCounts2)]
             logger.info("Processing files6...")
