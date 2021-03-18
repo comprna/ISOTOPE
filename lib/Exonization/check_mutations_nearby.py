@@ -162,6 +162,8 @@ def check_mutations_nearby(exonizations_path, mutations_path, window, output_pat
             exonizations["mut_offset_A5"] = "[]"
             exonizations["mut_offset_A3"] = "[]"
             exonizations["mut_coincidence"] = False
+            exonizations.to_csv(output_path, sep="\t", index=False, header=True)
+
 
 
         logger.info("Saved "+output_path)
