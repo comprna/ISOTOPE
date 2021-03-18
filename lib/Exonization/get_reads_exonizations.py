@@ -168,19 +168,36 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             aux = "\t".join(final_counts)
             final_counts_list.append(aux)
 
-        #Paste the readCounts
-        logger.info("Creating output file...")
-        exonizations["readCounts"] = final_counts_list
-        columns = list(exonizations.columns.values)
-        columns[-1] = "\t".join(header.split("\t")[8:])
-        exonizations.columns = columns
-        #Save the file
-        exonizations.to_csv(output_file, sep="\t", index=False, quoting=csv.QUOTE_NONE, escapechar=' ')
-        # #Save the file without using to_csv (it gave problems regarding the removal of quotations)
-        # f = open(output_file, 'w')
-        # f.write("\t".join(list(exonizations.columns.values)))
-        # for index, row in exonizations.iterrows():
-        #     f.write(row)
+        if(not Intropolis_flag):
+            #Paste the readCounts
+            logger.info("Creating output file...")
+            exonizations["readCounts"] = final_counts_list
+            columns = list(exonizations.columns.values)
+            columns[-1] = "\t".join(header.split("\t")[8:])
+            exonizations.columns = columns
+            #Save the file
+            exonizations.to_csv(output_file, sep="\t", index=False, quoting=csv.QUOTE_NONE, escapechar=' ')
+            # #Save the file without using to_csv (it gave problems regarding the removal of quotations)
+            # f = open(output_file, 'w')
+            # f.write("\t".join(list(exonizations.columns.values)))
+            # for index, row in exonizations.iterrows():
+            #     f.write(row)
+
+        else:
+            #Paste the readCounts
+            logger.info("Creating output file2...")
+            exonizations["readCounts"] = final_counts_list
+            # columns = list(exonizations.columns.values)
+            # columns[-1] = "\t".join(header.split("\t")[8:])
+            # exonizations.columns = columns
+            #Save the file
+            exonizations.to_csv(output_file, sep="\t", index=False, quoting=csv.QUOTE_NONE, escapechar=' ')
+            # #Save the file without using to_csv (it gave problems regarding the removal of quotations)
+            # f = open(output_file, 'w')
+            # f.write("\t".join(list(exonizations.columns.values)))
+            # for index, row in exonizations.iterrows():
+            #     f.write(row)
+
 
         logger.info("Done. Exiting program.")
 
