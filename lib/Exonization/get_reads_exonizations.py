@@ -109,9 +109,7 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             # if (cont == 3):
             #     break
             # By sample, sum all the reads by junctions
-            logger.info("Processing files2...")
             junction_list1_aux = junction_list1.split(",")
-            logger.info("Processing files3...")
             totalCounts1 = None
             for junction in junction_list1_aux:
                 logger.info(junction)
@@ -128,7 +126,6 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
                     totalCounts1 = [x + y for x, y in zip(totalCounts1, readCounts1)]
             # totalCounts1_list.append(totalCounts1)
 
-            logger.info("Processing files4...")
             junction_list2_aux = junction_list2.split(",")
             totalCounts2 = None
             for junction in junction_list2_aux:
@@ -147,24 +144,14 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             # totalCounts2_list.append(totalCounts2)
 
             #From both lists, take the minimum value
-            logger.info("Processing files5...")
             logger.info(totalCounts1)
             logger.info(totalCounts2)
             #Check if totalCounts are lists. If not, convert it to lists, to use zip
             if not isinstance(totalCounts1, list):
-                logger.info("Processing files5.1...")
                 totalCounts1 = [totalCounts1]
             if not isinstance(totalCounts2, list):
-                logger.info("Processing files5.2...")
                 totalCounts2 = [totalCounts2]
-            logger.info("Processing files6...")
-            logger.info(totalCounts1)
-            logger.info(totalCounts2)
-            logger.info("Processing files7...")
-            logger.info(list(zip(totalCounts1, totalCounts2)))
-            logger.info("Processing files8...")
             final_counts = [str(min(x,y)) for x, y in zip(totalCounts1, totalCounts2)]
-            logger.info("Processing files9...")
             aux = "\t".join(final_counts)
             final_counts_list.append(aux)
 
@@ -185,7 +172,7 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
 
         else:
             #Paste the readCounts
-            logger.info("Creating output file2...")
+            logger.info("Creating output file...")
             exonizations["readCounts"] = final_counts_list
             # columns = list(exonizations.columns.values)
             # columns[-1] = "\t".join(header.split("\t")[8:])

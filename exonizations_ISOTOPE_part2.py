@@ -87,27 +87,6 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
 
         logger.info("Starting execution exonizations_ISOTOPE_part2")
 
-        logger.info("TESTING...")
-
-
-        if(tumor_specific):
-            logger.info("Get the tumor specific events...")
-
-            # Get the significant exonizations from Intropolis (control)
-            logger.info("Intropolis...")
-            output_path_aux = output_path + "/new_exonized_junctions.tab"
-            output_Intropolis_path_aux2 = output_path + "/new_exonized_junctions_Intropolis_reads.tab"
-            get_reads_exonizations(output_path_aux, Intropolis_path,
-                                   output_Intropolis_path_aux2, True)
-            output_Intropolis_path_aux3 = output_path + "/new_exonized_junctions_Intropolis_reads_repeatitions.tab"
-            overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
-            output_Intropolis_path_aux4 = output_path + "/exonizations_by_sample_Intropolis.tab"
-            get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
-
-
-
-
-
         # 6. Create the folder, if it doesn't exists
         logger.info("Part6...")
         logger.info("Moving all coverageBed files...")
@@ -139,6 +118,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
         os.system(command2)
 
         # 10. Get the tumor specific events
+        logger.info("Part10...")
         if(tumor_specific):
             logger.info("Get the tumor specific events...")
 
@@ -174,21 +154,15 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
                 filter_exonizations_CHESS(output_path + "/non_mutated_exonizations_filtered.tab", CHESS_SE_path, output_path + "/non_mutated_exonizations_filtered2.tab")
 
             # 11. Join the mutated and non_mutated cases
-            logger.info("Part10...")
             output_path_aux13 = output_path + "/all_exonizations.tab"
             command3 = "cat " + output_path + "/mutated_exonizations.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/non_mutated_exonizations_filtered2.tab" + " >> " + output_path_aux13
             os.system(command3)
 
         else:
-
             # 11. Join the mutated and non_mutated cases
-            logger.info("Part10...")
             output_path_aux13 = output_path + "/all_exonizations.tab"
             command3 = "cat " + output_path + "/mutated_exonizations.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/non_mutated_exonizations.tab" + " >> " + output_path_aux13
             os.system(command3)
-
-        logger.info("STOP IT HERE!!!")
-        exit()
 
         # 12. Get the peptide sequence associated
         logger.info("Part11...")
