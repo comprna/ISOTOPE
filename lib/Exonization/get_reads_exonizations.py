@@ -152,8 +152,10 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             logger.info(totalCounts2)
             #Check if totalCounts are lists. If not, convert it to lists, to use zip
             if not isinstance(totalCounts1, list):
+                logger.info("Processing files5.1...")
                 totalCounts1 = list(totalCounts1)
             if not isinstance(totalCounts2, list):
+                logger.info("Processing files5.2...")
                 totalCounts2 = list(totalCounts2)
             logger.info("Processing files6...")
             logger.info(totalCounts1)
