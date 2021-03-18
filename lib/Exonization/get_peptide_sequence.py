@@ -183,6 +183,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
 
+        logger.info(gtf.head())
+
         # 5. Get the peptidic sequences of the reference and the transcript with the exonization
         peptide_change, frame_shift, NMD, Stalling = {}, {}, {}, {}
         index_DNA_ref, index_DNA_ex, index_AA_ref, index_AA_ex = {}, {}, {}, {}
@@ -238,13 +240,15 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     # Get the exons associated to this transcript
                     if (exonization_strand == "+"):
                         logger.info("Part12...")
+                        logger.info(gtf.loc[gtf['transcript_id'] == transcript])
+                        logger.info("Part13...")
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start')
                     else:
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                      ascending=False)
 
                     # Check if the neoskiipping is included on this transcript
-                    logger.info("Part13...")
+                    logger.info("Part14...")
                     logger.info(transcript)
                     logger.info(exonization_strand)
                     logger.info(exons_associated)
