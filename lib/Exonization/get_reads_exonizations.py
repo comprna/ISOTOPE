@@ -157,11 +157,11 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
                 totalCounts2 = list(totalCounts2)
             logger.info(totalCounts1)
             logger.info(totalCounts2)
-            logger.info("Processing files7...")
+            logger.info("Processing files6...")
             logger.info(list(zip(totalCounts1, totalCounts2)))
-            logger.info("Processing files8...")
+            logger.info("Processing files7...")
             final_counts = [str(min(x,y)) for x, y in zip(totalCounts1, totalCounts2)]
-            logger.info("Processing files9...")
+            logger.info("Processing files8...")
             aux = "\t".join(final_counts)
             final_counts_list.append(aux)
 
