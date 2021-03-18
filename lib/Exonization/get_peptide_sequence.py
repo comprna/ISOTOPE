@@ -237,13 +237,16 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                     # Get the exons associated to this transcript
                     if (exonization_strand == "+"):
+                        logger.info("Part12...")
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start')
                     else:
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                      ascending=False)
 
                     # Check if the neoskiipping is included on this transcript
+                    logger.info("Part13...")
                     if (check_exonization(exonization, exons_associated)):
+                        logger.info("Part14...")
                         TPM = get_expression(sample_id,transcript,transcript_expression)
                         if(TPM != -1):
                             # Get the TPM expression and the id. We will take the transcript with the greatest expression
