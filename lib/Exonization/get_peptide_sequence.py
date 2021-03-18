@@ -220,6 +220,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     continue
 
                 # Check in which transcripts the exonization is included
+                logger.info("Part1...")
+
                 exonization_start = exonization.split(";")[1]
                 exonization_end = exonization.split(";")[2]
                 exonization_strand = exonization.split(";")[3]
@@ -258,6 +260,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 else:
                     exons_associated = (gtf.loc[gtf['transcript_id'] == transcript_id]).sort_values('start',ascending=False)
                 # 5.1. Go over all the exons checking where the exonization is located
+                logger.info("Part2...")
+
                 start_prev = exons_associated.iloc[0, 3]
                 end_prev = exons_associated.iloc[0, 4]
                 strand_prev = exons_associated.iloc[0, 6]
@@ -326,6 +330,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 # 5.2 Get the dna sequence associated with this exons and the ones without the exonization, using MosEA
                 # 5.2.1. Format the exonization exons it in a bed format
                 # remember to substract 1 to the start position
+                logger.info("Part3...")
+
                 exons_associated_with_exonization['start'] = exons_associated_with_exonization['start'].apply(lambda x: str(int(x) - 1))
                 exonization_formatted = exons_associated_with_exonization.apply(lambda x: exonization+":"+x['chr']+":"+
                                                                                   str(x['start'])+"-"+str(x['end']),axis=1)
