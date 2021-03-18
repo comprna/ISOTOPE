@@ -246,6 +246,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     # Check if the neoskiipping is included on this transcript
                     logger.info("Part13...")
                     logger.info(transcript)
+                    logger.info(exonization_strand)
                     logger.info(exons_associated)
                     if (check_exonization(exonization, exons_associated)):
                         logger.info("Part14...")
