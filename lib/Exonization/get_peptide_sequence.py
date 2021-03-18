@@ -221,6 +221,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                 # Check in which transcripts the exonization is included
                 logger.info("Part1...")
+                logger.info(exonization)
 
                 exonization_start = exonization.split(";")[1]
                 exonization_end = exonization.split(";")[2]
@@ -228,6 +229,10 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                 TPM_associated = 0
                 transcript_id = "None"
+
+                logger.info("Part11...")
+
+
                 for transcript in associated_transcripts:
 
                     # Get the exons associated to this transcript
@@ -253,6 +258,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                 # Associate this transcript to tje exonization
                 exonization_transcript[exonization] = transcript_id
+
+                logger.info("Part12...")
 
                 #Get the exons associated to this transcript
                 if(exonization_strand=="+"):
