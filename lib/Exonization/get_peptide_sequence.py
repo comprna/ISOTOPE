@@ -175,7 +175,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         # 4. Load the gtf as a pandas dataframe
         logger.info("Loading gtf file..."+gtf_path)
         gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
-        logger.info(gtf.head())
 
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
@@ -183,18 +182,13 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         logger.info(gtf.head())
         #Check if the chr column is already formatted
         if(gtf['chr'].str.contains('chr').all()):
-            logger.info("Enter here2!!! ")
             list_chr = "chr"
             gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,22)] + ["chrX", "chrY"])]
         else:
-            logger.info("Enter here1!!! ")
             gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
             gtf['chr'] = 'chr' + gtf['chr'].astype(str)
 
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
-        logger.info("Loading gtf file2222..."+gtf_path)
-        logger.info(gtf.head())
-
 
         # 5. Get the peptidic sequences of the reference and the transcript with the exonization
         peptide_change, frame_shift, NMD, Stalling = {}, {}, {}, {}
@@ -233,9 +227,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     continue
 
                 # Check in which transcripts the exonization is included
-                logger.info("Part1...")
-                logger.info(exonization)
-
                 exonization_start = exonization.split(";")[1]
                 exonization_end = exonization.split(";")[2]
                 exonization_strand = exonization.split(";")[3]
@@ -243,28 +234,18 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 TPM_associated = 0
                 transcript_id = "None"
 
-                logger.info("Part11...")
-
-
                 for transcript in associated_transcripts:
 
                     # Get the exons associated to this transcript
                     if (exonization_strand == "+"):
-                        logger.info("Part12...")
                         logger.info(gtf.loc[gtf['transcript_id'] == transcript])
-                        logger.info("Part13...")
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start')
                     else:
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                      ascending=False)
 
                     # Check if the neoskiipping is included on this transcript
-                    logger.info("Part14...")
-                    logger.info(transcript)
-                    logger.info(exonization_strand)
-                    logger.info(exons_associated)
                     if (check_exonization(exonization, exons_associated)):
-                        logger.info("Part14...")
                         TPM = get_expression(sample_id,transcript,transcript_expression)
                         if(TPM != -1):
                             # Get the TPM expression and the id. We will take the transcript with the greatest expression
@@ -280,16 +261,12 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 # Associate this transcript to tje exonization
                 exonization_transcript[exonization] = transcript_id
 
-                logger.info("Part12...")
-
                 #Get the exons associated to this transcript
                 if(exonization_strand=="+"):
                     exons_associated = (gtf.loc[gtf['transcript_id'] == transcript_id]).sort_values('start')
                 else:
                     exons_associated = (gtf.loc[gtf['transcript_id'] == transcript_id]).sort_values('start',ascending=False)
                 # 5.1. Go over all the exons checking where the exonization is located
-                logger.info("Part2...")
-
                 start_prev = exons_associated.iloc[0, 3]
                 end_prev = exons_associated.iloc[0, 4]
                 strand_prev = exons_associated.iloc[0, 6]
@@ -358,7 +335,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 # 5.2 Get the dna sequence associated with this exons and the ones without the exonization, using MosEA
                 # 5.2.1. Format the exonization exons it in a bed format
                 # remember to substract 1 to the start position
-                logger.info("Part3...")
 
                 exons_associated_with_exonization['start'] = exons_associated_with_exonization['start'].apply(lambda x: str(int(x) - 1))
                 exonization_formatted = exons_associated_with_exonization.apply(lambda x: exonization+":"+x['chr']+":"+
