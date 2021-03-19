@@ -184,7 +184,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         #Check if the chr column is already formatted
         if(gtf['chr'].str.contains('chr').all()):
             logger.info("Enter here2!!! ")
-            gtf['chr'] = gtf[gtf['chr'].map(lambda x: x.lstrip('chr')).isin(list(range(1, 22)) + ["X", "Y"])]
+            list_chr = "chr"
+            gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,22)] + ["chrX", "chrY"])]
         else:
             logger.info("Enter here1!!! ")
             gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
