@@ -100,8 +100,8 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
         final_counts_list = []
         logger.info("Processing files...")
         cont = 0
-        logger.info(Junction_id3)
-        logger.info(Junction_id4)
+        # logger.info(Junction_id3)
+        # logger.info(Junction_id4)
         #By line, check all the possible reads associated to each junction.
         for junction_list1,junction_list2 in zip(Junction_id3,Junction_id4):
             # cont += 1
@@ -112,7 +112,7 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             junction_list1_aux = junction_list1.split(",")
             totalCounts1 = None
             for junction in junction_list1_aux:
-                logger.info(junction)
+                # logger.info(junction)
                 #Get the associated reads
                 # If the junctions is not in the junction reads file, assign a 0
                 if(junction in junction_reads):
@@ -129,7 +129,7 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             junction_list2_aux = junction_list2.split(",")
             totalCounts2 = None
             for junction in junction_list2_aux:
-                logger.info(junction)
+                # logger.info(junction)
                 #Get the associated reads
                 # If the junctions is not in the junction reads file, assign a 0
                 if(junction in junction_reads):
@@ -144,8 +144,8 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             # totalCounts2_list.append(totalCounts2)
 
             #From both lists, take the minimum value
-            logger.info(totalCounts1)
-            logger.info(totalCounts2)
+            # logger.info(totalCounts1)
+            # logger.info(totalCounts2)
             #Check if totalCounts are lists. If not, convert it to lists, to use zip
             if not isinstance(totalCounts1, list):
                 totalCounts1 = [totalCounts1]
