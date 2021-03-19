@@ -175,6 +175,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         # 4. Load the gtf as a pandas dataframe
         logger.info("Loading gtf file..."+gtf_path)
         gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
+        logger.info(gtf.head())
+
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf = gtf[gtf['type2'].isin(["exon"])]
@@ -182,8 +184,9 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         #Add the chr suffix
         gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
-
+        logger.info("Loading gtf file2222..."+gtf_path)
         logger.info(gtf.head())
+
 
         # 5. Get the peptidic sequences of the reference and the transcript with the exonization
         peptide_change, frame_shift, NMD, Stalling = {}, {}, {}, {}
