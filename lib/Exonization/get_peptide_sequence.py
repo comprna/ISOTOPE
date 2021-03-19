@@ -180,11 +180,14 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf = gtf[gtf['type2'].isin(["exon"])]
+        logger.info(gtf.head())
         #Check if the chr column is already formatted
         if("chr" not in gtf['chr']):
+            logger.info("Enter here1!!! ")
             gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
             gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         else:
+            logger.info("Enter here2!!! ")
             gtf['chr'] = gtf[gtf['chr'].map(lambda x: x.lstrip('chr')).isin(list(range(1, 22)) + ["X", "Y"])]
 
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
