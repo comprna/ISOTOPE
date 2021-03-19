@@ -173,13 +173,12 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         #                 pass
 
         # 4. Load the gtf as a pandas dataframe
-        logger.info("Loading gtf file..."+gtf_path)
+        logger.info("Loading gtf file...")
         gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
 
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf = gtf[gtf['type2'].isin(["exon"])]
-        logger.info(gtf.head())
         #Check if the chr column is already formatted
         if(gtf['chr'].str.contains('chr').all()):
             list_chr = "chr"
@@ -238,7 +237,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
 
                     # Get the exons associated to this transcript
                     if (exonization_strand == "+"):
-                        logger.info(gtf.loc[gtf['transcript_id'] == transcript])
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start')
                     else:
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
