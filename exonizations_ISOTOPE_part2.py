@@ -65,7 +65,7 @@ parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help = "HLA 
 parser.add_argument("-netMHC", "--netMHC", required=True, help = "netMHC path")
 parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpan path")
 parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
-parser.add_argument("-orfs", "--orfs", required=True, help = "MxFinder path")
+parser.add_argument("-mxfinder", "--mxfinder", required=True, help = "MxFinder path")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 parser.add_argument("--username", required=True, help = "Cluster user name")
 parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
