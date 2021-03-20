@@ -95,7 +95,7 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
         logger.info("Part5...")
         output_path_aux5 = output_path + "/random_exonizations.gtf"
         output_path_aux6 = output_path + "/random_exonizations.bed"
-        generate_random_intronic_positions(output_path_aux4, gtf_path, n_randomizations, output_path_aux5, output_path_aux6)
+        generate_random_intronic_positions(output_path_aux4, gtf_path_exon, n_randomizations, output_path_aux5, output_path_aux6)
 
         # 6. Run coverageBed on the samples in the cluster
 
