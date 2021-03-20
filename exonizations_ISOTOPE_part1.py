@@ -74,7 +74,7 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
         logger.info("Part1...")
         dir_path = os.path.dirname(os.path.realpath(__file__))
         output_path_aux = output_path+"/new_exonized_junctions.tab"
-        extract_exonized_junctions(readcounts_path, gtf_path, genome_path, max_length, output_path_aux, mosea_path)
+        extract_exonized_junctions(readcounts_path, gtf_path_exon, genome_path, max_length, output_path_aux, mosea_path)
 
         # 2. Given the list with the possible exonizations, get the reads associate to each of them
         logger.info("Part2...")
