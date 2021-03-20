@@ -53,6 +53,23 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
 
         logger.info("Starting execution exonizations_ISOTOPE_part1")
 
+        # 0. Create a gtf with only the exon information
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        gtf_path_exon = '{}.{}'.format(gtf_path, "exon")
+        gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
+        #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
+        gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
+        gtf = gtf[gtf['type2'].isin(["exon"])]
+        #Check if the chr column is already formatted
+        if(gtf['chr'].str.contains('chr').all()):
+            list_chr = "chr"
+            gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,22)] + ["chrX", "chrY"])]
+        else:
+            gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+            gtf['chr'] = 'chr' + gtf['chr'].astype(str)
+        #Save the gtf in external file
+        gtf.to_csv(gtf_path_exon,index=False,header=False,sep ='\t',quoting=csv.QUOTE_NONE)
+
         # 1. Identify the junctions that could generate an exonization
         logger.info("Part1...")
         dir_path = os.path.dirname(os.path.realpath(__file__))
