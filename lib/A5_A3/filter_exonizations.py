@@ -28,12 +28,12 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def filter_exonizations(exonizations_path, control_path, intropolis_path, output_path, control_flag):
+def filter_exonizations(exonizations_path, control_path, intropolis_path, output_path):
 
     try:
         logger.info("Starting execution")
 
-        if(control_flag!="Missing"):
+        if(control_path!="Missing"):
 
             #Load the exonizations
             exonizations = pd.read_table(exonizations_path, delimiter="\t", )

@@ -58,7 +58,7 @@ parser.add_argument("-trans", "--transcript", required=True, help = "transcript 
 parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
 parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-f", "--fold", required=False, type=int, default=0, help="Minimum fold of reads mapping the neoskipping with respect to the spanned junctions")
-parser.add_argument("-mut","--mutations", required=False, default="No file", help = "Mutations path")
+parser.add_argument("-mut","--mutations", required=False, default="Missing", help = "Mutations path")
 parser.add_argument("--chess", required=False, help = "CHESS SE path")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
@@ -70,13 +70,15 @@ parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help = "HLA 
 parser.add_argument("-netMHC", "--netMHC", required=True, help = "netMHC path")
 parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpan path")
 parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
+parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
+parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "reads mapped to junctions controls")
+parser.add_argument("-Intropolis", "--Intropolis", required=False, default="Missing", help = "reads mapped to junctions from Intropolis db")
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
-parser.add_argument("--username", required=True, help = "Cluster user name")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
 def main(readcounts_path, transcript_expression_path, gtf_path,
          threshold, fold, mutations_path, CHESS_SE_path,
-         tumor_specific, mosea, mxfinder, fasta_genome, HLAclass_path, HLAtypes_path,
+         tumor_specific, control_path, Intropolis_path, mosea_path, mxfinder, genome_path, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
          output_path):
 
@@ -108,30 +110,42 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
 
         # 2. Get the tumor specific neoskipping events
         if (tumor_specific):
+            logger.info("Get the tumor specific events...")
 
-            logger.info("Part2...")
-            # Get also the significant neoskipping from Rudin and Intropolis
-            output_Rudin_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
-            readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
-            extract_neoskipping_junctions(readCounts_Rudin_path, gtf_path_exon, threshold, output_Rudin_path_aux)
-
-            output_Intropolis_path_aux = output_path + "/new_Neoskipping_junctions_Rudin_normal_reads.tab"
-            readCounts_Intropolis_path = "/projects_rg/Annotation/Intropolis/intropolis.v1.hg19.filtered.tsv"
-            extract_neoskipping_junctions_Intropolis(readcounts_path, readCounts_Intropolis_path, gtf_path_exon, threshold,
+            # Get the significant exonizations from Intropolis (control)
+            logger.info("Intropolis...")
+            output_Intropolis_path_aux = output_path + "/new_Neoskipping_junctions_Intropolis_reads.tab"
+            extract_neoskipping_junctions_Intropolis(readcounts_path, Intropolis_path, gtf_path_exon, threshold,
                                                      output_Intropolis_path_aux)
 
-            filter_neoskipping(output_path_aux, output_Rudin_path_aux, output_Intropolis_path_aux,
-                               output_path + "/new_Neoskipping_junctions_filtered.tab", flag_Rudin)
-            filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered.tab", CHESS_SE_path,
-                                     output_path + "/new_Neoskipping_junctions_filtered2.tab")
-            output_path2 = output_path + "/new_Neoskipping_junctions_filtered2.tab"
+            if(control_path!="Missing"):
+
+                logger.info("Additional controls...")
+                # Get also the significant neoskipping from Rudin and Intropolis
+                output_control_path_aux = output_path + "/new_Neoskipping_junctions_control.tab"
+                extract_neoskipping_junctions(control_path, gtf_path_exon, threshold, output_control_path_aux)
+
+                #Filter neoskippiing
+                logger.info("Filtering events...")
+                filter_neoskipping(output_path_aux, output_control_path_aux, output_Intropolis_path_aux,
+                                   output_path + "/new_Neoskipping_junctions_filtered.tab")
+                filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered.tab", CHESS_SE_path,
+                                         output_path + "/new_Neoskipping_junctions_filtered2.tab")
+                output_path2 = output_path + "/new_Neoskipping_junctions_filtered2.tab"
+
+            else:
+                filter_neoskipping(output_path_aux, "Missing", output_Intropolis_path_aux,
+                                   output_path + "/new_Neoskipping_junctions_filtered.tab")
+                filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered.tab", CHESS_SE_path,
+                                         output_path + "/new_Neoskipping_junctions_filtered2.tab")
+                output_path2 = output_path + "/new_Neoskipping_junctions_filtered2.tab"
 
         else:
             output_path2 = output_path + "/new_Neoskipping_junctions.tab"
 
         # 3. Get the mutations nearby
         logger.info("Part3...")
-        if(mutations_path!="No file"):
+        if(mutations_path!="Missing"):
             check_mutations_nearby(output_path2, mutations_path, 200, output_path + "/new_Neoskipping_junctions_mut.tab")
 
         else:
@@ -151,12 +165,12 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
         output_path_aux15 = output_path + "/all_neoskipping_ORF_sequences.tab"
         get_peptide_sequence(output_path + "/new_Neoskipping_junctions_mut2.tab", transcript_expression_path, gtf_path,
                              output_path_peptide, output_path_dna, output_path_aux14,
-                             output_path_aux15, mosea, fasta_genome, mxfinder, remove_temp_files)
+                             output_path_aux15, mosea_path, genome_path, mxfinder, remove_temp_files)
 
         # 6. Filter the cases for running netMHC
         logger.info("Part6...")
         output_path_aux18 = output_path + "/all_neoskipping_filtered.tab"
-        command2 = "module load R; Rscript " + dir_path + "/lib/Neoskipping/filter_results.R " + output_path_aux14 + " " + output_path_aux18 + " " + output_path + "/all_neoskipping_filtered_peptide_change.tab"
+        command2 = "Rscript " + dir_path + "/lib/Neoskipping/filter_results.R " + output_path_aux14 + " " + output_path_aux18 + " " + output_path + "/all_neoskipping_filtered_peptide_change.tab"
         os.system(command2)
 
         # 7. Select the fasta candidates for being run to the epitope analysis

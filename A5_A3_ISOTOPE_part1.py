@@ -172,14 +172,14 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
                 #Filter A5_A3
                 logger.info("Filtering events...")
                 filter_exonizations(output_path + "/A5_A3_non_mutated.tab", output_path + "/A5_A3_by_sample_control.tab",
-                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/A5_A3_non_mutated_filtered.tab", control_path)
+                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/A5_A3_non_mutated_filtered.tab")
                 filter_exonizations_CHESS(output_path + "/A5_A3_non_mutated_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/A5_A3_non_mutated_filtered2.tab")
 
             else:
                 #Filter A5_A3
                 logger.info("Filtering events...")
                 filter_exonizations(output_path + "/A5_A3_non_mutated.tab", "Missing",
-                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/A5_A3_non_mutated_filtered.tab", control_path)
+                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/A5_A3_non_mutated_filtered.tab")
                 filter_exonizations_CHESS(output_path + "/A5_A3_non_mutated_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/A5_A3_non_mutated_filtered2.tab")
 
             # 9. Join the mutated and non_mutated cases

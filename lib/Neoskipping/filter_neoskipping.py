@@ -29,22 +29,22 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def filter_neoskipping(neoskipping_path, rudin_path, intropolis_path, output_path, flag_Rudin):
+def filter_neoskipping(neoskipping_path, control_path, intropolis_path, output_path):
 
     try:
         logger.info("Starting execution")
 
-        if(flag_Rudin):
+        if(control_path!="Missing"):
 
             #Load the neoskipping
             neoskipping = pd.read_table(neoskipping_path, delimiter="\t")
-            #Load the Rudin junction
-            rudin = pd.read_table(rudin_path, delimiter="\t")
+            #Load the control junction
+            control = pd.read_table(control_path, delimiter="\t")
             #Load the Intropolis junctions
             intropolis = pd.read_table(intropolis_path, delimiter="\t")
 
             #Merge the files and extract the exons that are not in the other files
-            merge1 = neoskipping.merge(rudin, on='Neoskipping_junction', how='left', suffixes=('', '_y'))
+            merge1 = neoskipping.merge(control, on='Neoskipping_junction', how='left', suffixes=('', '_y'))
             merge1_f = merge1[~merge1.Sample_id_y.notnull()]
             merge2 = merge1_f.merge(intropolis, on='Neoskipping_junction', how='left', suffixes=('', '_z'))
             merge2_f = merge2[~merge2.Sample_id_z.notnull()]
