@@ -54,8 +54,8 @@ def overlap_with_repeats(input_path, repeats_path, output_path):
 
         # Run interesectBed for obtaining the exons that overlapps with repeat regions
         logger.info("Running intersectBed...")
-        command2 = "module load BEDTools; intersectBed -wao -a " + path1 + "/aux.bed -b " + repeats_path + \
-                   " -s > " + path1 + "/aux2.bed; module unload BEDTools; "
+        command2 = "intersectBed -wao -a " + path1 + "/aux.bed -b " + repeats_path + \
+                   " -s > " + path1 + "/aux2.bed"
         os.system(command2)
 
         #Load the new created file. Get all the repeatitions associated to the exons
@@ -74,7 +74,7 @@ def overlap_with_repeats(input_path, repeats_path, output_path):
                         if(tokens[9] not in exon_repeat[tokens[3]]):
                             exon_repeat[tokens[3]].append(tokens[9])
 
-        #Read the table with the A5_A3 junctions, adding the infomration of the repeats
+        #Read the table with the A5_A3 junctions, adding the information of the repeats
         repeats = []
         for index, row in junction_reads.iterrows():
             if(row['Alt_Exon_id'] in exon_repeat):
@@ -92,8 +92,8 @@ def overlap_with_repeats(input_path, repeats_path, output_path):
         logger.info("Saved " + output_path)
 
         # Remove auxiliary files
-        os.remove(path1 + "/aux.bed")
-        os.remove(path1 + "/aux2.bed")
+        #os.remove(path1 + "/aux.bed")
+        #os.remove(path1 + "/aux2.bed")
 
         logger.info("Done. Exiting program.")
 
