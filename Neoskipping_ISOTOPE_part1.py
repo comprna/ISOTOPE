@@ -202,6 +202,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.transcript,args.gtf,args.thres, args.fold,
-         args.mutations,args.chessSE,args.tumor_specific,args.mosea,args.mxfinder,
+         args.mutations,args.chess,args.tumor_specific,args.mosea,args.mxfinder,
          args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
          args.Rudin, args.output)
