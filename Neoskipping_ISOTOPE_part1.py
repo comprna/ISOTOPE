@@ -60,7 +60,6 @@ parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="
 parser.add_argument("-f", "--fold", required=False, type=int, default=0, help="Minimum fold of reads mapping the neoskipping with respect to the spanned junctions")
 parser.add_argument("-mut","--mutations", required=False, default="Missing", help = "Mutations path")
 parser.add_argument("--chess", required=False, help = "CHESS SE path")
-parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
 parser.add_argument("-mxfinder", "--mxfinder", required=True, help = "MxFinder path")
 parser.add_argument("-genome", "--genome", required=True, help = "Genome annotation")
