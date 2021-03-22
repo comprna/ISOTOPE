@@ -146,7 +146,7 @@ def generate_random_intronic_positions(input_path, gtf_path, n, output_path, out
         #         gene = tokens[Gene_id_pos]
 
         for i in range(0,len(unique_values.index)):
-            logger.info("i: "+str(i))
+            # logger.info("i: "+str(i))
             id = unique_values.Event_id.iloc[i]
             gene = unique_values.Gene_id.iloc[i]
             #If there are more than one gene, take the one with the greatest interval
