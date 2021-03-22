@@ -72,14 +72,12 @@ parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "reads mapped to junctions controls")
 parser.add_argument("-Intropolis", "--Intropolis", required=False, default="Missing", help = "reads mapped to junctions from Intropolis db")
-parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
 def main(readcounts_path, transcript_expression_path, gtf_path,
          threshold, fold, mutations_path, CHESS_SE_path,
          tumor_specific, control_path, Intropolis_path, mosea_path, mxfinder, genome_path, HLAclass_path, HLAtypes_path,
-         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
-         output_path):
+         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, output_path):
 
     try:
 
@@ -216,5 +214,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.transcript,args.gtf,args.thres, args.fold,
          args.mutations,args.chess,args.tumor_specific,args.mosea,args.mxfinder,
-         args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
-         args.Rudin, args.output)
+         args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,args.output)
