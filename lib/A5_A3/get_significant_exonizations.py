@@ -41,7 +41,6 @@ def get_significant_exonizations(exonization_file, threshold, output_file):
         columns = list(exonizations_reads.columns.values)
         f = open(output_file, 'w')
         f.write("Sample_id\tGene\tCanonical_Junction_id\tAlt_Junction_id\tCanonical_Exon\tAlt_Exon_id\tstrand\tOffset\tRepeats\tNew_Exon_length\tmotif\tsplice_site_type\tReadCounts\n")
-        logger.info(str(len(exonizations_reads.index)))
         for index, row in exonizations_reads.iterrows():
             # logger.info(str(index))
             for i in range(11,len(columns)):

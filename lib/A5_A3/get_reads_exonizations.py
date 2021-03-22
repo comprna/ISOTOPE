@@ -109,6 +109,11 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
             else:
                 readCounts2 = list(np.repeat(0, len(tokens[8:])))
 
+            #Check if totalCounts are lists. If not, convert it to lists, to use zip
+            if not isinstance(readCounts1, list):
+                readCounts1 = [readCounts1]
+            if not isinstance(readCounts2, list):
+                readCounts2 = [readCounts2]
             # From both lists, take the minimum value
             final_counts = [str(min(x, y)) for x, y in zip(readCounts1, readCounts2)]
             aux = "\t".join(final_counts)
