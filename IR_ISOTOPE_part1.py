@@ -55,12 +55,13 @@ parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
 parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "transcript expression to introns on normal controls")
 parser.add_argument("-chess", "--chess", required=False, help = "transcript expression to introns on GTEX samples")
 parser.add_argument("-t", "--thres", required=False,  type=int, default=1, help="TPM threshold")
+parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 # parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
 def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
-         TPM_threshold, tumor_specific, output_path):
+         TPM_threshold, n_randomizations, tumor_specific, output_path):
 
     try:
 
@@ -192,4 +193,4 @@ def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.introns,args.bam,args.gtf,args.control_path, args.chess,
-         args.thres,args.tumor_specific, args.output)
+         args.thres,args.rand,args.tumor_specific, args.output)
