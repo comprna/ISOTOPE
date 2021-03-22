@@ -52,14 +52,14 @@ parser = ArgumentParser(description=description, formatter_class=RawTextHelpForm
 parser.add_argument("-i", "--introns", required=True, help = "transcript expression to introns")
 parser.add_argument("-b", "--bam", required=True, help = "path to STAR output")
 parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
-parser.add_argument("-introns_normal", "--introns_normal", required=False, default="Missing", help = "transcript expression to introns on normal controls")
-parser.add_argument("-introns_GTEX", "--introns_GTEX", required=False, help = "transcript expression to introns on GTEX samples")
+parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "transcript expression to introns on normal controls")
+parser.add_argument("-chess", "--chess", required=False, help = "transcript expression to introns on GTEX samples")
 parser.add_argument("-t", "--thres", required=False,  type=int, default=1, help="TPM threshold")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 # parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
 
-def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_path,
+def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
          TPM_threshold, tumor_specific, output_path):
 
     try:
@@ -71,8 +71,8 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
         # TPM_threshold = 1
         # tumor_specific = True
         # flag_Rudin = False
-        # introns_Normal_path = "/projects_rg/SCLC_cohorts/cis_analysis/v5/SCLC_v5/tables/iso_tpm_introns_Rudin_Normal.txt"
-        # introns_GTEX_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_RI_strict.ioe"
+        # control_path_path = "/projects_rg/SCLC_cohorts/cis_analysis/v5/SCLC_v5/tables/iso_tpm_introns_Rudin_Normal.txt"
+        # chess_path = "/projects_rg/SCLC_cohorts/annotation/chess2.0_assembly_hg19_CrossMap.events_RI_strict.ioe"
         # gtf_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.gtf"
         # gtf_protein_coding_path = "/projects_rg/SCLC_cohorts/annotation/Homo_sapiens.GRCh37.75.formatted.only_protein_coding.gtf"
         # output_path = "/users/genomics/juanluis/SCLC_cohorts/SCLC/epydoor/IR"
@@ -117,9 +117,9 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
         # 3. Get the IR tumor specific
         if(tumor_specific):
 
-            if(introns_Normal_path!="Missing"):
+            if(control_path_path!="Missing"):
                 #Get the significant introns for the set of normal
-                extract_significant_IR(introns_Normal_path, TPM_threshold, output_path + "/IR_expressed_Normal.tab")
+                extract_significant_IR(control_path_path, TPM_threshold, output_path + "/IR_expressed_Normal.tab")
 
                 #Filter by a set of Normal
                 output_path_filtered = output_path + "/IR_expressed_genes_filtered.tab"
@@ -127,12 +127,12 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
 
                 # Filter by a set of Normal (GTEX)
                 output_path_filtered2 = output_path + "/IR_expressed_genes_filtered2.tab"
-                filter_IR_CHESS(output_path_filtered, introns_GTEX_path, output_path_filtered2)
+                filter_IR_CHESS(output_path_filtered, chess_path, output_path_filtered2)
 
             else:
                 # Filter by a set of Normal (GTEX)
                 output_path_filtered2 = output_path + "/IR_expressed_genes_filtered2.tab"
-                filter_IR_CHESS(output_path + "/IR_expressed_genes.tab", introns_GTEX_path, output_path_filtered2)
+                filter_IR_CHESS(output_path + "/IR_expressed_genes.tab", chess_path, output_path_filtered2)
 
 
         else:
@@ -140,7 +140,7 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
 
         # 4. Generate random positions for each intron
         logger.info("Part4...")
-        generate_random_intronic_positions(output_path_filtered2, gtf_path_exon, 100, output_path + "/random_introns.gtf",
+        generate_random_intronic_positions(output_path_filtered2, gtf_path_exon, rand, output_path + "/random_introns.gtf",
                                            output_path + "/random_introns.bed")
 
         # 5. Run coverageBed on the samples in the cluster
@@ -191,5 +191,5 @@ def main(introns_path, bam_path, gtf_path, introns_Normal_path, introns_GTEX_pat
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.introns,args.bam,args.gtf,args.introns_normal, args.introns_GTEX,
+    main(args.introns,args.bam,args.gtf,args.control_path, args.chess,
          args.thres,args.tumor_specific, args.output)

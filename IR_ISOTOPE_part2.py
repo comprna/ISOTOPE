@@ -64,16 +64,17 @@ parser.add_argument("-netMHC", "--netMHC", required=True, help="netMHC path")
 parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help="netMHCpan path")
 parser.add_argument("-t", "--thres", required=False, type=int, default=1,
                     help="Minimum expression to consider an intron")
+parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
 parser.add_argument("-mosea", "--mosea", required=True, help="MoSEA path")
 parser.add_argument("-mxfinder", "--mxfinder", required=True, help="MxFinder path")
 parser.add_argument("-o", "--output", required=True, help="Output path")
-parser.add_argument("--username", required=True, help="Cluster user name")
+parser.add_argument("--user", required=True, help="Cluster user name")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?', const=True, default=False,
                     help="Tumor specific mode")
 parser.add_argument("--temp", type=str2bool, nargs='?', const=True, default=False, help="Remove temp files")
 
 def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAtypes_path,
-         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, threshold,
+         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, threshold, n_randomizations,
          mosea_path, mxfinder_path, output_path, tumor_specific, remove_temp_files, name_user):
 
     try:
@@ -196,5 +197,5 @@ def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAty
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.transcript,args.gtf,args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,
-         args.netMHC,args.netMHCpan,args.thres,args.mosea,args.mxfinder,args.output,args.tumor_specific,
-         args.temp,args.username)
+         args.netMHC,args.netMHCpan,args.thres,args.rand,args.mosea,args.mxfinder,args.output,args.tumor_specific,
+         args.temp,args.user)
