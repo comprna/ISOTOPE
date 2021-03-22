@@ -140,12 +140,12 @@ def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
             output_path_filtered2 = output_path + "/IR_expressed_genes.tab"
 
         # 4. Generate random positions for each intron
-        logger.info("Part4...")
+        logger.info("Part3...")
         generate_random_intronic_positions(output_path_filtered2, gtf_path_exon, n_randomizations, output_path + "/random_introns.gtf",
                                            output_path + "/random_introns.bed")
 
         # 5. Run coverageBed on the samples in the cluster
-        logger.info("Part5...")
+        logger.info("Part4...")
         # dir_path = os.path.dirname(os.path.realpath(__file__))
 
         # 5.1. If there is any chr missing in the bed file, add an extra line with this info
