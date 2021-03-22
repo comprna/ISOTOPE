@@ -56,31 +56,31 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intro
                         raise Exception("Junction id "+junction_id+" repeated")
 
         else:
-        junction_reads = {}
-        cont = 0
-        with open(readCounts_file) as f:
-            logger.info("Loading readCounts from Intropolis...")
-            for line in f:
-                cont += 1
-                # print(str(cont))
-                # if (cont == 100):
-                #     break
-                tokens = line.rstrip().split("\t")
-                # junction_id = tokens[0]
-                # junction_id = "chr"+tokens[0].split("_")[0]+";"+tokens[0].split("_")[1]+";"+tokens[0].split("_")[2]
-                # Sustract 2 to the start and add 1 to the end
-                junction_id = tokens[0] + ";" + str(int(tokens[1]) - 2) + ";" + str(
-                    int(tokens[2]) + 1) + ";" + str(
-                    tokens[3])
-                # reads = list(map(int,tokens[8:]))
-                # reads = np.max(tokens[7].split(","))
-                reads = max(list(map(int, tokens[7].split(","))))
-                # Save this reads in the dictionary
-                if (junction_id not in junction_reads):
-                    junction_reads[junction_id] = reads
-                else:
-                    logger.info("Junction id " + junction_id + " repeated")
-                    pass
+            junction_reads = {}
+            cont = 0
+            with open(readCounts_file) as f:
+                logger.info("Loading readCounts from Intropolis...")
+                for line in f:
+                    cont += 1
+                    # print(str(cont))
+                    # if (cont == 100):
+                    #     break
+                    tokens = line.rstrip().split("\t")
+                    # junction_id = tokens[0]
+                    # junction_id = "chr"+tokens[0].split("_")[0]+";"+tokens[0].split("_")[1]+";"+tokens[0].split("_")[2]
+                    # Sustract 2 to the start and add 1 to the end
+                    junction_id = tokens[0] + ";" + str(int(tokens[1]) - 2) + ";" + str(
+                        int(tokens[2]) + 1) + ";" + str(
+                        tokens[3])
+                    # reads = list(map(int,tokens[8:]))
+                    # reads = np.max(tokens[7].split(","))
+                    reads = max(list(map(int, tokens[7].split(","))))
+                    # Save this reads in the dictionary
+                    if (junction_id not in junction_reads):
+                        junction_reads[junction_id] = reads
+                    else:
+                        logger.info("Junction id " + junction_id + " repeated")
+                        pass
 
         #Load the exonizations
         logger.info("Loading exonizations...")
