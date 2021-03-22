@@ -7,8 +7,6 @@ annotation. CHESS is a db that obtains all expressed transcripts in GTEX data. W
 with SUPPA and obtained the events. If we detect any SE in CHESS overlapping any exonization, we will remove it
 """
 
-import pandas as pd
-from argparse import ArgumentParser, RawTextHelpFormatter
 import logging, sys, os, re
 import shutil
 
