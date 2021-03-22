@@ -175,7 +175,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         # 4. Load the gtf as a pandas dataframe
         logger.info("Loading gtf file...")
         gtf = pd.read_table(gtf_path, delimiter="\t",header=None,comment="#")
-
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf = gtf[gtf['type2'].isin(["exon"])]
@@ -186,7 +185,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         else:
             gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
             gtf['chr'] = 'chr' + gtf['chr'].astype(str)
-
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
 
         # 5. Get the peptidic sequences of the reference and the transcript with the exonization
@@ -241,7 +239,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     else:
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                      ascending=False)
-
                     # Check if the neoskiipping is included on this transcript
                     if (check_exonization(exonization, exons_associated)):
                         TPM = get_expression(sample_id,transcript,transcript_expression)

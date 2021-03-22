@@ -28,30 +28,59 @@ ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 
-def get_reads_exonizations(exonization_file, readCounts_file, output_file):
+def get_reads_exonizations(exonization_file, readCounts_file, output_file, Intropolis_flag):
 
     try:
         logger.info("Starting execution")
 
-        # Load the readCounts
-        junction_reads, junction_reads1, junction_reads2 = {},{},{}
+        # Load the readCounts. They could come form Normal samples processed by Junckey or from Intropolis
+        if(not Intropolis_flag):
+            # Load the readCounts
+            junction_reads, junction_reads1, junction_reads2 = {},{},{}
+            cont = 0
+            with open(readCounts_file) as f:
+                header = next(f).rstrip()
+                logger.info("Loading readCounts...")
+                for line in f:
+                    # cont += 1
+                    # print(str(cont))
+                    # if (cont == 1000):
+                    #     break
+                    tokens = line.rstrip().split("\t")
+                    junction_id = tokens[0]
+                    reads = list(map(float,tokens[8:]))
+                    # Save this reads in the dictionary
+                    if(junction_id not in junction_reads):
+                        junction_reads[junction_id] = reads
+                    else:
+                        raise Exception("Junction id "+junction_id+" repeated")
+
+        else:
+        junction_reads = {}
         cont = 0
         with open(readCounts_file) as f:
-            header = next(f).rstrip()
-            logger.info("Loading readCounts...")
+            logger.info("Loading readCounts from Intropolis...")
             for line in f:
-                # cont += 1
+                cont += 1
                 # print(str(cont))
-                # if (cont == 1000):
+                # if (cont == 100):
                 #     break
                 tokens = line.rstrip().split("\t")
-                junction_id = tokens[0]
-                reads = list(map(float,tokens[8:]))
+                # junction_id = tokens[0]
+                # junction_id = "chr"+tokens[0].split("_")[0]+";"+tokens[0].split("_")[1]+";"+tokens[0].split("_")[2]
+                # Sustract 2 to the start and add 1 to the end
+                junction_id = tokens[0] + ";" + str(int(tokens[1]) - 2) + ";" + str(
+                    int(tokens[2]) + 1) + ";" + str(
+                    tokens[3])
+                # reads = list(map(int,tokens[8:]))
+                # reads = np.max(tokens[7].split(","))
+                reads = max(list(map(int, tokens[7].split(","))))
                 # Save this reads in the dictionary
-                if(junction_id not in junction_reads):
+                if (junction_id not in junction_reads):
                     junction_reads[junction_id] = reads
                 else:
-                    raise Exception("Junction id "+junction_id+" repeated")
+                    logger.info("Junction id " + junction_id + " repeated")
+                    pass
 
         #Load the exonizations
         logger.info("Loading exonizations...")
@@ -85,14 +114,22 @@ def get_reads_exonizations(exonization_file, readCounts_file, output_file):
             aux = "\t".join(final_counts)
             final_counts_list.append(aux)
 
-        #Paste the readCounts
-        logger.info("Creating output file...")
-        exonizations["readCounts"] = final_counts_list
-        columns = list(exonizations.columns.values)
-        columns[-1] = "\t".join(header.split("\t")[8:])
-        exonizations.columns = columns
-        #Save the file
-        exonizations.to_csv(output_file, sep="\t", index=False, quoting=csv.QUOTE_NONE, escapechar=' ')
+        if(not Intropolis_flag):
+            #Paste the readCounts
+            logger.info("Creating output file...")
+            exonizations["readCounts"] = final_counts_list
+            columns = list(exonizations.columns.values)
+            columns[-1] = "\t".join(header.split("\t")[8:])
+            exonizations.columns = columns
+            #Save the file
+            exonizations.to_csv(output_file, sep="\t", index=False, quoting=csv.QUOTE_NONE, escapechar=' ')
+
+        else:
+            #Paste the readCounts
+            logger.info("Creating output file...")
+            exonizations["readCounts"] = final_counts_list
+            #Save the file
+            exonizations.to_csv(output_file, sep="\t", index=False, quoting=csv.QUOTE_NONE, escapechar=' ')
 
         logger.info("Saved "+output_file)
         logger.info("Done. Exiting program.")

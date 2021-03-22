@@ -63,10 +63,9 @@ parser.add_argument("-m", "--max", required=False, type=int, default=500)
 parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-chunks", "--size_chunks", required=False, type=int, default=1, help="For paralellization, this values indicates number of jobs to run")
 parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
-parser.add_argument("-mut","--mutations", required=False, default="No file", help = "Mutations path")
+parser.add_argument("-mut","--mutations", required=False, default="Missing", help = "Mutations path")
 parser.add_argument("--chessA5", required=False, help = "CHESS A5 path")
 parser.add_argument("--chessA3", required=False, help = "CHESS A3 path")
-parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
 parser.add_argument("-mxfinder", "--mxfinder", required=True, help = "MxFinder path")
 parser.add_argument("-genome", "--genome", required=True, help = "Genome annotation")
@@ -76,6 +75,9 @@ parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help = "HLA 
 parser.add_argument("-netMHC", "--netMHC", required=True, help = "netMHC path")
 parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpan path")
 parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
+parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
+parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "reads mapped to junctions controls")
+parser.add_argument("-Intropolis", "--Intropolis", required=False, default="Missing", help = "reads mapped to junctions from Intropolis db")
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("--username", required=True, help = "Cluster user name")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
@@ -89,7 +91,7 @@ def chunks(iterable, n):
 
 def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names, max_length,
          threshold, size_chunks, repeats_path, mutations_path, CHESS_A5_path, CHESS_A3_path,
-         tumor_specific, mosea, mxfinder, fasta_genome, HLAclass_path, HLAtypes_path,
+         tumor_specific, control_path, Intropolis_path,  mosea_path, mxfinder, genome_path, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
          name_user, output_path):
 
@@ -113,12 +115,12 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         # 1. Identify the junctions that could generate an alternative splice site
         logger.info("Part1...")
         output_path_aux = output_path+"/new_A5_A3_junctions.tab"
-        extract_exonized_junctions(readcounts_path, gtf_path_exon, fasta_genome, max_length, output_path_aux, mosea)
+        extract_exonized_junctions(readcounts_path, gtf_path_exon, genome_path, max_length, output_path_aux, mosea_path)
 
         # 2. Given the list with the possible A5_A3, get the reads associate to each of them
         logger.info("Part2...")
         output_path_aux2 = output_path+"/new_A5_A3_junctions_reads.tab"
-        get_reads_exonizations(output_path_aux, readcounts_path, output_path_aux2)
+        get_reads_exonizations(output_path_aux, readcounts_path, output_path_aux2, False)
 
         # 3. find the overlap between the nex A5_A3 and repeatitions (RepeatMasker)
         logger.info("Part3...")
@@ -136,72 +138,67 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
         # 6. Check if in the A5_A3 there are mutations nearby
         logger.info("Part6...")
-        if(mutations_path!="No file"):
-            check_mutations_nearby(output_path + "/A5_A3_by_sample_coverage.tab", mutations_path, 200, output_path + "/A5_A3_by_sample_coverage_mut.tab")
-            # 7. Separate the mutated from the non-mutated cases
-            logger.info("Part7...")
-            command1 = "Rscript " + dir_path + "/lib/A5_A3/separate_mutated_cases.R " + output_path + "/A5_A3_by_sample_coverage_mut.tab " \
-                       + output_path + "/A5_A3_mutated.tab " + output_path + "/A5_A3_non_mutated.tab "
-            os.system(command1)
+        check_mutations_nearby(output_path + "/A5_A3_by_sample_coverage.tab", mutations_path, 200, output_path + "/A5_A3_by_sample_coverage_mut.tab")
 
-            # 8. Get the tumor specific events
-            if (tumor_specific):
+        # 7. Separate the mutated from the non-mutated cases
+        logger.info("Part7...")
+        command1 = "Rscript " + dir_path + "/lib/A5_A3/separate_mutated_cases.R " + output_path + "/A5_A3_by_sample_coverage_mut.tab " \
+                   + output_path + "/A5_A3_mutated.tab " + output_path + "/A5_A3_non_mutated.tab"
+        os.system(command1)
 
-                # Get also the significant A5_A3 from Rudin and Intropolis
-                logger.info("Part8.1...")
-                output_Rudin_path_aux2 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads.tab"
-                readCounts_Rudin_path = "/projects_rg/SCLC_cohorts/Rudin/STAR/v1/normal_readCounts.tab"
-                get_reads_exonizations(output_path + "/new_A5_A3_junctions.tab", readCounts_Rudin_path,
-                                       output_Rudin_path_aux2)
-                output_Rudin_path_aux3 = output_path + "/new_A5_A3_junctions_Rudin_normal_reads_repeatitions.tab"
-                overlap_with_repeats(output_Rudin_path_aux2, repeats_path, output_Rudin_path_aux3)
-                output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
-                get_significant_exonizations(output_Rudin_path_aux3, threshold, output_Rudin_path_aux4)
+        # 8. Get the tumor specific events
+        if (tumor_specific):
+            logger.info("Get the tumor specific events...")
 
-                logger.info("Part8.2...")
-                output_Intropolis_path_aux2 = output_path + "/new_A5_A3_junctions_Intropolis_reads.tab"
-                get_reads_exonizations(output_path + "/new_A5_A3_junctions.tab", readcounts_path,
-                                       output_Intropolis_path_aux2)
-                output_Intropolis_path_aux3 = output_path + "/new_A5_A3_junctions_Intropolis_reads_repeatitions.tab"
-                overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
-                output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
-                get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
+            # Get the significant exonizations from Intropolis (control)
+            logger.info("Intropolis...")
+            output_path_aux = output_path + "/new_A5_A3_junctions.tab"
+            output_Intropolis_path_aux2 = output_path + "/new_A5_A3_junctions_Intropolis_reads.tab"
+            get_reads_exonizations(output_path_aux, Intropolis_path,
+                                   output_Intropolis_path_aux2, True)
 
-                logger.info("Part8.3...")
-                output_Rudin_path_aux4 = output_path + "/A5_A3_by_sample_Rudin_normal.tab"
-                output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
-                output_path_aux11 = output_path + "/A5_A3_non_mutated_filtered.tab"
-                filter_exonizations(output_path + "/A5_A3_non_mutated.tab", output_Rudin_path_aux4,
-                                    output_Intropolis_path_aux4, output_path_aux11, flag_Rudin)
-                output_path_aux12 = output_path + "/A5_A3_non_mutated_filtered2.tab"
-                filter_exonizations_CHESS(output_path_aux11, CHESS_A5_path, CHESS_A3_path, output_path_aux12)
+            output_Intropolis_path_aux3 = output_path + "/new_A5_A3_junctions_Intropolis_reads_repeatitions.tab"
+            overlap_with_repeats(output_Intropolis_path_aux2, repeats_path, output_Intropolis_path_aux3)
+            output_Intropolis_path_aux4 = output_path + "/A5_A3_by_sample_Intropolis.tab"
+            get_significant_exonizations(output_Intropolis_path_aux3, threshold, output_Intropolis_path_aux4)
 
-                # 9. Join the mutated and non_mutated cases
-                logger.info("Part8.4...")
-                output_path_aux13 = output_path + "/all_A5_A3.tab"
-                command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path_aux12 + " >> " + output_path_aux13
-                os.system(command3)
+            if(control_path!="Missing"):
+                # Get the significant A5_A3 from normal samples
+                logger.info("Additional controls...")
+                extract_exonized_junctions(control_path, gtf_path, genome_path, max_length, output_path + "/new_A5_A3_junctions_control.tab", mosea_path)
+                get_reads_exonizations(output_path + "/new_A5_A3_junctions_control.tab", control_path, output_path + "/new_A5_A3_junctions_control_reads.tab", False)
+                get_significant_exonizations(output_path + "/new_A5_A3_junctions_control_reads.tab", threshold, output_path + "/A5_A3_by_sample_control.tab")
+
+                #Filter A5_A3
+                logger.info("Filtering events...")
+                filter_exonizations(output_path + "/non_mutated_A5_A3.tab", output_path + "/A5_A3_by_sample_control.tab",
+                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/non_mutated_A5_A3_filtered.tab", control_path)
+                filter_exonizations_CHESS(output_path + "/non_mutated_A5_A3_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/non_mutated_A5_A3_filtered2.tab")
 
             else:
+                #Filter A5_A3
+                logger.info("Filtering events...")
+                filter_exonizations(output_path + "/non_mutated_A5_A3.tab", "Missing",
+                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/non_mutated_A5_A3_filtered.tab", control_path)
+                filter_exonizations_CHESS(output_path + "/non_mutated_A5_A3_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/non_mutated_A5_A3_filtered2.tab")
 
-                # 9. Join the mutated and non_mutated cases
-                logger.info("Part8...")
-                output_path_aux13 = output_path + "/all_A5_A3.tab"
-                command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/A5_A3_non_mutated.tab" + " >> " + output_path_aux13
-                os.system(command3)
+            # 9. Join the mutated and non_mutated cases
+            output_path_aux13 = output_path + "/all_A5_A3.tab"
+            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/non_mutated_A5_A3_filtered2.tab" + " >> " + output_path_aux13
+            os.system(command3)
 
         else:
-            logger.info("No mutation file specified")
-            #Rename the file before the mutation step
-            os.rename(output_path + "/A5_A3_by_sample_coverage.tab", output_path + "/all_A5_A3.tab")
+            # 9. Join the mutated and non_mutated cases
             output_path_aux13 = output_path + "/all_A5_A3.tab"
+            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/A5_A3_non_mutated.tab" + " >> " + output_path_aux13
+            os.system(command3)
 
         # 10. Get the peptide sequence associated
         logger.info("Part9...")
         get_peptide_sequence(output_path_aux13, transcript_expression_path, gtf_path,
                              output_path + "/A5_A3_peptide_sequence.fa", output_path + "/A5_A3_fasta_sequence.fa",
                              output_path + "/A5_A3_ORF.tab", output_path + "/A5_A3_ORF_sequences.tab",
-                             mosea, fasta_genome, mxfinder, bool(remove_temp_files))
+                             mosea_path, genome_path, mxfinder, remove_temp_files)
 
         # # 10.1. Split the input file into n pieces. Run a job per piece. When all jobs have finished, we will assemble all the pieces
         # logger.info("Part9...")
@@ -228,7 +225,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
         #         command1 = "python " + dir_path + "/lib/A5_A3/get_peptide_sequence.py " + file_split + " " + \
         #         transcript_expression_path + " " + gtf_path + " " + '{}.{}'.format(output_path + "/A5_A3_peptide_sequence.fa", i) + " " + \
         #         '{}.{}'.format(output_path + "/A5_A3_fasta_sequence.fa", i) + " " + '{}.{}'.format(output_path + "/A5_A3_ORF.tab", i) + " " + \
-        #         '{}.{}'.format(output_path + "/A5_A3_ORF_sequences.tab", i) + " " + mosea + " " + fasta_genome + " " + mxfinder + " " + str(remove_temp_files)
+        #         '{}.{}'.format(output_path + "/A5_A3_ORF_sequences.tab", i) + " " + mosea + " " + genome_path + " " + mxfinder + " " + str(remove_temp_files)
         #         open_peptides_file = open(output_path + "/aux.sh", "w")
         #         open_peptides_file.write("#!/bin/sh\n")
         #         # open_peptides_file.write("#SBATCH --partition=normal\n")
@@ -271,7 +268,8 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
         # 11. Filter the relevant results
         command4 = "Rscript " + dir_path + "/lib/A5_A3/filter_results.R " + output_path + "/A5_A3_ORF.tab " \
-                   + conversion_names + " " + output_path + "/A5_A3_ORF_filtered.tab " + output_path + "/A5_A3_ORF_filtered_peptide_change.tab"
+                   + conversion_names + " " + output_path + "/A5_A3_ORF_filtered.tab " + output_path + "/A5_A3_ORF_filtered_peptide_change.tab " \
+                    + str(max_length)
         os.system(command4)
 
         # 12. Select the fasta candidates for being run to the epitope analysis
@@ -324,6 +322,6 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres,args.size_chunks,
-         args.repeats,args.mutations,args.chessA5,args.chessA3,args.tumor_specific,args.mosea,args.mxfinder,
-         args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,
-         args.Rudin,args.username, args.output)
+         args.repeats,args.mutations,args.chessA5,args.chessA3,args.tumor_specific,args.control_path,args.Intropolis,
+         args.mosea,args.mxfinder,args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,
+         args.temp,args.Rudin,args.username, args.output)

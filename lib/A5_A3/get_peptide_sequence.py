@@ -214,9 +214,13 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf = gtf[gtf['type2'].isin(["exon"])]
-        gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
-        #Add the chr suffix
-        gtf['chr'] = 'chr' + gtf['chr'].astype(str)
+        #Check if the chr column is already formatted
+        if(gtf['chr'].str.contains('chr').all()):
+            list_chr = "chr"
+            gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,22)] + ["chrX", "chrY"])]
+        else:
+            gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+            gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
 
         # 5. Get the peptidic sequences of the reference and the transcript with the A5_A3 junctions replacement
@@ -274,7 +278,6 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     else:
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                           ascending=False)
-
                     # Check if the A5_A3 event is included on this transcript
                     if (check_exonization(id, exons_associated) and transcript in transcript_expression):
                         # Get the TPM expression and the id. We will take the transcript with the greatest expression
@@ -1038,19 +1041,19 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         sys.exit(1)
 
 
-if __name__ == '__main__':
-    exonizations_path = sys.argv[1]
-    transcript_expression_path = sys.argv[2]
-    gtf_path = sys.argv[3]
-    output_peptide_path = sys.argv[4]
-    output_sequence_path = sys.argv[5]
-    output_path2 = sys.argv[6]
-    output_path3 = sys.argv[7]
-    mosea = sys.argv[8]
-    fast_genome = sys.argv[9]
-    orfs_scripts = sys.argv[10]
-    remove_temp_files = bool(sys.argv[11])
-    print(sys.version)
-    get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
-                         output_sequence_path, output_path2, output_path3, mosea,
-                         fast_genome, orfs_scripts, remove_temp_files)
+# if __name__ == '__main__':
+#     exonizations_path = sys.argv[1]
+#     transcript_expression_path = sys.argv[2]
+#     gtf_path = sys.argv[3]
+#     output_peptide_path = sys.argv[4]
+#     output_sequence_path = sys.argv[5]
+#     output_path2 = sys.argv[6]
+#     output_path3 = sys.argv[7]
+#     mosea = sys.argv[8]
+#     fast_genome = sys.argv[9]
+#     orfs_scripts = sys.argv[10]
+#     remove_temp_files = bool(sys.argv[11])
+#     print(sys.version)
+#     get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
+#                          output_sequence_path, output_path2, output_path3, mosea,
+#                          fast_genome, orfs_scripts, remove_temp_files)

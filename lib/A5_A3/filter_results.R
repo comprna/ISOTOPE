@@ -9,7 +9,7 @@ merge_file <- merge(file,conversion,by.x="Gene",by.y="Gene.stable.ID",all.x=TRUE
 #How many above TPM > 1?
 file_f <- merge_file[which(as.numeric(merge_file$Transcript_TPM)>1),]
 #How many junctions giving rise to exons larger than 500nt?
-file_f2 <- file_f[which(as.numeric(file_f$New_Exon_length)<=500),]
+file_f2 <- file_f[which(as.numeric(file_f$New_Exon_length)<=as.integer(args[5])),]
 
 #Save this file
 write.table(file_f2,file=args[3],sep="\t",quote = FALSE,row.names = FALSE)

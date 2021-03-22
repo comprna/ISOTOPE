@@ -28,23 +28,22 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def filter_exonizations(exonizations_path, rudin_path, intropolis_path, output_path, flag_Rudin):
+def filter_exonizations(exonizations_path, control_path, intropolis_path, output_path, control_flag):
 
     try:
         logger.info("Starting execution")
 
-        if(flag_Rudin):
+        if(control_flag!="Missing"):
 
-            logger.info("Filter out Rudin samples")
-            #Load the eoxnizations
+            #Load the exonizations
             exonizations = pd.read_table(exonizations_path, delimiter="\t", )
-            #Load the Rudin exons
-            rudin = pd.read_table(rudin_path, delimiter="\t")
-            #Load the Intropolis exons
+            #Load the control exonizations
+            control = pd.read_table(control_path, delimiter="\t")
+            #Load the Intropolis exonizations
             intropolis = pd.read_table(intropolis_path, delimiter="\t")
 
             #Merge the files and extract the exons that are not in the other files
-            merge1 = exonizations.merge(rudin, on=['Canonical_Junction_id','Alt_Junction_id'], how='left', suffixes=('', '_y'))
+            merge1 = exonizations.merge(control, on=['Canonical_Junction_id','Alt_Junction_id'], how='left', suffixes=('', '_y'))
             merge1_f = merge1[~merge1.Gene_y.notnull()]
             merge2 = merge1_f.merge(intropolis, on=['Canonical_Junction_id','Alt_Junction_id'], how='left', suffixes=('', '_z'))
             merge2_f = merge2[~merge2.Gene_z.notnull()]
@@ -58,7 +57,6 @@ def filter_exonizations(exonizations_path, rudin_path, intropolis_path, output_p
 
         else:
 
-            logger.info("Do not use Rudin samples")
             # Load the exonizations
             exonizations = pd.read_table(exonizations_path, delimiter="\t")
             # Load the Intropolis exons
