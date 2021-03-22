@@ -125,17 +125,17 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
                 #Filter neoskippiing
                 logger.info("Filtering events...")
                 filter_neoskipping(output_path_aux, output_control_path_aux, output_Intropolis_path_aux,
-                                   output_path + "/new_Neoskipping_junctions_filtered.tab")
-                filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered.tab", CHESS_SE_path,
-                                         output_path + "/new_Neoskipping_junctions_filtered2.tab")
-                output_path2 = output_path + "/new_Neoskipping_junctions_filtered2.tab"
+                                   output_path + "/new_Neoskipping_junctions_filtered2.tab")
+                filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered2.tab", CHESS_SE_path,
+                                         output_path + "/new_Neoskipping_junctions_filtered3.tab")
+                output_path2 = output_path + "/new_Neoskipping_junctions_filtered3.tab"
 
             else:
                 filter_neoskipping(output_path_aux, "Missing", output_Intropolis_path_aux,
-                                   output_path + "/new_Neoskipping_junctions_filtered.tab")
-                filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered.tab", CHESS_SE_path,
-                                         output_path + "/new_Neoskipping_junctions_filtered2.tab")
-                output_path2 = output_path + "/new_Neoskipping_junctions_filtered2.tab"
+                                   output_path + "/new_Neoskipping_junctions_filtered2.tab")
+                filter_neoskipping_CHESS(output_path + "/new_Neoskipping_junctions_filtered2.tab", CHESS_SE_path,
+                                         output_path + "/new_Neoskipping_junctions_filtered3.tab")
+                output_path2 = output_path + "/new_Neoskipping_junctions_filtered3.tab"
 
         else:
             output_path2 = output_path + "/new_Neoskipping_junctions.tab"
