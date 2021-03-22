@@ -31,7 +31,7 @@ logger.addHandler(ch)
 def overlap_with_repeats(input_path, repeats_path, output_path):
 
     try:
-        logger.info("Starting execution")
+        logger.info("Starting execution "+repeats_path)
 
         # Transform the alt exon cordinates to bed file
         logger.info("Formatting bed files...")
