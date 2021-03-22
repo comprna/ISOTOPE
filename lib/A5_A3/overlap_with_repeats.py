@@ -31,7 +31,7 @@ logger.addHandler(ch)
 def overlap_with_repeats(input_path, repeats_path, output_path):
 
     try:
-        logger.info("Starting execution "+repeats_path)
+        logger.info("Starting execution")
 
         # Transform the alt exon cordinates to bed file
         logger.info("Formatting bed files...")
@@ -92,8 +92,8 @@ def overlap_with_repeats(input_path, repeats_path, output_path):
         logger.info("Saved " + output_path)
 
         # Remove auxiliary files
-        #os.remove(path1 + "/aux.bed")
-        #os.remove(path1 + "/aux2.bed")
+        os.remove(path1 + "/aux.bed")
+        os.remove(path1 + "/aux2.bed")
 
         logger.info("Done. Exiting program.")
 
