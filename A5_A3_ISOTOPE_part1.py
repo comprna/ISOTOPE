@@ -74,7 +74,7 @@ parser.add_argument("-HLAtypes", "--HLAtypes", required=True, help = "HLA alelle
 parser.add_argument("-HLAtypespan", "--HLAtypespan", required=True, help = "HLA alelles recognized by NetMHCpan")
 parser.add_argument("-netMHC", "--netMHC", required=True, help = "netMHC path")
 parser.add_argument("-netMHCpan", "--netMHCpan", required=True, help = "netMHCpan path")
-parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
+parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False, required=False,help="Remove temp files")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "reads mapped to junctions controls")
 parser.add_argument("-Intropolis", "--Intropolis", required=False, default="Missing", help = "reads mapped to junctions from Intropolis db")
