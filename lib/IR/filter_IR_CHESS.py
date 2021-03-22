@@ -85,7 +85,7 @@ def filter_IR_CHESS(IR_path, CHESS_RI_path, output_path):
                 # Look for it in the CHESS db.
                 if(event_id_f in CHESS_event):
                     #Dont plot the line and go with the next line
-                    logger.info(str(cont) + ": found event in CHESS")
+                    # logger.info(str(cont) + ": found event in CHESS")
                     continue
                 else:
                     outfile.write(line)

@@ -141,7 +141,7 @@ def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
 
         # 4. Generate random positions for each intron
         logger.info("Part4...")
-        generate_random_intronic_positions(output_path_filtered2, gtf_path_exon, rand, output_path + "/random_introns.gtf",
+        generate_random_intronic_positions(output_path_filtered2, gtf_path_exon, n_randomizations, output_path + "/random_introns.gtf",
                                            output_path + "/random_introns.bed")
 
         # 5. Run coverageBed on the samples in the cluster
