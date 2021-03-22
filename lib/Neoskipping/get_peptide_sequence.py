@@ -824,8 +824,8 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
 
         # 6. Add the columns to the initial list
         logger.info("Processing output file...")
-        logger.info("Size of dictionaries: Peptide change"+str(len(peptide_change))+" NMD: "+str(len(NMD))
-                    + " frame_shift: " + str(len(frame_shift)) +" Stalling: "+str(len(Stalling)))
+        # logger.info("Size of dictionaries: Peptide change"+str(len(peptide_change))+" NMD: "+str(len(NMD))
+        #             + " frame_shift: " + str(len(frame_shift)) +" Stalling: "+str(len(Stalling)))
         outFile2 = open(output_path2,"w")
         outFile3 = open(output_path3,"w")
         index = 0
