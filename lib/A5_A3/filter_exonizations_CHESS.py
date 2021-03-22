@@ -33,7 +33,7 @@ def filter_exonizations_CHESS(exonization_path, CHESS_A5_path, CHESS_A3_path, ou
     try:
         logger.info("Starting execution")
 
-        if(CHESS_A5_path!="Missing" | CHESS_A3_path!="Missing"):
+        if(CHESS_A5_path!="Missing" or CHESS_A3_path!="Missing"):
 
             # 1. Load the A5/A3 CHESS events,
             logger.info("Loading CHESS db...")

@@ -315,7 +315,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
     except Exception as error:
         logger.error('ERROR: ' + repr(error))
-        logger.error("Abor  ting execution")
+        logger.error("Aborting execution")
         sys.exit(1)
 
 
