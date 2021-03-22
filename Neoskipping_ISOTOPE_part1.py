@@ -59,7 +59,7 @@ parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
 parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-f", "--fold", required=False, type=int, default=0, help="Minimum fold of reads mapping the neoskipping with respect to the spanned junctions")
 parser.add_argument("-mut","--mutations", required=False, default="No file", help = "Mutations path")
-parser.add_argument("--chessSE", required=False, help = "CHESS SE path")
+parser.add_argument("--chess", required=False, help = "CHESS SE path")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 parser.add_argument("-mosea", "--mosea", required=True, help = "MoSEA path")
 parser.add_argument("-mxfinder", "--mxfinder", required=True, help = "MxFinder path")
@@ -103,7 +103,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
         extract_neoskipping_junctions(readcounts_path, gtf_path_exon, threshold, output_path_aux)
 
         # 1.1. Get those that are over a threshold
-        logger.info("Part1.1...")
+        logger.info("Part2...")
         get_significant_exonizations(output_path_aux, threshold, fold, output_path + "/new_Neoskipping_junctions_filtered.tab")
 
         # 2. Get the tumor specific neoskipping events
