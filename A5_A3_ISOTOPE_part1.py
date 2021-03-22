@@ -171,20 +171,20 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
 
                 #Filter A5_A3
                 logger.info("Filtering events...")
-                filter_exonizations(output_path + "/non_mutated_A5_A3.tab", output_path + "/A5_A3_by_sample_control.tab",
-                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/non_mutated_A5_A3_filtered.tab", control_path)
-                filter_exonizations_CHESS(output_path + "/non_mutated_A5_A3_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/non_mutated_A5_A3_filtered2.tab")
+                filter_exonizations(output_path + "/A5_A3_non_mutated.tab", output_path + "/A5_A3_by_sample_control.tab",
+                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/A5_A3_non_mutated_filtered.tab", control_path)
+                filter_exonizations_CHESS(output_path + "/A5_A3_non_mutated_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/A5_A3_non_mutated_filtered2.tab")
 
             else:
                 #Filter A5_A3
                 logger.info("Filtering events...")
-                filter_exonizations(output_path + "/non_mutated_A5_A3.tab", "Missing",
-                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/non_mutated_A5_A3_filtered.tab", control_path)
-                filter_exonizations_CHESS(output_path + "/non_mutated_A5_A3_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/non_mutated_A5_A3_filtered2.tab")
+                filter_exonizations(output_path + "/A5_A3_non_mutated.tab", "Missing",
+                                    output_path + "/A5_A3_by_sample_Intropolis.tab", output_path + "/A5_A3_non_mutated_filtered.tab", control_path)
+                filter_exonizations_CHESS(output_path + "/A5_A3_non_mutated_filtered.tab", CHESS_A5_path, CHESS_A3_path, output_path + "/A5_A3_non_mutated_filtered2.tab")
 
             # 9. Join the mutated and non_mutated cases
             output_path_aux13 = output_path + "/all_A5_A3.tab"
-            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/non_mutated_A5_A3_filtered2.tab" + " >> " + output_path_aux13
+            command3 = "cat " + output_path + "/A5_A3_mutated.tab" + " > " + output_path_aux13 + ";tail -n+2 " + output_path + "/A5_A3_non_mutated_filtered2.tab" + " >> " + output_path_aux13
             os.system(command3)
 
         else:
