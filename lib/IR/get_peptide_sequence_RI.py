@@ -70,6 +70,7 @@ def check_IR(IR, exons, IR_strand):
         return True
 
 def get_expression(sample_id,transcript_id,transcript_expression):
+    logger.info("get_expression...")
     if (transcript_id in transcript_expression[sample_id]):
         return transcript_expression[sample_id][transcript_id]
     else:
@@ -257,6 +258,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                     continue
 
                 # Associate this transcript to tje exonization
+                logger.info("3.0.2...")
                 exonization_transcript[exonization] = transcript_id
 
                 #Get the exons associated to this transcript
