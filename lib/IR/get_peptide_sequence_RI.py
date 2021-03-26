@@ -41,10 +41,10 @@ def check_IR(IR, exons, IR_strand):
     IR_end = int(IR.split(":")[1].split("(")[0].split("-")[1]) - 40
 
     # 5.1. Go over all the exons checking where the IR is located
-    start_prev = exons.iloc[0, 3]
-    end_prev = exons.iloc[0, 4]
-    strand_prev = exons.iloc[0, 6]
     if (len(exons.index) > 1):
+        start_prev = exons.iloc[0, 3]
+        end_prev = exons.iloc[0, 4]
+        strand_prev = exons.iloc[0, 6]
         logger.info("len(exons.index) > 1 ")
         for i in range(1, len(exons.index)):
             start = exons.iloc[i, 3]
