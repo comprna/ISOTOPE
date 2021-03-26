@@ -34,10 +34,12 @@ def check_IR(IR, exons, IR_strand):
     '''
     Returns True if the IR exists, False on any other case
     '''
-    logger.info("IR_start: "+IR)
+    logger.info("exons: "+exons)
+
     IR_start = int(IR.split(":")[1].split("\\(")[0].split("-")[0]) + 41
-    logger.info("IR_end: "+IR)
+    logger.info("IR_start: "+IR_start)
     IR_end = int(IR.split(":")[1].split("(")[0].split("-")[1]) - 40
+    logger.info("IR_end: "+IR_end)
 
     # 5.1. Go over all the exons checking where the IR is located
     start_prev = exons.iloc[0, 3]
