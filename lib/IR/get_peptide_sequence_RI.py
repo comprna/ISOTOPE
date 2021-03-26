@@ -44,7 +44,7 @@ def check_IR(IR, exons, IR_strand):
     start_prev = exons.iloc[0, 3]
     end_prev = exons.iloc[0, 4]
     strand_prev = exons.iloc[0, 6]
-    if (len(exons.index) != 1):
+    if (len(exons.index) > 1):
         for i in range(1, len(exons.index)):
             start = exons.iloc[i, 3]
             end = exons.iloc[i, 4]
@@ -68,7 +68,7 @@ def check_IR(IR, exons, IR_strand):
                     end_prev = exons.iloc[i, 4]
                     strand_prev = exons.iloc[i, 6]
 
-    else:  # Only 1 exon in the df
+    else:  # If there are less than 2 exons in the df, return False
         flag_exit = True
         return True
 
@@ -244,7 +244,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                      ascending=False)
 
-                    # Check if the neoskiipping is included on this transcript
+                    # Check if the IR is included on this transcript
                     logger.info("3.0.1...")
                     if (check_IR(exonization, exons_associated, IR_strand)):
                         logger.info("3.1...")
