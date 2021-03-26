@@ -35,7 +35,7 @@ def check_IR(IR, exons, IR_strand):
     Returns True if the IR exists, False on any other case
     '''
     logger.info("exon length: "+str(len(exons.index)))
-    logger.info("IR: "+IR.split(":"))
+    logger.info("IR: "+str(IR))
 
     IR_start = int(IR.split(":")[1].split("\\(")[0].split("-")[0]) + 41
     IR_end = int(IR.split(":")[1].split("(")[0].split("-")[1]) - 40
