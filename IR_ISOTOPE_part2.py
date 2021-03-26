@@ -145,7 +145,7 @@ def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAty
 
         # 8. Get the peptide sequence associated
         logger.info("Part8...")
-        get_peptide_sequence(output_path + "/IR_significant_introns.tab", transcript_expression_path, gtf_path,
+        get_peptide_sequence(output_path + "/IR_significant_introns.tab", transcript_expression_path, gtf_path_exon,
                              output_path + "/IR_peptide_sequence.fa", output_path + "/IR_fasta_sequence.fa",
                              output_path + "/IR_ORF.tab", output_path + "/IR_ORF_sequences.tab", mosea_path,
                              genome_path, mxfinder_path, remove_temp_files)
