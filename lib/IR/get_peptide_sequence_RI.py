@@ -95,15 +95,15 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
             header = next(f).rstrip().split("\t")
             # Initialize the list of dictionaries
             for i in range(0, len(header)):
-                transcript_expression[header[i]] = {}
+                transcript_expression[header[i].replace("-", ".")] = {}
                 # transcript_expression.append({})
             for line in f:
                 tokens = line.rstrip().split("\t")
                 transcript = tokens[0]
                 tpm = tokens[1:]
                 for i in range(0, len(tpm)):
-                    if (transcript not in transcript_expression[header[i]]):
-                        transcript_expression[header[i]][transcript] = float(tpm[i])
+                    if (transcript not in transcript_expression[header[i].replace("-", ".")]):
+                        transcript_expression[header[i].replace("-", ".")][transcript] = float(tpm[i])
                     else:
                         logger.info("Repeated transcript " + transcript + " in transcript_expression")
 
