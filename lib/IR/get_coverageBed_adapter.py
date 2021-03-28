@@ -94,7 +94,7 @@ def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, na
             open_peptides_file = open(output_path + "/aux.sh", "w")
             open_peptides_file.write("#!/bin/sh\n")
             open_peptides_file.write("#SBATCH --mem 5000\n")
-            open_peptides_file.write("#SBATCH --partition=normal\n")
+            # open_peptides_file.write("#SBATCH --partition=normal\n")
             open_peptides_file.write("#SBATCH -e " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".err" + "\n")
             open_peptides_file.write("#SBATCH -o " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".out" + "\n")
             open_peptides_file.write(command3 + ";\n")
