@@ -3,17 +3,17 @@ ISOform-guided prediction of epiTOPEs in cancer
 
 ![ISOTOPE_pipeline.jpg](https://user-images.githubusercontent.com/23315833/103201760-f84bcc00-48f0-11eb-9c3e-613cfc7f4b1a.png)
 
-This pipeline has been developed for the identification of cancer-specific splicing-derived epitopes from RNA-seq. The pipeline
+The ISOTOPE pipeline identifies cancer-specific splicing-derived epitopes from short-read RNA-seq data. The pipeline
 operates on individual tumor samples, without the requirement of additional controls or multiple tumor samples. 
 
-The pipeline is divided in 4 parts, depending the alternative splicing event type the user wants to obtain:
+The pipeline is divided into 4 parts, depending of the type of alternative splicing event of interest:
 
    * Pseudoexons (**Exonizations**)
    * New exons skipping events (**Neoskipping**)
    * Alternative splice site (**A5_A3**)
    * Intron retention (**IR**)
    
-To obtain exonizations, neoskipping, and A5_A3 events, the input is a file with the read counts for all posible splicing junctions in the genome. This file (readCounts.tab) is created with Junckey (https://github.com/comprna/Junckey#1-format-star-output). From these junctions, ISOTOPE will obtain all splicing events that show significan expression based on the sequence coverage of the gene locus.
+To obtain exonizations, neoskipping, and A5_A3 events, the input is a file with the counts of supporting reads for all posible splicing junctions in the genome. This file (readCounts.tab) is created with Junckey (https://github.com/comprna/Junckey#1-format-star-output). From these junctions, ISOTOPE will obtain all splicing events that show significant expression based on the sequence coverage of the gene locus.
 
 For the identification of IR events, a normalized expression like TPMs for all possible intronic regions is needed. ISOTOPE first creates a transcriptome with all possible intronic regions using kma (https://github.com/pachterlab/kma) and then quantifies this transcriptome with a pseudoalligner (e.g. Salmon https://combine-lab.github.io/salmon/ or Kallisto https://pachterlab.github.io/kallisto/about). With these values, ISOTOPE filters out intron retention events that are lowly expressed.
 
