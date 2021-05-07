@@ -1,7 +1,7 @@
 # ISOTOPE
 ISOform-guided prediction of epiTOPEs in cancer
 
-![ISOTOPE_pipeline.jpg](https://user-images.githubusercontent.com/23315833/103201760-f84bcc00-48f0-11eb-9c3e-613cfc7f4b1a.png)
+![ISOTOPE_pipeline.jpg](https://user-images.githubusercontent.com/23315833/117435640-5be4a680-af2e-11eb-823a-01865a490134.png)
 
 The ISOTOPE pipeline identifies cancer-specific splicing-derived epitopes from short-read RNA-seq data. The pipeline
 operates on individual tumor samples, without the requirement of additional controls or multiple tumor samples. 
