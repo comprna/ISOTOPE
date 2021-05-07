@@ -24,13 +24,13 @@ The user must run each of the 3 parts sequentially. The scripts are ready to be 
 
 We provide an extensive tutorial detailling how to run each of these steps. If you have a query related to the tool or any problem regarding running the pipeline, please create an issue in the repository. 
 
-
+# How to run ISOTOPE
 
 ISOTOPE allows you to obtain exonizations, neoskipping, and alternative 5'/3' splice site (A5_A3) events from a file of splicing junction from sequencing reads, and evaluate their immunogenic potential. In addition, it also evaluates the immunogenic potential of introns from retained-intron abundance files. In this tutorial, we provide all the necessary steps to recover each type of event. We provide some toy datasets for testing. If there is anything unclear or not working feel free to post an issue on GitHub and we will respond as soon as possible.
 
 To obtain exonizations, neoskipping, and A5_A3 events, the first required input is a file with the read counts for all possible junctions in the genome. This file (readCounts.tab) is created with Junckey (https://github.com/comprna/Junckey#1-format-star-output). From these junctions, ISOTOPE will obtain splicing events.
 
-# Exonizations
+## Exonizations
 
 We have created a toy dataset ([readCounts_TEST.tab](https://github.com/comprna/ISOTOPE/blob/master/test_files/readCounts_TEST.tab)) with some of the genes for which we have detected neoepitopes from splicing events (source data from Smart et al, 2018). These changes in the putative coding sequence could give rise to new regions potentially bound by the HLA system, increasing the likelihood to be recognized as neoantigens. This file has been generated with Junckey (https://github.com/comprna/Junckey#1-format-star-output). Visit Junckey GitHub page to see how to extract junction read counts.
 
