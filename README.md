@@ -1,5 +1,4 @@
-# ISOTOPE
-ISOform-guided prediction of epiTOPEs in cancer
+# ISOTOPE (ISOform-guided prediction of epiTOPEs in cancer)
 
 ![ISOTOPE_pipeline.jpg](https://user-images.githubusercontent.com/23315833/117435640-5be4a680-af2e-11eb-823a-01865a490134.png)
 
@@ -172,7 +171,7 @@ We detail here the description for each of the parameters:
 
 - **-h**  | **--help**: display the help message describing the different parameters.
 
-# Alternative splice site
+## Alternative splice site
 
 Here we describe the steps to obtain alternative splice site events. The initial file is the same toy dataset (readCounts_TEST.tab[https://github.com/comprna/ISOTOPE/blob/master/test_files/readCounts_TEST.tab]) as before and most of the steps are pretty similar as with exonizations. It's composed of 2 parts.
 
@@ -267,7 +266,7 @@ We detail here the description for each of the parameters:
 
 - **-h**  | **--help**: display the help message describing the different parameters
 
-# Neoskipping
+## Neoskipping
 
 ### Part1:
 
@@ -350,7 +349,7 @@ We detail here the description for each of the parameters:
 
 - **-h**  | **--help**: display the help message describing the different parameters
 
-# Intron retention (IR)
+## Intron retention (IR)
 
 For the analysis of IR changes the quantification of intron abundances needs to be computed. We provide a toy dataset for the tutorial [iso_tpm_introns_TEST.txt](https://github.com/comprna/ISOTOPE/blob/master/test_files/iso_tpm_introns_TEST.txt). This file has been obtained using kma (https://github.com/pachterlab/kma). Each line is an intronic region and the columns are all the normalized abundances values for each of the samples (in this case TPMs, but any normalized expression could be valid).
 
@@ -455,12 +454,12 @@ We detail here the description of the parameters:
 
 - **-h**  | **--help**: display the help message describing the different parameters
 
-Required packages:
+## Required packages:
 
-- bedtools
-- MoSEA
-- MxFinder
-- pandas
-- scikit
 - python3
-- R
+- pandas
+- biopython
+- R (>=3.0.0)
+- bedtools
+- MoSEA (https://github.com/comprna/MoSEA)
+- MxFinder (https://github.com/JLTrincado/MxFinder)
