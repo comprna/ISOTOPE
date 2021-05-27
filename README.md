@@ -173,7 +173,7 @@ We detail here the description for each of the parameters:
 
 ## Alternative splice site
 
-Here we describe the steps to obtain alternative splice site events. The initial file is the same toy dataset ([readCounts_TEST.tab] (https://github.com/comprna/ISOTOPE_supplementary/blob/main/readCounts_TEST.tab)) as before and most of the steps are pretty similar as with exonizations. It's composed of 2 parts.
+Here we describe the steps to obtain alternative splice site events. The initial file is the same toy dataset ([readCounts_TEST.tab](https://github.com/comprna/ISOTOPE_supplementary/blob/main/readCounts_TEST.tab)) as before and most of the steps are pretty similar as with exonizations. It's composed of 2 parts.
 
 ### Part1:
 
