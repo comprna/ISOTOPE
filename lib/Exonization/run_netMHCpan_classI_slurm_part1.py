@@ -125,7 +125,6 @@ def run_netMHCpan_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_pa
                     cont2 = 0
                     for x in HLA_types:
                         if(cluster):
-                            logger.info("Running jobs in parallel...")
                             logger.info("Running job HLA-type: " + output_netMHC_path + "/" + index + "_" + x + ".out")
                             cont2 += 1
                             command1 = netMHC_path + " -BA -a " + x + " -l 8,9,10,11 " + input_sequence_pieces_path + "/" + index + \
@@ -143,8 +142,7 @@ def run_netMHCpan_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_pa
                             os.system(command2)
 
                         else:
-                            logger.info("Running jobs sequentially...")
-                            logger.info("Running job HLA-type: " + output_netMHC_path + "/" + index + "_" + x + ".out")
+                            logger.info("Calculating HLA-type: " + output_netMHC_path + "/" + index + "_" + x + ".out")
                             cont2 += 1
                             command1 = netMHC_path + " -BA -a " + x + " -l 8,9,10,11 " + input_sequence_pieces_path + "/" + index + \
                                        ".fa > " + output_netMHC_path + "/" + index + "_" + x + ".out"
