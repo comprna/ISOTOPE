@@ -79,10 +79,11 @@ parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=Fals
 parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
 parser.add_argument("-mut","--mutations", required=False, default="Missing", help = "Mutations path")
 parser.add_argument("--chess", required=False, default="Missing", help = "Path to annotated SE from CHESSdb (GTEX)")
+parser.add_argument("-c", "--cluster", required=False, default=False, help = "Run in parallel on a cluster")
 
 def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path,
          mosea_path, orfs_scripts, output_path, repeats_path, threshold, max_length, tumor_specific, control_path, Intropolis_path, mutations_path, CHESS_SE_path,
-         flag_Rudin, remove_temp_files, name_user):
+         flag_Rudin, remove_temp_files, name_user, cluster):
     try:
 
         logger.info("Starting execution exonizations_ISOTOPE_part2")
@@ -100,7 +101,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
         logger.info("Part7...")
         dir_path = os.path.dirname(os.path.realpath(__file__))
         get_coverageBed_adapter(output_path + "/exonizations_by_sample.tab", output_path + "/random_exonizations.bed",
-                        output_path + "/coverageBed", output_path, name_user)
+                        output_path + "/coverageBed", output_path, name_user, cluster)
 
         # 7.2. Assemble all pieces into one single file
         command2 = "awk 'FNR==1 && NR!=1{next;}{print}' " + output_path + "/get_coverageBed_*.tab > " + output_path + "/exonizations_by_sample_coverage.tab"
@@ -202,7 +203,7 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
                                       output_path + "/exonization_fasta_files",output_path + "/exonizations_NetMHC-4.0_files", output_path + "/exonizations_NetMHC-4.0_neoantigens_type_gained.tab",
                                       output_path + "/exonizations_NetMHC-4.0_neoantigens_type_gained_all.tab", output_path + "/exonizations_NetMHC-4.0_neoantigens_type_lost.tab",
                                       output_path + "/exonizations_NetMHC-4.0_neoantigens_type_lost_all.tab", output_path + "/exonizations_NetMHC-4.0_junctions_ORF_neoantigens.tab",
-                                      netMHC_path)
+                                      netMHC_path, cluster)
 
         # 16. Run netMHCpan-4.0_part1
         logger.info("Part15...")
@@ -212,8 +213,11 @@ def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLA
                                       output_path + "/exonization_fasta_files",output_path + "/exonizations_NetMHCpan-4.0_files", output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_gained.tab",
                                       output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_gained_all.tab", output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_lost.tab",
                                       output_path + "/exonizations_NetMHCpan-4.0_neoantigens_type_lost_all.tab", output_path + "/exonizations_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
-                                      netMHC_pan_path)
-        logger.info("Wait until all jobs have finished. Then, go on with part3")
+                                      netMHC_pan_path, cluster)
+        if(cluster):
+            logger.info("Wait until all jobs have finished. Then, go on with part3")
+        else:
+            logger.info("Done. Go on with part3")
 
         logger.info("Done. Exiting program.")
 
@@ -229,4 +233,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.gtf,args.genome,args.transcript,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,
          args.netMHCpan,args.mosea,args.orfs,args.output,args.repeats,args.thres,args.max,args.tumor_specific,
-         args.control_path,args.Intropolis,args.mutations,args.chess,args.Rudin,args.temp,args.username)
+         args.control_path,args.Intropolis,args.mutations,args.chess,args.Rudin,args.temp,args.username,args.cluster)

@@ -128,7 +128,7 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
         del introns_sorted['chr_num']
         introns_sorted.to_csv(output_path_aux6, sep="\t", index=False)
 
-        if(args.cluster):
+        if(cluster):
             # 6.2. Run a job per sample in parallel
             logger.info("Part6...")
             command1="for sample in $(ls "+bam_path+"/*/*.bam);do " \
@@ -146,7 +146,7 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
                     "echo \"Processing file $sample: \"$(date); bash "+dir_path+"/coverageBed.sh $(echo $sample) " \
                      +output_path_aux6+" "+output_path+"/$(echo $sample_id).coverage_sorted;done"
             os.system(command1)
-            logger.info("Wait until all jobs have finished. Then, go on with part2")
+            logger.info("Done. Go on with part2")
 
         exit(0)
 

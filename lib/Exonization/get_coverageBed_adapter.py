@@ -46,7 +46,7 @@ def extract_number(id):
 
 
 
-def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, name_user):
+def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, name_user, cluster):
 
     try:
         logger.info("Starting execution")
@@ -89,48 +89,53 @@ def get_coverageBed_adapter(input_path, gtf_path, coverage_path, output_path, na
             command1 = "head -1 " + input_path + " > " + output_path + "/input.aux." + sample_formatted + ".tab" + ";" \
                         "awk '{if ($1==\"" + sample_formatted + "\") print }' " + input_path + " >> " + output_path + "/input.aux." + sample_formatted + ".tab"
             os.system(command1)
-            # Create an auxiliary script
             command3 = "python "+dir_path+"/get_coverageBed.py " \
                        + output_path+"/input.aux."+sample_formatted+".tab " + gtf_path + " " + coverage_path + " " + \
                        output_path + "/get_coverageBed_results." + sample_formatted + ".tab True"
-            open_peptides_file = open(output_path + "/aux.sh", "w")
-            open_peptides_file.write("#!/bin/sh\n")
-            # open_peptides_file.write("#SBATCH --partition=normal\n")
-            open_peptides_file.write("#SBATCH --mem 1000\n")
-            open_peptides_file.write("#SBATCH -e " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".err" + "\n")
-            open_peptides_file.write("#SBATCH -o " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".out" + "\n")
-            open_peptides_file.write(command3 + ";\n")
-            open_peptides_file.close()
-            command4 = "sbatch -J "+sample_formatted+"_coverageBed " + output_path + "/aux.sh; sleep 0.5;"
-            # os.system(command4)
-            job_message = subprocess.check_output(command4, shell=True)
-            #Get the job id and store it
-            job_id = (str(job_message).rstrip().split(" ")[-1])[:-3]
-            dict_jobs[job_id] = 1
+            if(cluster):
+                # Create an auxiliary script
+                open_peptides_file = open(output_path + "/aux.sh", "w")
+                open_peptides_file.write("#!/bin/sh\n")
+                # open_peptides_file.write("#SBATCH --partition=normal\n")
+                open_peptides_file.write("#SBATCH --mem 1000\n")
+                open_peptides_file.write("#SBATCH -e " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".err" + "\n")
+                open_peptides_file.write("#SBATCH -o " + output_path + "/" + "get_coverageBed" + "_" + sample_formatted + ".out" + "\n")
+                open_peptides_file.write(command3 + ";\n")
+                open_peptides_file.close()
+                command4 = "sbatch -J "+sample_formatted+"_coverageBed " + output_path + "/aux.sh; sleep 0.5;"
+                # os.system(command4)
+                job_message = subprocess.check_output(command4, shell=True)
+                #Get the job id and store it
+                job_id = (str(job_message).rstrip().split(" ")[-1])[:-3]
+                dict_jobs[job_id] = 1
+            else:
+                os.system(command3)
 
-        logger.info("Waiting for all the jobs to finished...")
-        flag_exit = False
-        while(not flag_exit):
-            # Initialize the dictionary with the pending jobs in the cluster
-            flag_exit = True
-            pending_jobs = {}
-            os.system("sleep 10")
-            p = subprocess.Popen(["squeue","-u", name_user], stdout=subprocess.PIPE)
-            # Skip the first line (the header)
-            line = p.stdout.readline()
-            for line in p.stdout:
+        if(cluster):
+
+            logger.info("Waiting for all the jobs to finished...")
+            flag_exit = False
+            while(not flag_exit):
+                # Initialize the dictionary with the pending jobs in the cluster
                 flag_exit = True
-                #Get the id of the job
-                job_id_aux = str(line).rstrip().split()[1]
-                #Save the id of the jobs
-                pending_jobs[job_id_aux] = 1
-                #If there is any job on the cluster on dict_jobs, break the loop and wait for another 10 seconds
-                # to check the status of the jobs in the cluster
-                if(job_id_aux in dict_jobs):
-                    flag_exit = False
-                    break
+                pending_jobs = {}
+                os.system("sleep 10")
+                p = subprocess.Popen(["squeue","-u", name_user], stdout=subprocess.PIPE)
+                # Skip the first line (the header)
+                line = p.stdout.readline()
+                for line in p.stdout:
+                    flag_exit = True
+                    #Get the id of the job
+                    job_id_aux = str(line).rstrip().split()[1]
+                    #Save the id of the jobs
+                    pending_jobs[job_id_aux] = 1
+                    #If there is any job on the cluster on dict_jobs, break the loop and wait for another 10 seconds
+                    # to check the status of the jobs in the cluster
+                    if(job_id_aux in dict_jobs):
+                        flag_exit = False
+                        break
 
-        logger.info("All jobs finished.")
+            logger.info("All jobs finished.")
 
 
     except Exception as error:
