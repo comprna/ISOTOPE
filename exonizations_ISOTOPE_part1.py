@@ -46,9 +46,10 @@ parser.add_argument("-m", "--max", required=False,  type=int, default=500)
 parser.add_argument("-t", "--thres", required=False,  type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
 parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
+parser.add_argument("-c", "--cluster", required=False, default=False, help = "Run in parallel on a cluster")
 
 
-def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, max_length, threshold, n_randomizations):
+def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, max_length, threshold, n_randomizations, cluster):
     try:
 
         logger.info("Starting execution exonizations_ISOTOPE_part1")
@@ -127,14 +128,25 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
         del introns_sorted['chr_num']
         introns_sorted.to_csv(output_path_aux6, sep="\t", index=False)
 
-        # 6.2. Run a job per sample
-        logger.info("Part6...")
-        command1="for sample in $(ls "+bam_path+"/*/*.bam);do " \
-                "sample_id=$(echo $sample | awk -F '/' '{print $(NF-1)}');" \
-                "echo \"Processing file $sample: \"$(date); sbatch -J $(echo $sample)_coverageBed "+dir_path+"/coverageBed.sh $(echo $sample) " \
-                 +output_path_aux6+" "+output_path+"/$(echo $sample_id).coverage_sorted;done"
-        os.system(command1)
-        logger.info("Wait until all jobs have finished. Then, go on with part2")
+        if(args.cluster):
+            # 6.2. Run a job per sample in parallel
+            logger.info("Part6...")
+            command1="for sample in $(ls "+bam_path+"/*/*.bam);do " \
+                    "sample_id=$(echo $sample | awk -F '/' '{print $(NF-1)}');" \
+                    "echo \"Processing file $sample: \"$(date); sbatch -J $(echo $sample)_coverageBed "+dir_path+"/coverageBed.sh $(echo $sample) " \
+                     +output_path_aux6+" "+output_path+"/$(echo $sample_id).coverage_sorted;done"
+            os.system(command1)
+            logger.info("Wait until all jobs have finished. Then, go on with part2")
+
+        else:
+            # 6.2. Run a job per sample sequentially
+            logger.info("Part6...")
+            command1="for sample in $(ls "+bam_path+"/*/*.bam);do " \
+                    "sample_id=$(echo $sample | awk -F '/' '{print $(NF-1)}');" \
+                    "echo \"Processing file $sample: \"$(date); bash "+dir_path+"/coverageBed.sh $(echo $sample) " \
+                     +output_path_aux6+" "+output_path+"/$(echo $sample_id).coverage_sorted;done"
+            os.system(command1)
+            logger.info("Wait until all jobs have finished. Then, go on with part2")
 
         exit(0)
 
@@ -146,4 +158,4 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    main(args.reads,args.bam,args.gtf,args.genome,args.mosea,args.output,args.repeats,args.max,args.thres,args.rand)
+    main(args.reads,args.bam,args.gtf,args.genome,args.mosea,args.output,args.repeats,args.max,args.thres,args.rand,args.cluster)
