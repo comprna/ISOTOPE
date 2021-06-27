@@ -58,7 +58,7 @@ def get_coverageBed(input_path, gtf_path, coverage_path, output_path, sclc_flag)
     # args = parser.parse_args()
 
     try:
-        logger.info("Starting execution")
+        logger.info("get_coverageBed: Starting execution")
 
         # input_path = args.input
         # gtf_path = args.gtf

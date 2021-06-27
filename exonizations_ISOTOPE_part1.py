@@ -13,6 +13,7 @@ from lib.Exonization.get_coverageBed import *
 from lib.Exonization.check_mutations_nearby import *
 
 from argparse import ArgumentParser, RawTextHelpFormatter
+import argparse
 
 # create logger
 logger = logging.getLogger(__name__)
@@ -34,6 +35,16 @@ logger.addHandler(ch)
 description = \
 "Description: Get exonization events\n\n"
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 parser = ArgumentParser(description=description, formatter_class=RawTextHelpFormatter,
                         add_help=True)
 parser.add_argument("-r", "--reads", required=True, help = "reads mapped to junctions")
@@ -46,7 +57,7 @@ parser.add_argument("-m", "--max", required=False,  type=int, default=500)
 parser.add_argument("-t", "--thres", required=False,  type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, help="Number of rounds for calculating significance of each event")
 parser.add_argument("-rep", "--repeats", required=True, help = "Regions of the genome with repeats from maskerDB",default=None)
-parser.add_argument("-c", "--cluster", required=False, default=False, help = "Run in parallel on a cluster")
+parser.add_argument("-c", "--cluster", type=str2bool, nargs='?',const=True, default=False,help="Run in parallel on a cluster")
 
 
 def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_path, repeats_path, max_length, threshold, n_randomizations, cluster):

@@ -79,7 +79,7 @@ parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=Fals
 parser.add_argument("--temp", type=str2bool, nargs='?',const=True, default=False,help="Remove temp files")
 parser.add_argument("-mut","--mutations", required=False, default="Missing", help = "Mutations path")
 parser.add_argument("--chess", required=False, default="Missing", help = "Path to annotated SE from CHESSdb (GTEX)")
-parser.add_argument("-c", "--cluster", required=False, default=False, help = "Run in parallel on a cluster")
+parser.add_argument("-c", "--cluster", type=str2bool, nargs='?',const=True, default=False,help="Run in parallel on a cluster")
 
 def main(readcounts_path, gtf_path, genome_path, transcript_expression_path, HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pan_path,
          mosea_path, orfs_scripts, output_path, repeats_path, threshold, max_length, tumor_specific, control_path, Intropolis_path, mutations_path, CHESS_SE_path,
