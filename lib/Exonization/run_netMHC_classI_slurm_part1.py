@@ -147,7 +147,7 @@ def run_netMHC_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_path,
                             logger.info("Running jobs sequentially...")
                             logger.info("Running job HLA-type: " + output_netMHC_path + "/" + index + "_" + x + ".out")
                             cont2 += 1
-                            command1 = netMHC_path + " -a " + x + " " + input_sequence_pieces_path + "/" + index + \
+                            command1 = "/bin/sh " + netMHC_path + " -a " + x + " " + input_sequence_pieces_path + "/" + index + \
                                        ".fa > " + output_netMHC_path + "/" + index + "_" + x + ".out"
                             os.system(command1)
 
