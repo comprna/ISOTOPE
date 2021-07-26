@@ -186,7 +186,7 @@ ISOTOPE_path="/users/genomics/juanluis/Software/ISOTOPE"
 data_path="/users/genomics/juanluis/SCLC_cohorts/Smart/test_ISOTOPE"
 output_path="/users/genomics/juanluis/SCLC_cohorts/Smart/test_ISOTOPE/A5_A3"
 
-python "${ISOTOPE_path}"/A5_A3_ISOTOPE_part1.py -r "${data_path}"/data/readCounts_TEST.tab  --transcript "${data_path}"/data/iso_tpm.txt --gtf "${data_path}"/annotation/Homo_sapiens.GRCh37.75.gtf -c "${data_path}"/annotation/Ensembl_gene_conversion.txt -genome /genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa -mosea /users/genomics/juanluis/Software/MoSEA --mxfinder /users/genomics/juanluis/Software/MxFinder --rep "${data_path}"/annotation/hg19_repeats.bed -o "${output_path}" --HLAclass "${data_path}"/annotation/PHLAT_summary_ClassI.out --HLAtypes "${data_path}"/annotation/NetMHC-4.0_HLA_types_accepted.tab --HLAtypespan "${data_path}"/annotation/NetMHCpan-4.0_HLA_types_accepted.tab --netMHC /genomics/users/juanluis/Software/netMHC-4.0/netMHC --netMHCpan /genomics/users/juanluis/Software/netMHCpan-4.0/netMHCpan -o "${output_path}" --username juanluis --Intropolis "${data_path}"/annotation/intropolis.v1.hg19.filtered.tsv --chessA5 "${data_path}"/annotation/chess2.0_assembly_hg19_CrossMap.events_A5_strict.ioe --chessA3 "${data_path}"/annotation/chess2.0_assembly_hg19_CrossMap.events_A3_strict.ioe
+python "${ISOTOPE_path}"/A5_A3_ISOTOPE_part1.py -r "${data_path}"/data/readCounts_TEST.tab  --transcript "${data_path}"/data/iso_tpm.txt --gtf "${data_path}"/annotation/Homo_sapiens.GRCh37.75.gtf -conv "${data_path}"/annotation/Ensembl_gene_conversion.txt -genome /genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa -mosea /users/genomics/juanluis/Software/MoSEA --mxfinder /users/genomics/juanluis/Software/MxFinder --rep "${data_path}"/annotation/hg19_repeats.bed -o "${output_path}" --HLAclass "${data_path}"/annotation/PHLAT_summary_ClassI.out --HLAtypes "${data_path}"/annotation/NetMHC-4.0_HLA_types_accepted.tab --HLAtypespan "${data_path}"/annotation/NetMHCpan-4.0_HLA_types_accepted.tab --netMHC /genomics/users/juanluis/Software/netMHC-4.0/netMHC --netMHCpan /genomics/users/juanluis/Software/netMHCpan-4.0/netMHCpan --username juanluis --Intropolis "${data_path}"/annotation/intropolis.v1.hg19.filtered.tsv --chessA5 "${data_path}"/annotation/chess2.0_assembly_hg19_CrossMap.events_A5_strict.ioe --chessA3 "${data_path}"/annotation/chess2.0_assembly_hg19_CrossMap.events_A3_strict.ioe
 ```
 We detail here the description for each of the parameters:
 
@@ -199,6 +199,8 @@ We detail here the description for each of the parameters:
 - **-trans**  | **--transcript**: Required. Transcript expression file.
 
 - **-g**  | **--gtf**: Required. GTF annotation file. Only the exonic regions will be used.
+
+- **-conv**  | **--conversion**: Required. File with the correspondence gene ID-gene symbol. We provide a file from biomart.
 
 - **-HLAclass**  | **--HLAclass**: Required. HLA genotype of the samples.  
 
