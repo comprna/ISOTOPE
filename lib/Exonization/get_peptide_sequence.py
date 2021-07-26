@@ -392,7 +392,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                             if (re.search(">", x)):
                                 coordinates = x.split(":")[2]
                                 start_coordinates = coordinates.split("-")[0]
-                                end_coordinates = coordinates.split("-")[1][:-4]
+                                # end_coordinates = coordinates.split("-")[1][:-4]
+                                end_coordinates = coordinates.split("-")[1]
                                 # start_coordinates = x.split(";")[1]
                                 # end_coordinates = x.split(";")[2]
                                 if (int(start_coordinates) <= int(start_codon) <= int(end_coordinates)):
@@ -430,7 +431,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                     cont2 += 1
                                     coordinates = line.split(":")[2]
                                     start_coordinates = coordinates.split("-")[0]
-                                    end_coordinates = coordinates.split("-")[1][:-4]
+                                    end_coordinates = coordinates.split("-")[1]
+                                    # end_coordinates = coordinates.split("-")[1][:-4]
                                     # start_coordinates = line.split(";")[1]
                                     # end_coordinates = line.split(";")[2]
                                     offset1 = -1
@@ -477,7 +479,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                     cont2 += 1
                                     coordinates = line.split(":")[2]
                                     start_coordinates = coordinates.split("-")[0]
-                                    end_coordinates = coordinates.split("-")[1][:-4]
+                                    end_coordinates = coordinates.split("-")[1]
+                                    # end_coordinates = coordinates.split("-")[1][:-4]
                                     # start_coordinates = line.split(";")[1]
                                     # end_coordinates = line.split(";")[2]
                                     offset1 = -1
@@ -660,7 +663,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                     n_exons += 1
                                     coordinates = line.split(":")[2]
                                     start_coordinates = coordinates.split("-")[0]
-                                    end_coordinates = coordinates.split("-")[1][:-4]
+                                    end_coordinates = coordinates.split("-")[1]
+                                    # end_coordinates = coordinates.split("-")[1][:-4]
                                     # start_coordinates = line.split(";")[1]
                                     # end_coordinates = line.split(";")[2]
                                     if (int(start_coordinates) <= int(start_codon) <= int(end_coordinates)):
@@ -681,7 +685,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                     cont3 += 1
                                     coordinates = line.split(":")[2]
                                     start_coordinates = coordinates.split("-")[0]
-                                    end_coordinates = coordinates.split("-")[1][:-4]
+                                    end_coordinates = coordinates.split("-")[1]
+                                    # end_coordinates = coordinates.split("-")[1][:-4]
                                     # start_coordinates = line.split(";")[1]
                                     # end_coordinates = line.split(";")[2]
                                     offset1 = -1

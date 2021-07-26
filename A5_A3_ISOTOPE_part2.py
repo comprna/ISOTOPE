@@ -102,3 +102,8 @@ def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pa
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.output)
+    # main("/home/trincadojl/Projects/SCLC/Smart/data/PHLAT_summary_ClassI.out",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/NetMHC-4.0_HLA_types_accepted.tab",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/NetMHCpan-4.0_HLA_types_accepted.tab",
+    #      "/home/trincadojl/Software/netMHC-4.0/netMHC", "/home/trincadojl/Software/netMHCpan-4.0/netMHCpan",
+    #      "/home/trincadojl/Projects/SCLC/Smart/test_ISOTOPE/A5_A3")

@@ -270,7 +270,7 @@ def run_netMHCpan_classI_slurm_part2(input_list_path, HLAclass_path, HLAtypes_pa
         logger.info("Saved " + output_peptides_path)
         logger.info("Saved " + output_peptides_path2)
         logger.info("Saved " + output_peptides_all_path)
-        logger.info("Saved " + output_peptides_all_path)
+        logger.info("Saved " + output_peptides_all_path2)
 
         # Assign the status_neoantigen to the list of the exonizations
         exonizations = pd.read_table(input_list_path, delimiter="\t")

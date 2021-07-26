@@ -421,7 +421,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                     if (x == y):
                                         coordinates = y.split(":")[2]
                                         start_coordinates = coordinates.split("-")[0]
-                                        end_coordinates = coordinates.split("-")[1][:-4]
+                                        end_coordinates = coordinates.split("-")[1]
+                                        # end_coordinates = coordinates.split("-")[1][:-4]
                                         if (int(start_coordinates) <= int(start_codon) <= int(end_coordinates)):
                                             flag_save_sequence = True
                                             flag_diff = True
@@ -440,12 +441,14 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                         # Get the offset relative to the shorter exon
                                         aberrant_coordinates = x.split(":")[2]
                                         aberrant_start_coordinates = aberrant_coordinates.split("-")[0]
-                                        aberrant_end_coordinates = aberrant_coordinates.split("-")[1][:-4]
+                                        aberrant_end_coordinates = aberrant_coordinates.split("-")[1]
+                                        # aberrant_end_coordinates = aberrant_coordinates.split("-")[1][:-4]
                                         # aberrant_length = int(aberrant_start_coordinates )- int(aberrant_end_coordinates)
                                         aberrant_length = int(aberrant_end_coordinates) - int(aberrant_start_coordinates)
                                         ref_coordinates = y.split(":")[2]
                                         ref_start_coordinates = ref_coordinates.split("-")[0]
-                                        ref_end_coordinates = ref_coordinates.split("-")[1][:-4]
+                                        ref_end_coordinates = ref_coordinates.split("-")[1]
+                                        # ref_end_coordinates = ref_coordinates.split("-")[1][:-4]
                                         # ref_length = int(ref_start_coordinates )- int(ref_end_coordinates)
                                         ref_length = int(ref_end_coordinates) - int(ref_start_coordinates)
                                         if (event_type == "New_donor"):  # A5 event
@@ -574,7 +577,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                             cont2 += 1
                                             coordinates = line.split(":")[2]
                                             start_coordinates = coordinates.split("-")[0]
-                                            end_coordinates = coordinates.split("-")[1][:-4]
+                                            end_coordinates = coordinates.split("-")[1]
+                                            # end_coordinates = coordinates.split("-")[1][:-4]
                                             offset1 = -1
                                             offset2 = -1
                                             pass
@@ -622,7 +626,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                             cont2 += 1
                                             coordinates = line.split(":")[2]
                                             start_coordinates = coordinates.split("-")[0]
-                                            end_coordinates = coordinates.split("-")[1][:-4]
+                                            end_coordinates = coordinates.split("-")[1]
+                                            # end_coordinates = coordinates.split("-")[1][:-4]
                                             offset1 = -1
                                             offset2 = -1
                                             pass
@@ -728,7 +733,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                         if (re.search(">", line)):
                                             coordinates = line.split(":")[2]
                                             start_coordinates = int(coordinates.split("-")[0])
-                                            end_coordinates = int(coordinates.split("-")[1][:-4])
+                                            end_coordinates = int(coordinates.split("-")[1])
+                                            # end_coordinates = int(coordinates.split("-")[1][:-4])
                                             exon_length = end_coordinates - start_coordinates
                                             if (can_exon_strand == "+" and event_type == "New_donor"):  # A5
                                                 if (start_coordinates > int(start_codon)):
@@ -796,7 +802,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                         if (re.search(">", line)):
                                             coordinates = line.split(":")[2]
                                             start_coordinates = int(coordinates.split("-")[0])
-                                            end_coordinates = int(coordinates.split("-")[1][:-4])
+                                            end_coordinates = int(coordinates.split("-")[1])
+                                            # end_coordinates = int(coordinates.split("-")[1][:-4])
                                             aux_length = end_coordinates - start_coordinates
                                             if (int(distance) > aux_length):
                                                 distance -= aux_length
@@ -905,7 +912,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                             n_exons += 1
                                             coordinates = line.split(":")[2]
                                             start_coordinates = coordinates.split("-")[0]
-                                            end_coordinates = coordinates.split("-")[1][:-4]
+                                            end_coordinates = coordinates.split("-")[1]
+                                            # end_coordinates = coordinates.split("-")[1][:-4]
                                             if (int(start_coordinates) <= int(start_codon) <= int(end_coordinates)):
                                                 flag_start_codon = True
 
@@ -924,7 +932,8 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                                             cont3 += 1
                                             coordinates = line.split(":")[2]
                                             start_coordinates = coordinates.split("-")[0]
-                                            end_coordinates = coordinates.split("-")[1][:-4]
+                                            end_coordinates = coordinates.split("-")[1]
+                                            # end_coordinates = coordinates.split("-")[1][:-4]
                                             offset1 = -1
                                             offset2 = -1
                                             pass

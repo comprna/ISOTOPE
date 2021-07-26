@@ -234,3 +234,10 @@ if __name__ == '__main__':
     main(args.reads,args.gtf,args.genome,args.transcript,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,
          args.netMHCpan,args.mosea,args.mxfinder,args.output,args.repeats,args.thres,args.max,args.tumor_specific,
          args.control_path,args.Intropolis,args.mutations,args.chess,args.Rudin,args.temp,args.username,args.cluster)
+    # main("/home/trincadojl/Projects/SCLC/Smart/data/readCounts_TEST.tab","/home/trincadojl/Projects/SCLC/Smart/annotation/Homo_sapiens.GRCh37.75.gtf",
+    #      "/media/trincadojl/data/Projects/annotation/hg19.fa","/home/trincadojl/Projects/SCLC/Smart/data/iso_tpm.txt",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/PHLAT_summary_ClassI.out","/home/trincadojl/Projects/SCLC/Smart/data/NetMHC-4.0_HLA_types_accepted.tab",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/NetMHCpan-4.0_HLA_types_accepted.tab","/home/trincadojl/Software/netMHC-4.0/netMHC",
+    #      "/home/trincadojl/Software/netMHCpan-4.0/netMHCpan","/home/trincadojl/Software/MoSEA","/home/trincadojl/Software/MxFinder","/home/trincadojl/Projects/SCLC/Smart/test_ISOTOPE/exonizations",
+    #      "/home/trincadojl/Projects/SCLC/Smart/annotation/hg19_repeats.bed",5,500,False,
+    #      "Missing","Missing","Missing","Missing",False,False,"juanluis",False)

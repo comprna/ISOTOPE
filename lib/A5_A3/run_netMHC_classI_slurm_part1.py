@@ -32,7 +32,7 @@ logger.addHandler(ch)
 
 def run_netMHC_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_path, input_sequence_pieces_path, output_netMHC_path,
                                   output_peptides_path,output_peptides_all_path,output_peptides_path2, output_peptides_all_path2,
-                                  output_list_path,netMHC_path):
+                                  output_list_path,netMHC_path, cluster):
 
     try:
         logger.info("Starting execution")
@@ -128,21 +128,30 @@ def run_netMHC_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_path,
                     HLA_types = HLA_samples[sample]
                     cont2 = 0
                     for x in HLA_types:
-                        logger.info("Running job HLA-type: " + output_netMHC_path + "/" + index + "_" + x + ".out")
-                        cont2 += 1
-                        command1 = netMHC_path + " -a " + x + " " + input_sequence_pieces_path + "/" + index + \
-                                   ".fa > " + output_netMHC_path + "/" + index + "_" + x + ".out"
-                        # Output this to an auxiliary script
-                        open_peptides_file = open(path1 + "/aux.sh", "w")
-                        open_peptides_file.write("#!/bin/sh\n")
-                        open_peptides_file.write("#SBATCH --partition=lowmem\n")
-                        open_peptides_file.write("#SBATCH --mem 2000\n")
-                        open_peptides_file.write("#SBATCH -e " + path1 + "/" + index + "_" + x + ".err" + "\n")
-                        open_peptides_file.write("#SBATCH -o " + path1 + "/" + index + "_" + x + ".out" + "\n")
-                        open_peptides_file.write(command1 + ";\n")
-                        open_peptides_file.close()
-                        command2 = "sbatch -J " + index + "_" + x + " " + path1 + "/aux.sh; sleep 0.5"
-                        os.system(command2)
+                        if(cluster):
+                            logger.info("Running jobs in parallel...")
+                            logger.info("Running job HLA-type: " + output_netMHC_path + "/" + index + "_" + x + ".out")
+                            cont2 += 1
+                            command1 = netMHC_path + " -a " + x + " " + input_sequence_pieces_path + "/" + index + \
+                                       ".fa > " + output_netMHC_path + "/" + index + "_" + x + ".out"
+                            # Output this to an auxiliary script
+                            open_peptides_file = open(path1 + "/aux.sh", "w")
+                            open_peptides_file.write("#!/bin/sh\n")
+                            open_peptides_file.write("#SBATCH --partition=lowmem\n")
+                            open_peptides_file.write("#SBATCH --mem 2000\n")
+                            open_peptides_file.write("#SBATCH -e " + path1 + "/" + index + "_" + x + ".err" + "\n")
+                            open_peptides_file.write("#SBATCH -o " + path1 + "/" + index + "_" + x + ".out" + "\n")
+                            open_peptides_file.write(command1 + ";\n")
+                            open_peptides_file.close()
+                            command2 = "sbatch -J " + index + "_" + x + " " + path1 + "/aux.sh; sleep 0.5"
+                            os.system(command2)
+                        else:
+                            logger.info("Running jobs sequentially...")
+                            logger.info("Running job HLA-type: " + output_netMHC_path + "/" + index + "_" + x + ".out")
+                            cont2 += 1
+                            command1 = netMHC_path + " -a " + x + " " + input_sequence_pieces_path + "/" + index + \
+                                       ".fa > " + output_netMHC_path + "/" + index + "_" + x + ".out"
+                            os.system(command1)
 
                 else:
                     pass

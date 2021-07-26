@@ -58,7 +58,7 @@ parser = ArgumentParser(description=description, formatter_class=RawTextHelpForm
 parser.add_argument("-r", "--reads", required=True, help = "reads mapped to junctions")
 parser.add_argument("-trans", "--transcript", required=True, help = "transcript expression file")
 parser.add_argument("-g", "--gtf", required=True, help = "gtf annotation")
-parser.add_argument("-c", "--conversion", required=True, help = "gene name conversion")
+parser.add_argument("-conv", "--conversion", required=True, help = "gene name conversion")
 parser.add_argument("-m", "--max", required=False, type=int, default=500)
 parser.add_argument("-t", "--thres", required=False, type=int, default=5, help="Minimum number of reads mapping the event")
 parser.add_argument("-chunks", "--size_chunks", required=False, type=int, default=1, help="For paralellization, this values indicates number of jobs to run")
@@ -81,6 +81,7 @@ parser.add_argument("-Intropolis", "--Intropolis", required=False, default="Miss
 parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("--username", required=True, help = "Cluster user name")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
+parser.add_argument("-c", "--cluster", type=str2bool, nargs='?',const=True, default=False,help="Run in parallel on a cluster")
 
 def chunks(iterable, n):
    "chunks(ABCDE,2) => AB CD E"
@@ -93,7 +94,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
          threshold, size_chunks, repeats_path, mutations_path, CHESS_A5_path, CHESS_A3_path,
          tumor_specific, control_path, Intropolis_path,  mosea_path, mxfinder, genome_path, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, flag_Rudin,
-         name_user, output_path):
+         name_user, output_path, cluster):
 
     try:
 
@@ -293,7 +294,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
                                       output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_lost.tab",
                                       output_path + "/A5_A3_NetMHC-4.0_neoantigens_type_lost_all.tab",
                                       output_path + "/A5_A3_NetMHC-4.0_junctions_ORF_neoantigens.tab",
-                                      netMHC_path)
+                                      netMHC_path, cluster)
 
         # 14. Run netMHCpan-4.0_part1
         logger.info("Part12...")
@@ -307,7 +308,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path, conversion_names
                                          output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_lost.tab",
                                          output_path + "/A5_A3_NetMHCpan-4.0_neoantigens_type_lost_all.tab",
                                          output_path + "/A5_A3_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
-                                         netMHC_pan_path)
+                                         netMHC_pan_path, cluster)
 
         logger.info("Wait until all jobs have finished. Then, go on with part2")
 
@@ -324,4 +325,17 @@ if __name__ == '__main__':
     main(args.reads,args.transcript,args.gtf,args.conversion,args.max,args.thres,args.size_chunks,
          args.repeats,args.mutations,args.chessA5,args.chessA3,args.tumor_specific,args.control_path,args.Intropolis,
          args.mosea,args.mxfinder,args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,
-         args.temp,args.Rudin,args.username, args.output)
+         args.temp,args.Rudin,args.username, args.output, args.cluster)
+    # main("/home/trincadojl/Projects/SCLC/Smart/data/readCounts_TEST.tab",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/iso_tpm.txt",
+    #      "/home/trincadojl/Projects/SCLC/Smart/annotation/Homo_sapiens.GRCh37.75.gtf"
+    #      , "/home/trincadojl/Projects/SCLC/Smart/annotation/Ensembl_gene_conversion.txt", 500, 5, 1,
+    #      "/home/trincadojl/Projects/SCLC/Smart/annotation/hg19_repeats.bed", "Missing", "Missing", "Missing", False,
+    #      "Missing", "Missing",
+    #      "/home/trincadojl/Software/MoSEA", "/home/trincadojl/Software/MxFinder",
+    #      "/media/trincadojl/data/Projects/annotation/hg19.fa",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/PHLAT_summary_ClassI.out",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/NetMHC-4.0_HLA_types_accepted.tab",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/NetMHCpan-4.0_HLA_types_accepted.tab",
+    #      "/home/trincadojl/Software/netMHC-4.0/netMHC", "/home/trincadojl/Software/netMHCpan-4.0/netMHCpan",
+    #      False, False, "juanluis", "/home/trincadojl/Projects/SCLC/Smart/test_ISOTOPE/A5_A3", False)
