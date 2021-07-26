@@ -75,10 +75,11 @@ def main(readcounts_path, bam_path, gtf_path, genome_path, mosea_path, output_pa
         #Check if the chr column is already formatted
         if(gtf['chr'].str.contains('chr').all()):
             list_chr = "chr"
-            gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,22)] + ["chrX", "chrY"])]
+            gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,23)] + ["chrX", "chrY"])]
         else:
-            gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+            list_chr = "chr"
             gtf['chr'] = 'chr' + gtf['chr'].astype(str)
+            gtf = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,23)] + ["chrX", "chrY"])]
         #Save the gtf in external file
         gtf.to_csv(gtf_path_exon,index=False,header=False,sep ='\t',quoting=csv.QUOTE_NONE)
 

@@ -86,7 +86,7 @@ def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
         #Get only the information on the exons and on chromosomes from 1 to 22, X and Y
         gtf.columns = ['chr', 'type1', 'type2', 'start', 'end', 'dot', 'strand', 'dot2', 'rest_information']
         gtf = gtf[gtf['type2'].isin(["exon"])]
-        gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+        gtf = gtf[gtf['chr'].isin(list(range(1,23)) + ["X","Y"])]
         #Add the chr suffix
         gtf['chr'] = 'chr' + gtf['chr'].astype(str)
         #Save the gtf in external file

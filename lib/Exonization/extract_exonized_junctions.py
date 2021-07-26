@@ -381,6 +381,8 @@ def extract_exonized_junctions(input_path, gtf_path, genome_path, max_length, ou
                     motif3.append(line.rstrip())
 
         #Associate the motifs to the original exonization file
+        print(len(motif5))
+        print(len(motif3))
         exonizations_filtered["splice_site5"] = motif5
         exonizations_filtered["splice_site3"] = motif3
         # exonizations_filtered["position5"] = position5

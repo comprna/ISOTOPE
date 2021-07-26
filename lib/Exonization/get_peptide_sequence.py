@@ -181,10 +181,11 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         #Check if the chr column is already formatted
         if(gtf['chr'].str.contains('chr').all()):
             list_chr = "chr"
-            gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,22)] + ["chrX", "chrY"])]
+            gtf['chr'] = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,23)] + ["chrX", "chrY"])]
         else:
-            gtf = gtf[gtf['chr'].isin(list(range(1,22)) + ["X","Y"])]
+            list_chr = "chr"
             gtf['chr'] = 'chr' + gtf['chr'].astype(str)
+            gtf = gtf[gtf['chr'].isin([list_chr + str(i) for i in range(1,23)] + ["chrX", "chrY"])]
         gtf["transcript_id"] = gtf["rest_information"].apply(lambda x: x.split(";")[1].split("\"")[1])
 
         # 5. Get the peptidic sequences of the reference and the transcript with the exonization
