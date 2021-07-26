@@ -59,9 +59,10 @@ parser.add_argument("-rand", "--rand", required=False,  type=int, default=100, h
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, default=False,help="Tumor specific mode")
 # parser.add_argument("--Rudin", type=str2bool, nargs='?',const=True, default=False,help="Rudin mode")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
+parser.add_argument("-c", "--cluster", type=str2bool, nargs='?',const=True, default=False,help="Run in parallel on a cluster")
 
 def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
-         TPM_threshold, n_randomizations, tumor_specific, output_path):
+         TPM_threshold, n_randomizations, tumor_specific, output_path, cluster):
 
     try:
 
@@ -174,13 +175,33 @@ def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
         del introns_sorted['chr_num']
         introns_sorted.to_csv(output_path + "/random_introns.bed", sep="\t", index=False)
 
-        # 5.2. Run a job per sample
-        command3="for sample in $(ls "+bam_path+"/*/*.bam);do " \
-                "sample_id=$(echo $sample | awk -F '/' '{print $(NF-1)}');" \
-                "echo \"Processing file $sample: \"$(date); sbatch -J $(echo $sample)_coverageBed "+dir_path+"/coverageBed.sh $(echo $sample) " \
-                 + output_path + "/random_introns.bed "+output_path+"/$(echo $sample_id).coverage_sorted;done"
-        os.system(command3)
-        logger.info("Wait until all jobs have finished. Then, go on with part2")
+        # # 5.2. Run a job per sample
+        # command3="for sample in $(ls "+bam_path+"/*/*.bam);do " \
+        #         "sample_id=$(echo $sample | awk -F '/' '{print $(NF-1)}');" \
+        #         "echo \"Processing file $sample: \"$(date); sbatch -J $(echo $sample)_coverageBed "+dir_path+"/coverageBed.sh $(echo $sample) " \
+        #          + output_path + "/random_introns.bed "+output_path+"/$(echo $sample_id).coverage_sorted;done"
+        # os.system(command3)
+        # logger.info("Wait until all jobs have finished. Then, go on with part2")
+
+        if(cluster):
+            # 5.1. Run a job per sample in parallel
+            logger.info("Part5...")
+            command1="for sample in $(ls "+bam_path+"/*/*.bam);do " \
+                    "sample_id=$(echo $sample | awk -F '/' '{print $(NF-1)}');" \
+                    "echo \"Processing file $sample: \"$(date); sbatch -J $(echo $sample)_coverageBed "+dir_path+"/coverageBed.sh $(echo $sample) " \
+                    + output_path + "/random_introns.bed " + output_path + "/$(echo $sample_id).coverage_sorted;done"
+            os.system(command1)
+            logger.info("Wait until all jobs have finished. Then, go on with part2")
+
+        else:
+            # 5.2. Run a job per sample sequentially
+            logger.info("Part5...")
+            command1="for sample in $(ls "+bam_path+"/*/*.bam);do " \
+                    "sample_id=$(echo $sample | awk -F '/' '{print $(NF-1)}');" \
+                    "echo \"Processing file $sample: \"$(date); bash "+dir_path+"/coverageBed.sh $(echo $sample) " \
+                    + output_path + "/random_introns.bed " + output_path + "/$(echo $sample_id).coverage_sorted;done"
+            os.system(command1)
+            logger.info("Done. Go on with part2")
 
         exit(0)
 
@@ -193,4 +214,4 @@ def main(introns_path, bam_path, gtf_path, control_path_path, chess_path,
 if __name__ == '__main__':
     args = parser.parse_args()
     main(args.introns,args.bam,args.gtf,args.control_path, args.chess,
-         args.thres,args.rand,args.tumor_specific, args.output)
+         args.thres,args.rand,args.tumor_specific, args.output, args.cluster)

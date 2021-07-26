@@ -71,10 +71,11 @@ parser.add_argument("--username", required=True, help="Cluster user name")
 parser.add_argument("--tumor_specific", type=str2bool, nargs='?', const=True, default=False,
                     help="Tumor specific mode")
 parser.add_argument("--temp", type=str2bool, nargs='?', const=True, default=False, help="Remove temp files")
+parser.add_argument("-c", "--cluster", type=str2bool, nargs='?',const=True, default=False,help="Run in parallel on a cluster")
 
 def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAtypes_path,
          HLAtypes_pan_path, netMHC_path, netMHC_pan_path, threshold,
-         mosea_path, mxfinder_path, output_path, tumor_specific, remove_temp_files, name_user):
+         mosea_path, mxfinder_path, output_path, tumor_specific, remove_temp_files, name_user, cluster):
 
     try:
 
@@ -130,7 +131,7 @@ def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAty
         else:
             output_path_filtered2 = output_path + "/IR_expressed_genes.tab"
 
-        get_coverageBed_adapter(output_path_filtered2, output_path + "/random_introns.bed",output_path + "/coverageBed", output_path, name_user)
+        get_coverageBed_adapter(output_path_filtered2, output_path + "/random_introns.bed",output_path + "/coverageBed", output_path, name_user, cluster)
 
         # 7.2. Assemble all pieces into one single file
         logger.info("Part7.2...")
@@ -172,7 +173,7 @@ def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAty
                                       output_path + "/IR_fasta_files",output_path + "/IR_NetMHC-4.0_files", output_path + "/IR_NetMHC-4.0_neoantigens_type_gained.tab",
                                       output_path + "/IR_NetMHC-4.0_neoantigens_type_gained_all.tab", output_path + "/IR_NetMHC-4.0_neoantigens_type_lost.tab",
                                       output_path + "/IR_NetMHC-4.0_neoantigens_type_lost_all.tab", output_path + "/IR_NetMHC-4.0_junctions_ORF_neoantigens.tab",
-                                      netMHC_path)
+                                      netMHC_path, cluster)
 
         #12. Run netMHCpan-4.0_part1
         logger.info("Part12...")
@@ -182,8 +183,7 @@ def main(transcript_expression_path, gtf_path, genome_path, HLAclass_path, HLAty
                                       output_path + "/IR_fasta_files",output_path + "/IR_NetMHCpan-4.0_files", output_path + "/IR_NetMHCpan-4.0_neoantigens_type_gained.tab",
                                       output_path + "/IR_NetMHCpan-4.0_neoantigens_type_gained_all.tab", output_path + "/IR_NetMHCpan-4.0_neoantigens_type_lost.tab",
                                       output_path + "/IR_NetMHCpan-4.0_neoantigens_type_lost_all.tab", output_path + "/IR_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
-                                      netMHC_pan_path)
-        logger.info("Wait until all jobs have finished. Then, go on with part3")
+                                      netMHC_pan_path, cluster)
 
         exit(0)
 
@@ -197,4 +197,20 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args.transcript,args.gtf,args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,
          args.netMHC,args.netMHCpan,args.thres,args.mosea,args.mxfinder,args.output,args.tumor_specific,
-         args.temp,args.username)
+         args.temp,args.username,args.cluster)
+    # main("/home/trincadojl/Projects/SCLC/Smart/data/iso_tpm.txt",
+    #      "/home/trincadojl/Projects/SCLC/Smart/annotation/Homo_sapiens.GRCh37.75.gtf",
+    #      "/media/trincadojl/data/Projects/annotation/hg19.fa",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/PHLAT_summary_ClassI.out",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/NetMHC-4.0_HLA_types_accepted.tab",
+    #      "/home/trincadojl/Projects/SCLC/Smart/data/NetMHCpan-4.0_HLA_types_accepted.tab",
+    #      "/home/trincadojl/Software/netMHC-4.0/netMHC",
+    #      "/home/trincadojl/Software/netMHCpan-4.0/netMHCpan",
+    #      1,
+    #      "/home/trincadojl/Software/MoSEA",
+    #      "/home/trincadojl/Software/MxFinder",
+    #      "/home/trincadojl/Projects/SCLC/Smart/test_ISOTOPE/IR",
+    #      False,
+    #      False,
+    #      "juanluis",
+    #      False)

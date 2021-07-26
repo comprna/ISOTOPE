@@ -90,7 +90,7 @@ def get_coverageBed(input_path, gtf_path, coverage_path, output_path, sclc_flag)
         aux_sample = ""
         pvalue_list, reads_coverage_intron_list = [], []
         for i in range(0,len(introns.index)):
-            logger.info(str(i)+"...")
+            # logger.info(str(i)+"...")
             new_sample = introns["Sample_id"].iloc[i].rstrip()
             #Get the id of this intron
             intron = introns["Event_id"].iloc[i].rstrip()

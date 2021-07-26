@@ -207,7 +207,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 sample_id = tokens[Sample_id_pos]
                 flag_exit = False
                 cont1+=1
-                # logger.info(str(cont1))
+                logger.info(str(cont1))
                 # if(cont1==25):
                 #     break
                 # Intitialize the dictionaries if the exonizations has not been explored yet
