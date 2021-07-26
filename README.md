@@ -462,6 +462,7 @@ We detail here the description of the parameters:
 - pandas
 - biopython
 - R (>=3.0.0)
+- biomaRt
 - bedtools
 - MoSEA (https://github.com/comprna/MoSEA)
 - MxFinder (https://github.com/JLTrincado/MxFinder)
