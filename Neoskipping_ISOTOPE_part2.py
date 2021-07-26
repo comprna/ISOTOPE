@@ -69,17 +69,17 @@ def main(HLAclass_path, HLAtypes_path, HLAtypes_pan_path, netMHC_path, netMHC_pa
         # 10. Run netMHC-4.0_part2
         logger.info("Part10...")
         run_netMHC_classI_slurm_part2(output_path + "/all_neoskipping_filtered_peptide_change.tab", HLAclass_path, HLAtypes_path,
-                                      output_path + "/neoskipping_fasta_files",output_path + "/neoskipping_NetMHC-4.0_files", output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_3.tab",
-                                      output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_3_all.tab", output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_2.tab",
-                                      output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_2_all.tab", output_path + "/neoskipping_NetMHC-4.0_junctions_ORF_neoantigens.tab",
+                                      output_path + "/neoskipping_fasta_files",output_path + "/neoskipping_NetMHC-4.0_files", output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_gained.tab",
+                                      output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_gained_all.tab", output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_lost.tab",
+                                      output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_lost_all.tab", output_path + "/neoskipping_NetMHC-4.0_junctions_ORF_neoantigens.tab",
                                       netMHC_path)
 
         # 11. Run netMHCpan-4.0_part2
         logger.info("Part11...")
         run_netMHCpan_classI_slurm_part2(output_path + "/all_neoskipping_filtered_peptide_change.tab", HLAclass_path, HLAtypes_pan_path,
-                                      output_path + "/neoskipping_fasta_files",output_path + "/neoskipping_NetMHCpan-4.0_files", output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_3.tab",
-                                      output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_3_all.tab", output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_2.tab",
-                                      output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_2_all.tab", output_path + "/neoskipping_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
+                                      output_path + "/neoskipping_fasta_files",output_path + "/neoskipping_NetMHCpan-4.0_files", output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_gained.tab",
+                                      output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_gained_all.tab", output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_lost.tab",
+                                      output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_lost_all.tab", output_path + "/neoskipping_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
                                       netMHC_pan_path)
 
         # # 12. Run format_to_SPADA

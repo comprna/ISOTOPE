@@ -73,11 +73,12 @@ parser.add_argument("--tumor_specific", type=str2bool, nargs='?',const=True, def
 parser.add_argument("-control_path", "--control_path", required=False, default="Missing", help = "reads mapped to junctions controls")
 parser.add_argument("-Intropolis", "--Intropolis", required=False, default="Missing", help = "reads mapped to junctions from Intropolis db")
 parser.add_argument("-o", "--output", required=True, help = "Output path")
+parser.add_argument("-c", "--cluster", type=str2bool, nargs='?',const=True, default=False,help="Run in parallel on a cluster")
 
 def main(readcounts_path, transcript_expression_path, gtf_path,
          threshold, fold, mutations_path, CHESS_SE_path,
          tumor_specific, control_path, Intropolis_path, mosea_path, mxfinder, genome_path, HLAclass_path, HLAtypes_path,
-         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, output_path):
+         HLAtypes_pan_path, netMHC_path, netMHC_pan_path, remove_temp_files, output_path, cluster):
 
     try:
 
@@ -170,7 +171,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
         command2 = "Rscript " + dir_path + "/lib/Neoskipping/filter_results.R " + output_path_aux14 + " " + output_path_aux18 + " " + output_path + "/all_neoskipping_filtered_peptide_change.tab"
         os.system(command2)
 
-        # 7. Select the fasta candidates for being run to the epitope analysis
+        # 7. Select the fasta candidates for running the epitope analysis
         logger.info("Part7...")
         output_path_aux20 = output_path + "/neoskipping_peptide_sequence.fa"
         output_path_aux21 = output_path + "/neoskipping_peptide_sequence_filtered.fa"
@@ -188,7 +189,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
                                       output_path + "/neoskipping_fasta_files",output_path + "/neoskipping_NetMHC-4.0_files", output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_3.tab",
                                       output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_3_all.tab", output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_2.tab",
                                       output_path + "/neoskipping_NetMHC-4.0_neoantigens_type_2_all.tab", output_path + "/neoskipping_NetMHC-4.0_junctions_ORF_neoantigens.tab",
-                                      netMHC_path)
+                                      netMHC_path, cluster)
 
         # 9. Run netMHCpan-4.0_part1
         logger.info("Part9...")
@@ -198,9 +199,7 @@ def main(readcounts_path, transcript_expression_path, gtf_path,
                                       output_path + "/neoskipping_fasta_files",output_path + "/neoskipping_NetMHCpan-4.0_files", output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_3.tab",
                                       output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_3_all.tab", output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_2.tab",
                                       output_path + "/neoskipping_NetMHCpan-4.0_neoantigens_type_2_all.tab", output_path + "/neoskipping_NetMHCpan-4.0_junctions_ORF_neoantigens.tab",
-                                      netMHC_pan_path)
-
-        logger.info("Wait until all jobs have finished. Then, go on with part2")
+                                      netMHC_pan_path, cluster)
 
         exit(0)
 
@@ -214,4 +213,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args.reads,args.transcript,args.gtf,args.thres, args.fold,
          args.mutations,args.chess,args.tumor_specific,args.control_path,args.Intropolis,args.mosea,args.mxfinder,
-         args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,args.output)
+         args.genome,args.HLAclass,args.HLAtypes,args.HLAtypespan,args.netMHC,args.netMHCpan,args.temp,args.output,args.cluster)

@@ -381,8 +381,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                                     # Take the last coordinates. These are the ones that MoSEA have used for obtaining the sequence
                                     coordinates = x.split(":")[-1]
                                     start_coordinates = coordinates.split("-")[0]
-                                    end_coordinates = coordinates.split("-")[1]
-                                    # end_coordinates = coordinates.split("-")[1][:-4]
+                                    end_coordinates = coordinates.split("-")[1][:-4]
                                     if (int(start_coordinates) <= int(start_codon) <= int(end_coordinates)):
                                         cont_start_codon = counter
                                     counter += 1
@@ -426,8 +425,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                                         #Take the last coordinates. These are the ones that MoSEA have used for obtaining the sequence
                                         coordinates = line.split(":")[-1]
                                         start_coordinates = coordinates.split("-")[0]
-                                        end_coordinates = coordinates.split("-")[1]
-                                        # end_coordinates = coordinates.split("-")[1][:-4]
+                                        end_coordinates = coordinates.split("-")[1][:-4]
                                         offset1 = -1
                                         offset2 = -1
                                         pass
@@ -476,8 +474,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                                         #Take the last coordinates. These are the ones that MoSEA have used for obtaining the sequence
                                         coordinates = line.split(":")[-1]
                                         start_coordinates = coordinates.split("-")[0]
-                                        end_coordinates = coordinates.split("-")[1]
-                                        # end_coordinates = coordinates.split("-")[1][:-4]
+                                        end_coordinates = coordinates.split("-")[1][:-4]
                                         offset1 = -1
                                         offset2 = -1
                                         pass
@@ -582,8 +579,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                                         #Take the last coordinates. These are the ones that MoSEA have used for obtaining the sequence
                                         coordinates = line.split(":")[-1]
                                         start_coordinates = int(coordinates.split("-")[0])
-                                        end_coordinates = int(coordinates.split("-")[1])
-                                        # end_coordinates = int(coordinates.split("-")[1][:-4])
+                                        end_coordinates = int(coordinates.split("-")[1][:-4])
                                         exon_length = end_coordinates - start_coordinates
                                         #If we have skipped the start codon, stop iterating
                                         if (neoskipping_strand == "+"):
@@ -640,8 +636,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                                         #Take the last coordinates. These are the ones that MoSEA have used for obtaining the sequence
                                         coordinates = line.split(":")[-1]
                                         start_coordinates = int(coordinates.split("-")[0])
-                                        end_coordinates = int(coordinates.split("-")[1])
-                                        # end_coordinates = int(coordinates.split("-")[1][:-4])
+                                        end_coordinates = int(coordinates.split("-")[1][:-4])
                                         aux_length = end_coordinates - start_coordinates
                                         if (int(distance) > aux_length):
                                             distance -= aux_length
@@ -754,8 +749,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                                         #Take the last coordinates. These are the ones that MoSEA have used for obtaining the sequence
                                         coordinates = line.split(":")[-1]
                                         start_coordinates = coordinates.split("-")[0]
-                                        end_coordinates = coordinates.split("-")[1]
-                                        # end_coordinates = coordinates.split("-")[1][:-4]
+                                        end_coordinates = coordinates.split("-")[1][:-4]
                                         if (int(start_coordinates) <= int(start_codon) <= int(end_coordinates)):
                                             flag_start_codon = True
 
@@ -772,8 +766,7 @@ def get_peptide_sequence(neoskipping_path, transcript_expression_path, gtf_path,
                                         #Take the last coordinates. These are the ones that MoSEA have used for obtaining the sequence
                                         coordinates = line.split(":")[-1]
                                         start_coordinates = coordinates.split("-")[0]
-                                        end_coordinates = coordinates.split("-")[1]
-                                        # end_coordinates = coordinates.split("-")[1][:-4]
+                                        end_coordinates = coordinates.split("-")[1][:-4]
                                         offset1 = -1
                                         offset2 = -1
                                         pass

@@ -142,6 +142,7 @@ def run_netMHC_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_path,
                             open_peptides_file.close()
                             command2 = "sbatch -J " + index + "_" + x + " " + path1 + "/aux.sh; sleep 0.5"
                             os.system(command2)
+                            logger.info("When all the jobs have finished, run part2.")
 
                         else:
                             logger.info("Running jobs sequentially...")
@@ -154,7 +155,6 @@ def run_netMHC_classI_slurm_part1(input_list_path, HLAclass_path, HLAtypes_path,
                 else:
                     pass
 
-        logger.info("When all the jobs have finished, run part2.")
         logger.info("Done. Exiting program.")
 
     except Exception as error:
