@@ -41,7 +41,7 @@ The pipeline uses MoSEA software (https://github.com/comprna/MoSEA) to test for 
 
 Additionally, if a file of repetitive elements is provided, ISOTOPE will look if the new exonizations fall on repetitive regions or regions with low complexity. Here we provide a [test bed file](https://github.com/comprna/ISOTOPE_supplementary/blob/main/hg19_repeats_TEST_f.bed) obtained from RepeatMasker (http://www.repeatmasker.org/).
 
-ISOTOPE_path is the path where the whole GitHub repository is located. data_path is the root path where the data will be stored. output_path is the path where the output files will be saved. Users should change these paths according to their system folders. We will refer to these paths in the rest of the tutorial.
+**ISOTOPE_path** is the path where the whole GitHub repository is located. **data_path** is the root path where the data will be stored. **output_path** is the path where the output files will be saved. Users should change these paths according to their system folders. We will refer to these paths in the rest of the tutorial.
 
 ```
 ISOTOPE_path="/users/genomics/juanluis/Software/ISOTOPE"
@@ -73,7 +73,7 @@ We detail here the description for each of the parameters:
 
 - **-rep**  | **--repeats**: Regions of the genome with repeats from maskerDB
 
-- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is run on a slurm cluster. Default: False.
+- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is run on a slurm cluster. Default: False (it will run locally).
 
 - **-h**  | **--help**: display the help message describing the different paramenters
 
@@ -91,7 +91,7 @@ We make use of another software developed in the lab, MxFinder (https://github.c
 
 For all those events giving rise to a new open reading frame and not likely to be degraded by the non-sense mediated decay (NMD) pathway (filtered by checking the 50nt rule), using NetMHC (https://services.healthtech.dtu.dk/service.php?NetMHC-4.0) and NetMHCpan (https://services.healthtech.dtu.dk/service.php?NetMHCpan-4.1) we evaluate the likelihood the translated peptides could generate epitopes bound by the MHC complex. We used both NetMHC and NetMHCpan. Both methods are very similar but there are some HLA types that are only covered by one of the methods. Users should feel free to choose either one or both outputs to analyze the predicted epitopes. HLA types accepted by each method are provided in this tutorial ([HLAtypes](https://github.com/comprna/ISOTOPE_supplementary/blob/main/NetMHC-4.0_HLA_types_accepted.tab), [HLAtypespan](https://github.com/comprna/ISOTOPE_supplementary/blob/main/NetMHCpan-4.0_HLA_types_accepted.tab)). In addition, the HLA genotyping for your samples needs to be provided. This could be computed through PHLAT (https://sites.google.com/site/phlatfortype/). We include here [HLAclass](https://github.com/comprna/ISOTOPE_supplementary/blob/main/PHLAT_summary_ClassI.out) for the tested samples 
 
-Important note: this step is computationally intensive and has been parallelized. When all jobs have finished, we can proceed with the last part3:
+Important note: this step is computationally intensive and has been parallelized (see option **--cluster**). When all jobs have finished, we can proceed with the last part3:
 
 ```
 python "${ISOTOPE_path}"/exonizations_ISOTOPE_part2.py -r "${data_path}"/data/readCounts_TEST.tab --gtf "${data_path}"/annotation/Homo_sapiens.GRCh37.75.gtf -genome /genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa --transcript /projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt --HLAclass /projects_rg/SCLC_cohorts/Smart/PHLAT/PHLAT_summary_ClassI.out --HLAtypes /projects_rg/SCLC_cohorts/tables/NetMHC-4.0_HLA_types_accepted.tab --HLAtypespan /projects_rg/SCLC_cohorts/tables/NetMHCpan-4.0_HLA_types_accepted.tab --netMHC /projects_rg/SCLC_cohorts/soft/netMHC-4.0/netMHC --netMHCpan /projects_rg/SCLC_cohorts/soft/netMHCpan-4.0/netMHCpan -mosea /users/genomics/juanluis/Software/MoSEA --mxfinder /genomics/users/juanluis/comprna/MxFinder --rep "${data_path}"/annotation/hg19_repeats.bed -o "${output_path}" --username juanluis --Intropolis "${data_path}"/annotation/intropolis.v1.hg19.filtered.tsv --tumor_specific --chess "${data_path}"/annotation/chess2.0_assembly_hg19_CrossMap.events_SE_strict.ioe
@@ -145,7 +145,7 @@ We detail here the description for each of the parameters:
 
 - **--temp**: Remove temporary files
 
-- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False.
+- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False (it will run locally).
 
 - **-user**  | **--user**: Only necessary if --cluster option is enabled. Cluster user name. 
 
@@ -181,7 +181,7 @@ Here we describe the steps to obtain alternative splice site events. The initial
 
 ### Part1:
 
-In a similar way as with the exonizations, ISOTOPE will extract all the associated significant alternative splice site events. To assess the significance of each event recovered, ISOTOPE compares the reads mapping to each event against random junctions obtained on the same gene by empirical distribution. For all the events passing the previous filters, ISOTOPE will evaluate the likelihood to generate new open reading frames with respect to the canonical associated transcript (A5_A3_ORF.tab). Finally, the translated peptides are evaluated for their affinity for the MHC complex. Again this step is computationally intensive and has been parallelized. When all jobs have finished, we can proceed with part2.
+In a similar way as with the exonizations, ISOTOPE will extract all the associated significant alternative splice site events. To assess the significance of each event recovered, ISOTOPE compares the reads mapping to each event against random junctions obtained on the same gene by empirical distribution. For all the events passing the previous filters, ISOTOPE will evaluate the likelihood to generate new open reading frames with respect to the canonical associated transcript (A5_A3_ORF.tab). Finally, the translated peptides are evaluated for their affinity for the MHC complex. Again this step is computationally intensive and has been parallelized (see option **--cluster**). When all jobs have finished, we can proceed with part2.
 
 This time we deactivate --tumor_specific flag (we just do not include it on the command), because the A5_A3 events on our toy dataset are not tumor-specific. We include the Intropolis and CHESS paths if the user is interested to apply it on their data. CHESS files for A5_A3 events are provided ([chess2.0_assembly_hg19_CrossMap.events_A5_strict.ioe](https://github.com/comprna/ISOTOPE_supplementary/blob/main/chess2.0_assembly_hg19_CrossMap.events_A5_strict.ioe), [chess2.0_assembly_hg19_CrossMap.events_A3_strict.ioe](https://github.com/comprna/ISOTOPE_supplementary/blob/main/chess2.0_assembly_hg19_CrossMap.events_A3_strict.ioe)) as well as the Intropolis dataset (https://figshare.com/s/ae2283696db044488c32)
 
@@ -244,7 +244,7 @@ We detail here the description for each of the parameters:
 
 - **--temp**: Remove temporary files
 
-- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False.
+- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False (it will run locally).
 
 - **-h**  | **--help**: display the help message describing the different parameters
 
@@ -276,7 +276,7 @@ We detail here the description for each of the parameters:
 
 ### Part1:
 
-In a similar way as with the exonizations, ISOTOPE will extract all the neoskipping events. To assess the significance of each event recovered by --fold option only events with a greater fold of reads mapping the neoskipping with respect to the spanned junctions will be retained (Default: 1). For all the events passing the filters, ISOTOPE will evaluate the likelihood to generate new open reading frames with respect to the canonical associated transcript (all_neoskipping_filtered_peptide_change.tab). Finally, the translated peptides are evaluated for their affinity for the MHC complex. This step is computationally intensive and has been parallelized. When all jobs have finished, we can proceed with part2:
+In a similar way as with the exonizations, ISOTOPE will extract all the neoskipping events. To assess the significance of each event recovered by --fold option only events with a greater fold of reads mapping the neoskipping with respect to the spanned junctions will be retained (Default: 1). For all the events passing the filters, ISOTOPE will evaluate the likelihood to generate new open reading frames with respect to the canonical associated transcript (all_neoskipping_filtered_peptide_change.tab). Finally, the translated peptides are evaluated for their affinity for the MHC complex. This step is computationally intensive and has been parallelized (see option **--cluster**). When all jobs have finished, we can proceed with part2:
 
 ```
 ISOTOPE_path="/users/genomics/juanluis/Software/ISOTOPE"
@@ -327,7 +327,7 @@ We detail here the description for each of the parameters:
 
 - **--temp**: Remove temporary files
 
-- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False.
+- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False (it will run locally).
 
 - **-user**  | **--user**: Only necessary if --cluster option is enabled. Cluster user name.
 
@@ -363,7 +363,7 @@ For the analysis of IR changes the quantification of intron abundances needs to 
 
 In this part1, ISOTOPE will extract the tumor-specific introns by comparing them against the GTEX database (https://www.gtexportal.org/home/) if flag --tumor_specific is set. We have extracted the IR events from GTEX using SUPPA (https://github.com/comprna/SUPPA). We provide this file ([chess2.0_assembly_hg19_CrossMap.events_RI_strict.ioe](https://github.com/comprna/ISOTOPE_supplementary/blob/main/chess2.0_assembly_hg19_CrossMap.events_RI_strict.ioe)). Additionally, the user could provide some extra control files to compare with (--introns_normal). They should be in the same format as iso_tpm_introns_TEST.txt. Any IR event that is minimally expressed (by default 1, this value can be changed with the parameter --thres) in these control samples will be censored from our IR candidates.
 
-For each of the surviving IR events from the previous step, we will compare its expression level with n random intronic positions to test significance. This step is computationally intensive and has been parallelized. When all jobs have finished, we can proceed with part2: 
+For each of the surviving IR events from the previous step, we will compare its expression level with n random intronic positions to test significance. This step is computationally intensive and has been parallelized (see option **--cluster**). When all jobs have finished, we can proceed with part2: 
 
 ### Part1:
 
@@ -394,13 +394,13 @@ python "${ISOTOPE_path}"/IR_ISOTOPE_part1.py -i "${data_path}"/annotation/iso_tp
 
 - **--temp**: Remove temporary files
 
-- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False.
+- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False (it will run locally).
 
 - **-h**  | **--help**: display the help message describing the different parameters
 
 ### Part2:
 
-From all significant introns according to the previous test, ISOTOPE will evaluate if they would drive new open reading frames by comparing against the canonical associated transcript (IR_ORF_filtered_peptide_change.tab). For all those introns giving rise to a new open reading frame and not likely to be degraded by nonsense-mediated decay pathway, using NetMHC (https://services.healthtech.dtu.dk/service.php?NetMHC-4.0) and NetMHCpan (https://services.healthtech.dtu.dk/service.php?NetMHCpan-4.1) we evaluate the likelihood that the translated peptides could generate epitopes bound by MHC complex. Again, this step is computationally intensive and has been parallelized. When all jobs have finished, we can proceed with the last part3:
+From all significant introns according to the previous test, ISOTOPE will evaluate if they would drive new open reading frames by comparing against the canonical associated transcript (IR_ORF_filtered_peptide_change.tab). For all those introns giving rise to a new open reading frame and not likely to be degraded by nonsense-mediated decay pathway, using NetMHC (https://services.healthtech.dtu.dk/service.php?NetMHC-4.0) and NetMHCpan (https://services.healthtech.dtu.dk/service.php?NetMHCpan-4.1) we evaluate the likelihood that the translated peptides could generate epitopes bound by MHC complex. Again, this step is computationally intensive and has been parallelized (see option **--cluster**). When all jobs have finished, we can proceed with the last part3:
 
 ```
 python "${ISOTOPE_path}"/IR_ISOTOPE_part2.py --transcript /projects_rg/SCLC_cohorts/Smart/Salmon/iso_tpm.txt --gtf "${data_path}"/annotation/Homo_sapiens.GRCh37.75.gtf -genome /genomics/users/juanluis/Software/MoSEA-master/test_files/genome/hg19.fa -mosea /users/genomics/juanluis/Software/MoSEA --mxfinder /users/genomics/juanluis/Software/MxFinder -o "${output_path}" --HLAclass "${data_path}"/annotation/PHLAT_summary_ClassI.out --HLAtypes "${data_path}"/annotation/NetMHC-4.0_HLA_types_accepted.tab --HLAtypespan "${data_path}"/annotation/NetMHCpan-4.0_HLA_types_accepted.tab --netMHC /genomics/users/juanluis/Software/netMHC-4.0/netMHC --netMHCpan /genomics/users/juanluis/Software/netMHCpan-4.0/netMHCpan --username juanluis --tumor_specific
@@ -436,7 +436,7 @@ We detail here the description of the parameters:
 
 - **--temp**: Remove temporary files
 
-- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False.
+- **-c**  | **--cluster**: If activated, ISOTOPE will parallelize the execution if the software is executed on a slurm cluster. Default: False (it will run locally).
 
 - **-user**  | **--user**: Only necessary if --cluster option is enabled. Cluster user name.
 
