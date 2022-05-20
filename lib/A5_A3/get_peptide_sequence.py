@@ -250,6 +250,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
             next(f)
             for line in f:
                 tokens = line.rstrip().split("\t")
+                sample_id = tokens[0].replace(" ","")
                 gene = tokens[1]
                 can_exon = tokens[4]
                 alt_exon = tokens[5]
@@ -1002,6 +1003,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
             outFile3.write("Index\tORF_reference\tORF_changed\tPeptide_reference\tPeptide_changed\n")
             for line in f:
                 tokens = line.rstrip().split("\t")
+                sample_id = tokens[0].replace(" ","")
                 gene = tokens[1]
                 can_exon = tokens[4]
                 alt_exon = tokens[5]
