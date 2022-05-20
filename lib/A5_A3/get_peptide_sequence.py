@@ -94,6 +94,12 @@ def check_exonization(id, exons):
                         [exons.iloc[:i], exons.iloc[i + 1:]]).reset_index(drop=True), df)):
                     return True
 
+def get_expression(sample_id,transcript_id,transcript_expression):
+    if (transcript_id in transcript_expression[sample_id]):
+        return transcript_expression[sample_id][transcript_id]
+    else:
+        return -1
+    
 def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path, output_peptide_path,
                          output_sequence_path, output_path2, output_path3, mosea,
                          fast_genome, MxFinder_path, remove_temp_files):
@@ -130,15 +136,20 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
         logger.info("Load the expression associated to each transcript...")
         transcript_expression = {}
         with open(transcript_expression_path) as f:
+            header = next(f).rstrip().split("\t")
+            #Initialize the list of dictionaries
+            for i in range(0, len(header)):
+                transcript_expression[header[i]] = {}
+                # transcript_expression.append({})
             for line in f:
                 tokens = line.rstrip().split("\t")
                 transcript = tokens[0]
-                tpm = tokens[1]
-                # Save the values
-                if (transcript not in transcript_expression):
-                    transcript_expression[transcript] = tpm
-                else:
-                    logger.info("Repeated transcript " + transcript + " in transcript_expression")
+                tpm = tokens[1:]
+                for i in range(0,len(tpm)):
+                    if (transcript not in transcript_expression[header[i]]):
+                        transcript_expression[header[i]][transcript] = float(tpm[i])
+                    else:
+                        logger.info("Repeated transcript " + transcript + " in transcript_expression")
 
         # 2. Get the association gene - transcript from the gtf and the start and end codon from each transcript
         transcript_start_codon, transcript_stop_codon = {}, {}
@@ -279,13 +290,15 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                         exons_associated = (gtf.loc[gtf['transcript_id'] == transcript]).sort_values('start',
                                                                                                           ascending=False)
                     # Check if the A5_A3 event is included on this transcript
-                    if (check_exonization(id, exons_associated) and transcript in transcript_expression):
-                        # Get the TPM expression and the id. We will take the transcript with the greatest expression
-                        if (float(transcript_expression[transcript]) > TPM_associated):
-                            TPM_associated = float(transcript_expression[transcript])
-                            transcript_id = transcript
+                    if (check_exonization(id, exons_associated)):
+                        TPM = get_expression(sample_id,transcript,transcript_expression)
+                        if(TPM != -1):
+                            # Get the TPM expression and the id. We will take the transcript with the greatest expression
+                            if (TPM > TPM_associated):
+                                TPM_associated = TPM
+                                transcript_id = transcript
 
-                            # If no transcript has been chosen, that means that there is no transcript in the annotation with this exonization
+                # If no transcript has been chosen, that means that there is no transcript in the annotation with this exonization
                 if (transcript_id == "None"):
                     logger.info("A5_A3 event " + id + " not in the annotation")
                     continue
@@ -995,10 +1008,7 @@ def get_peptide_sequence(exonizations_path, transcript_expression_path, gtf_path
                 id = can_exon + "|" + alt_exon
                 if(id in exonization_transcript):
                     transcript = exonization_transcript[id]
-                    if(transcript in transcript_expression):
-                        tpm = float(transcript_expression[transcript])
-                    else:
-                        tpm = 0
+                    tpm = get_expression(sample_id, transcript, transcript_expression)
                 else:
                     transcript = ""
                     tpm = 0
