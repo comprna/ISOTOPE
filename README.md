@@ -2,10 +2,15 @@
 
 ![ISOTOPE_pipeline.jpg](https://user-images.githubusercontent.com/23315833/117435640-5be4a680-af2e-11eb-823a-01865a490134.png)
 
-The ISOTOPE pipeline identifies cancer-specific splicing-derived epitopes from short-read RNA-seq data. The pipeline
+ISOTOPE identifies cancer-specific splicing-derived epitopes from short-read RNA-seq data. The pipeline
 operates on individual tumor samples, without the requirement of additional controls or multiple tumor samples. 
 
-The pipeline is divided into 4 parts, depending of the type of alternative splicing event of interest:
+The full description and tessting of ISOTOPE and its applications to melanoma and small cell lung cancer can be found in our publication:
+
+* Trincado JL, Reixachs-Solé M, Pérez-Granado J, Fugmann T, Sanz F, Yokota J, Eyras E. ISOTOPE: ISOform-guided prediction of epiTOPEs in cancer. PLoS Comput Biol. 2021 Sep 16;17(9):e1009411. https://doi.org/10.1371/journal.pcbi.1009411.
+
+
+The ISOTOPE pipeline is divided into 4 parts, depending of the type of alternative splicing event of interest:
 
    * Pseudoexons (**Exonizations**)
    * New exons skipping events (**Neoskipping**)
